@@ -209,6 +209,11 @@ def install_packages():
         print "failed to install google python api client. Trying again 5 seconds."
         time.sleep(5)
 
+    while subprocess.call(['pip', 'install', '--upgrade', 'oauth2client']): 
+        print "failed to install oauth2 api client. Trying again 5 seconds." 
+        time.sleep(5)
+
+
 #END install_packages()
 
 def install_neuron():
@@ -864,12 +869,12 @@ def main():
         subprocess.call(shlex.split('systemctl enable mariadb'))
         subprocess.call(shlex.split('systemctl start mariadb'))
 
-	subprocess.call(['mysql', '-u', 'root', '-e',
-	    "create user 'slurm'@'localhost'"])
-	subprocess.call(['mysql', '-u', 'root', '-e',
-	    "grant all on slurm_acct_db.* TO 'slurm'@'localhost';"])
-	subprocess.call(['mysql', '-u', 'root', '-e',
-	    "grant all on slurm_acct_db.* TO 'slurm'@'controller';"])
+    subprocess.call(['mysql', '-u', 'root', '-e',
+        "create user 'slurm'@'localhost'"])
+    subprocess.call(['mysql', '-u', 'root', '-e',
+        "grant all on slurm_acct_db.* TO 'slurm'@'localhost';"])
+    subprocess.call(['mysql', '-u', 'root', '-e',
+        "grant all on slurm_acct_db.* TO 'slurm'@'controller';"])
 
         subprocess.call(shlex.split('systemctl enable slurmdbd'))
         subprocess.call(shlex.split('systemctl start slurmdbd'))
