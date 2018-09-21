@@ -1,0 +1,1 @@
+There are things in the startup_script I would suggest incorporating. It's probably best to extract your changes and merge them into the new scripts. The YAML file stuff is much clearer, and is probably all optional fields. You can review the changes but continue using your current YAML. One note is that 17.11.7 is the current version, and previous versions no longer build.
