@@ -148,7 +148,11 @@ def have_internet():
 
 def install_packages():
 
-    packages = ['bind-utils',
+    packages = ['python36u', 
+                'python36u-libs',
+                'python36u-devel',
+                'python36u-pip',
+                'bind-utils',
                 'epel-release',
                 'gcc',
                 'hwloc',
@@ -171,7 +175,6 @@ def install_packages():
                 'openssl-devel',
                 'pam-devel',
                 'perl-ExtUtils-MakeMaker',
-                'python-pip',
                 'readline-devel',
                 'rpm-build',
                 'rrdtool-devel',
@@ -179,8 +182,8 @@ def install_packages():
                 'wget'
                ]
 
-    custom_packages = ['git', 'hg', 'python-devel', 'bison', 'cmake', 'flex', 'automake',
-        'libtool', 'libxext-dev', 'libncurses-dev', 'python-dev', 'xorg-x11-server-Xorg', 
+    custom_packages = ['git', 'hg', 'bison', 'cmake', 'flex', 'automake',
+        'libtool', 'libxext-dev', 'libncurses-dev', 'xorg-x11-server-Xorg', 
         'xorg-x11-xauth', 'xorg-x11-apps', 'SDL-devel', 'freetype-devel', 'gd-devel', 'giflib-devel',
         'libX11-devel', 'libXcursor-devel', 'libXfont-devel', 'libXrandr-devel', 'libXt-devel', 
         'libjpeg-devel', 'libpng-devel', 'libtiff-devel', 'mesa-libGL-devel', 'mesa-libGLU-devel', 
@@ -188,6 +191,14 @@ def install_packages():
 ]
 
     custom_group_packages = ['Development Tools']
+
+    while subprocess.call(['yum', 'install', '-y', 'https://centos7.iuscommunity.org/ius-release.rpm']):
+        print "yum failed to add rpm"
+        time.sleep(5)
+
+    while subprocess.call(['yum', 'update']):
+        print "yum failed to add rpm"
+        time.sleep(5)
 
     while subprocess.call(['yum', 'install', '-y'] + packages):
         print "yum failed to install packages. Trying again in 5 seconds"
@@ -262,7 +273,7 @@ def install_neuron():
     subprocess.call(['mkdir', env['NB']])
     os.chdir(env['NSRC'])
     subprocess.call(['./build.sh'])
-    subprocess.call(['./configure', '--with-iv='+env['IVB'], '--prefix='+env['NB'], '--with-nrnpython',
+    subprocess.call(['./configure', '--with-iv='+env['IVB'], '--prefix='+env['NB'], '--with-nrnpython=python3',
         '--enable-pysetup=--home='+env['NB']+'/share/python', '--with-paranrn', 
         'MPICC=/apps/openmpi/bin/mpicc', 'MPICXX=/apps/openmpi/bin/mpicxx'])
     subprocess.call(['make', '-j4'])
