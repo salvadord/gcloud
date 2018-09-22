@@ -35,20 +35,31 @@ required:
 - default_users
 - login_machine_type
 - max_node_count
-- munge_key
+- private_google_access
 - region
 - slurm_version
 - static_node_count
 - zone
 
 optional:
-- compute_disk_size_gb
 - compute_disk_type
-- controller_disk_size_gb
+- compute_disk_size_gb
 - controller_disk_type
+- controller_disk_size_gb
+- controller_secondary_disk
+- controller_secondary_disk_type
+- controller_secondary_disk_size_gb
+- cpu_platform
 - external_compute_ips
+- gpu_count
+- gpu_type
+- labels
 - login_disk_size_gb
 - login_disk_type
+- login_node_count
+- munge_key
+- nfs_apps_server
+- nfs_home_server
 - preemptible_bursting
 
 properties:
@@ -62,8 +73,8 @@ properties:
 
   compute_machine_type:
     type        : string
-    description : |
-      Machine type to use for compute node instances, eg. n1-standard-4.
+    description : Machine type to use for compute node instances.
+                  eg. n1-standard-4.
 
   compute_disk_type:
     enum        : ["pd-ssd", "pd-standard"]
@@ -74,13 +85,13 @@ properties:
     type        : integer
     default     : 100
     minimum     : 10
-    maximum     : 64000
+    maximum     : 2000
     description : Size of disk for compute nodes.
 
   controller_machine_type:
     type        : string
-    description : |
-      Machine type to use for the controller instance, eg. n1-standard-4.
+    description : Machine type to use for the controller instance.
+                  eg. n1-standard-4.
 
   controller_disk_type:
     enum        : ["pd-ssd", "pd-standard"]
@@ -91,31 +102,74 @@ properties:
     type        : integer
     default     : 100
     minimum     : 10
-    maximum     : 64000
+    maximum     : 2000
     description : Size of disk for the controller.
+
+  controller_secondary_disk:
+    type        : boolean
+    default     : False
+    description : Create secondary disk mounted to controller node (True/False)
+
+  controller_secondary_disk_type:
+    enum        : ["pd-ssd", "pd-standard"]
+    default     : pd-standard
+    description : Disk type (pd-ssd or pd-standard) for secondary disk.
+
+  controller_secondary_disk_size_gb:
+    type        : integer
+    default     : 100
+    minimum     : 10
+    maximum     : 64000
+    description : Size of disk for the secondary disk.
+
+  cpu_platform:
+    enum        :
+                - Intel Sandy Bridge
+                - Intel Ivy Bridge
+                - Intel Haswell
+                - Intel Broadwell
+                - Intel Skylake
+    description : Minimum Intel Platform for Compute Nodes to Use
 
   default_account:
     type        : string
+    default     : default
     description : Default account to setup in accounting.
 
   default_users:
     type        : string
-    description : |
-      Default users to add to accounting. Added to default_account. Users can be
-      added later using sacctmgr.
+    description : Default users to add to accounting. Added to default_account.
+                  Users can be added later using sacctmgr.
 
   external_compute_ips:
     type        : boolean
     default     : True
-    description : |
-      Whether compute nodes are assigned external IPs or not. If set to false,
-      then the compute nodes will get to the internet through the controller
-      through a NAT'ed gateway.
+    description : Whether compute nodes are assigned external IPs or not. If set
+                  to false, then the compute nodes will get to the internet
+                  through the controller through a NAT'ed gateway.
+
+  gpu_type:
+    enum        :
+                - nvidia-tesla-k80
+                - nvidia-tesla-p100
+                - nvidia-tesla-v100
+                - nvidia-tesla-p4
+    description : GPU Type to attach to static nodes.
+
+  gpu_count:
+    enum        : [1, 2, 4, 8]
+    description : Number of GPUs to attach to each node.
+
+  labels:
+    type        : string
+    default     : slurm-on-gcp
+    description : Labels to add to nodes for reporting. Key will be node name
+                  (key,value).
 
   login_machine_type:
     type        : string
-    description : |
-      Machine type to use for login node instances, eg. n1-standard-4.
+    description : Machine type to use for login node instances, eg.
+                  n1-standard-4.
 
   login_disk_type:
     enum        : ["pd-ssd", "pd-standard"]
@@ -126,8 +180,13 @@ properties:
     type        : integer
     default     : 100
     minimum     : 10
-    maximum     : 64000
+    maximum     : 2000
     description : Size of disk for login node.
+
+  login_node_count:
+    type        : integer
+    default     : 0
+    description : Number of login nodes in the cluster.
 
   max_node_count:
     type        : integer
@@ -135,14 +194,29 @@ properties:
 
   munge_key:
     type        : string
-    description : The generated mungekey
+    description : Specific munge key to use
+                  (e.g "date +%s | sha512sum | cut -d' ' -f1"). If not specified
+                  then a random key will be generated at deployment creation.
+
+  nfs_apps_server:
+    type        : string
+    description : IP address of NFS server hosting apps dir
+
+  nfs_home_server:
+    type        : string
+    description : IP address of NFS server hosting home dir
 
   preemptible_bursting:
     type        : boolean
     default     : False
-    description : |
-      Whether bursted compute nodes are preemptible instances or not. Makre sure
-      to choose a zone that has preemptible resources.
+    description : Whether bursted compute nodes are preemptible instances or
+                  not. Makre sure to choose a zone that has preemptible
+                  resources.
+
+  private_google_access:
+    type        : boolean
+    default     : True
+    description : Private Google Access is Enabled (True/False).
 
   region:
     type        : string
@@ -150,9 +224,9 @@ properties:
 
   slurm_version:
     type        : string
-    description : |
-      The Slurm version to install. The version should match link name found at
-      https : //www.schedmd.com/downloads.php.
+    default     : 17.11.9-2
+    description : The Slurm version to install. The version should match link
+                  name found at https://www.schedmd.com/downloads.php.
 
   static_node_count:
     type        : integer
@@ -161,4 +235,3 @@ properties:
   zone:
     type        : string
     description : Zone to run the instances in based on Region.
-
