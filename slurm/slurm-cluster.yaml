@@ -34,7 +34,7 @@ resources:
     compute_machine_type    : n1-standard-8
     login_machine_type      : n1-standard-1
 
-    slurm_version           : 17.11.7
+    slurm_version           : 18.08
     default_account         : default
     default_users           : salvadord
     munge_key               : 9bc8d9bee6fcd2a15d9aaeed44afe795ac2d9bb234870bf48f1fde56c0b56c537d8098d2b82919e60d543af462ea913c0ae30e0a3b063f066326285f6a05e0ff
