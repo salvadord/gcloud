@@ -39,7 +39,7 @@ resources:
     default_users           : salvadord
     munge_key               : 9bc8d9bee6fcd2a15d9aaeed44afe795ac2d9bb234870bf48f1fde56c0b56c537d8098d2b82919e60d543af462ea913c0ae30e0a3b063f066326285f6a05e0ff
 
-    controller_disk_size_gb : 200s   # 2000
+    controller_disk_size_gb : 200   # 2000
     login_disk_size_gb      : 10
     compute_disk_size_gb    : 10
     preemptible_bursting    : True
