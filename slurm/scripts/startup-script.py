@@ -17,7 +17,6 @@
 import httplib
 import os
 import shlex
-import socket
 import subprocess
 import time
 import urllib
@@ -38,14 +37,6 @@ MAX_NODE_COUNT    = @MAX_NODE_COUNT@
 DEF_SLURM_ACCT    = '@DEF_SLURM_ACCT@'
 DEF_SLURM_USERS   = '@DEF_SLURM_USERS@'
 EXTERNAL_COMPUTE_IPS = @EXTERNAL_COMPUTE_IPS@
-GPU_TYPE          = '@GPU_TYPE@'
-GPU_COUNT         = @GPU_COUNT@
-NFS_APPS_SERVER   = '@NFS_APPS_SERVER@'
-NFS_HOME_SERVER   = '@NFS_HOME_SERVER@'
-CONTROLLER_SECONDARY_DISK = @CONTROLLER_SECONDARY_DISK@
-SEC_DISK_DIR      = '/mnt/disks/sec'
-
-CONTROL_MACHINE = CLUSTER_NAME + '-controller'
 
 SLURM_PREFIX  = APPS_DIR + '/slurm/slurm-' + SLURM_VERSION
 
@@ -157,7 +148,11 @@ def have_internet():
 
 def install_packages():
 
-    packages = ['bind-utils',
+    packages = ['python36u', 
+                'python36u-libs',
+                'python36u-devel',
+                'python36u-pip',
+                'bind-utils',
                 'epel-release',
                 'gcc',
                 'hwloc',
@@ -185,69 +180,151 @@ def install_packages():
                 'rpm-build',
                 'rrdtool-devel',
                 'vim',
-                'wget',
-                'tmux',
-                'pdsh',
-                'openmpi'
+                'wget'
                ]
+
+    custom_packages = ['git', 'hg', 'bison', 'cmake', 'flex', 'automake',
+        'libtool', 'libxext-dev', 'libncurses-dev', 'xorg-x11-server-Xorg', 
+        'xorg-x11-xauth', 'xorg-x11-apps', 'SDL-devel', 'freetype-devel', 'gd-devel', 'giflib-devel',
+        'libX11-devel', 'libXcursor-devel', 'libXfont-devel', 'libXrandr-devel', 'libXt-devel', 
+        'libjpeg-devel', 'libpng-devel', 'libtiff-devel', 'mesa-libGL-devel', 'mesa-libGLU-devel', 
+        'mesa-libGLw-devel', 'netpbm-devel', 'openmotif-devel',  'xorg-x11-server-sdk'
+]
+
+    custom_group_packages = ['Development Tools']
+
+    while subprocess.call(['yum', 'install', '-y', 'https://centos7.iuscommunity.org/ius-release.rpm']):
+        print "yum failed to add rpm"
+        time.sleep(5)
+
+
+    while subprocess.call(['yum', 'update', '-y', 'google-cloud-sdk']):
+        print "yum failed to add rpm"
+        time.sleep(5)
+
+    while subprocess.call(['yum', 'update', '-y']):
+        print "yum failed to add rpm"
+        time.sleep(5)
 
     while subprocess.call(['yum', 'install', '-y'] + packages):
         print "yum failed to install packages. Trying again in 5 seconds"
         time.sleep(5)
 
-    while subprocess.call(['pip', 'install', '--upgrade',
-        'google-api-python-client']):
+    while subprocess.call(['yum', 'group', 'install', '-y'] + custom_group_packages):
+        print "yum failed to install packages. Trying again in 5 seconds"
+        time.sleep(5)
+
+    while subprocess.call(['yum', 'install', '-y'] + custom_packages):
+        print "yum failed to install packages. Trying again in 5 seconds"
+        time.sleep(5)
+
+    while subprocess.call(['pip', 'install', '--upgrade', 'pip']):
+        print "failed to upgrade pip. Trying again 5 seconds."
+        time.sleep(5)
+
+    while subprocess.call(['pip', 'install', '--upgrade', 'google-api-python-client']):
         print "failed to install google python api client. Trying again 5 seconds."
         time.sleep(5)
 
-    if GPU_TYPE and (INSTANCE_TYPE == "compute"):
-        rpm = "cuda-repo-rhel7-9.2.148-1.x86_64.rpm"
-        subprocess.call("yum -y install kernel-devel-$(uname -r) kernel-headers-$(uname -r)", shell=True)
-        subprocess.call(shlex.split("wget http://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/" + rpm))
-        subprocess.call(shlex.split("sudo rpm -i " + rpm))
-        subprocess.call(shlex.split("sudo yum clean all"))
-        subprocess.call(shlex.split("sudo yum -y install cuda"))
-        subprocess.call(shlex.split("nvidia-smi")) # Creates the device files
+    while subprocess.call(['pip', 'install', '--upgrade', 'oauth2client']): 
+        print "failed to install oauth2 api client. Trying again 5 seconds." 
+        time.sleep(5)
 
+    while subprocess.call(['pip3.6', 'install', '--upgrade', 'pip']):
+        print "failed to upgrade pip. Trying again 5 seconds."
+        time.sleep(5)
+
+    while subprocess.call(['pip3.6', 'install', '--upgrade', 'google-api-python-client']):
+        print "failed to install google python api client. Trying again 5 seconds."
+        time.sleep(5)
+
+    while subprocess.call(['pip3.6', 'install', '--upgrade', 'oauth2client']): 
+        print "failed to install oauth2 api client. Trying again 5 seconds." 
+        time.sleep(5)
 #END install_packages()
+
+
+def install_neuron():
+    env = os.environ
+    # set SITE
+    os.chdir('/apps')
+    subprocess.call(['mkdir', 'site'])
+    env['SITE'] = '/apps/site'
+    subprocess.call(['mkdir', env['SITE']+'/python'])
+    
+    # pip packages
+    pip_packages = ['numpy', 'matplotlib', 'scipy', 'pandas', 'mpi4py', 'seaborn']
+    for pip_package in pip_packages:
+        subprocess.call(['pip3.6', 'install', pip_package, '-t', env['SITE']+'/python'])
+
+    # openmpi
+    os.chdir('/apps')
+    subprocess.call(['wget', 'https://www.open-mpi.org/software/ompi/v1.10/downloads/openmpi-1.10.7.tar.gz'])
+    subprocess.call(['tar', '-xvzf', 'openmpi-1.10.7.tar.gz'])
+    subprocess.call(['mkdir', 'openmpi'])
+    os.chdir('/apps/openmpi-1.10.7')
+    subprocess.call(['./configure', '--prefix=/apps/openmpi'])
+    subprocess.call(['make', '-j4'])
+    subprocess.call(['make', 'install', '-j4'])
+
+    # create folders and get neuron+iv sources
+    env['N'] = '/apps/neuron'
+    subprocess.call(['mkdir', env['N']])
+    os.chdir(env['N'])
+    subprocess.call(['git', 'clone', 'https://github.com/nrnhines/iv', 'iv_src'])
+    subprocess.call(['git', 'clone', 'https://github.com/nrnhines/nrn', 'nrn_src'])
+
+    # install interviews
+    env['IVSRC'] = '/apps/neuron/iv_src'
+    env['IVB'] = '/apps/neuron/iv'
+    subprocess.call(['mkdir', env['IVB']])
+    os.chdir(env['IVSRC'])
+    subprocess.call(['./build.sh'])
+    subprocess.call(['./configure', '--prefix='+env['IVB']])
+    subprocess.call(['make', '-j4'])
+    subprocess.call(['make', 'install', '-j4'])
+
+    # install NEURON
+    env['NSRC'] = '/apps/neuron/nrn_src'
+    env['NB'] = '/apps/neuron/nrn'
+    subprocess.call(['mkdir', env['NB']])
+    os.chdir(env['NSRC'])
+    subprocess.call(['./build.sh'])
+    subprocess.call(['./configure', '--with-iv='+env['IVB'], '--prefix='+env['NB'], '--with-nrnpython=python3.6',
+        '--enable-pysetup=--home='+env['NB']+'/share/python', '--with-paranrn', 
+        'MPICC=/apps/openmpi/bin/mpicc', 'MPICXX=/apps/openmpi/bin/mpicxx'])
+    subprocess.call(['make', '-j4'])
+    subprocess.call(['make', 'install', '-j4'])
+
+    # Clone neurosim support folders
+    subprocess.call(['mkdir', env['SITE']+'/nrniv'])
+    
+    # cannot clone from neurosim without passwd
+    #subprocess.call(['cd', '$SITE'])
+    #subprocess.call(['git', 'clone ssh://salvadord@no.neurosim.downstate.edu//usr/site/scripts']
+    #sudo git clone ssh://salvadord@no.neurosim.downstate.edu//usr/site/scripts
+    #cd nrniv
+    #sudo git clone ssh://salvadord@no.neurosim.downstate.edu//usr/site/nrniv/local
+    #cd local/python
+    #sudo git clone -b development https://github.com/Neurosim-lab/netpyne.git
+
+
 
 def setup_munge():
 
-    MUNGE_DIR = "/etc/munge"
-
-    f = open('/etc/fstab', 'a')
-    if not NFS_APPS_SERVER:
-        if ((INSTANCE_TYPE != "controller")):
-            f.write("""
-{1}:{0}    {0}     nfs      rw,sync,hard,intr  0     0
-""".format(MUNGE_DIR, CONTROL_MACHINE))
-    else:
-        f.write("""
-{1}:{0}    {0}     nfs      rw,sync,hard,intr  0     0
-""".format(MUNGE_DIR, NFS_APPS_SERVER))
+    f = open('/etc/munge/munge.key', 'w')
+    f.write(MUNGE_KEY)
     f.close()
 
-    if (INSTANCE_TYPE != "controller"):
-        return
-
-    if MUNGE_KEY:
-        f = open(MUNGE_DIR +'/munge.key', 'w')
-        f.write(MUNGE_KEY)
-        f.close()
-
-        subprocess.call(['chown', '-R', 'munge:', MUNGE_DIR, '/var/log/munge/'])
-        os.chmod(MUNGE_DIR + '/munge.key' ,0o400)
-        os.chmod(MUNGE_DIR                ,0o700)
-        os.chmod('/var/log/munge/'        ,0o700)
-    else:
-        subprocess.call(['create-munge-key'])
+    subprocess.call(['chown', '-R', 'munge:', '/etc/munge/', '/var/log/munge/'])
+    os.chmod('/etc/munge/munge.key' ,0o400)
+    os.chmod('/etc/munge/'          ,0o700)
+    os.chmod('/var/log/munge/'      ,0o700)
+    subprocess.call(['systemctl', 'enable', 'munge'])
+    subprocess.call(['systemctl', 'start', 'munge'])
 
 #END setup_munge ()
 
-def start_munge():
-        subprocess.call(['systemctl', 'enable', 'munge'])
-        subprocess.call(['systemctl', 'start', 'munge'])
-#END start_munge()
 
 def setup_nfs_exports():
 
@@ -255,12 +332,7 @@ def setup_nfs_exports():
     f.write("""
 /home  *(rw,sync,no_subtree_check,no_root_squash)
 %s  *(rw,sync,no_subtree_check,no_root_squash)
-/etc/munge *(rw,sync,no_subtree_check,no_root_squash)
 """ % APPS_DIR)
-    if CONTROLLER_SECONDARY_DISK:
-        f.write("""
-%s  *(rw,sync,no_subtree_check,no_root_squash)
-""" % SEC_DISK_DIR)
     f.close()
 
     subprocess.call(shlex.split("exportfs -a"))
@@ -323,7 +395,7 @@ def install_slurm_conf():
 # Put this file on all nodes of your cluster.
 # See the slurm.conf man page for more information.
 #
-ControlMachine={control_machine}
+ControlMachine=controller
 #ControlAddr=
 #BackupController=
 #BackupAddr=
@@ -337,7 +409,7 @@ CryptoType=crypto/munge
 #EpilogSlurmctld=
 #FirstJobId=1
 #MaxJobId=999999
-GresTypes=gpu
+#GresTypes=
 #GroupUpdateForce=0
 #GroupUpdateTime=600
 #JobCheckpointDir=/var/slurm/checkpoint
@@ -377,7 +449,7 @@ ProctrackType=proctrack/cgroup
 #PropagateResourceLimitsExcept=Sched
 #RebootProgram=
 
-ReturnToService=2
+ReturnToService=1
 #SallocDefaultCommand=
 SlurmctldPidFile=/var/run/slurm/slurmctld.pid
 SlurmctldPort=6817
@@ -416,7 +488,7 @@ KillWait=30
 MinJobAge=300
 #OverTimeLimit=0
 SlurmctldTimeout=120
-SlurmdTimeout=300
+SlurmdTimeout=900
 #UnkillableStepTimeout=60
 #VSizeFactor=0
 Waittime=0
@@ -449,7 +521,7 @@ SelectTypeParameters=CR_Core_Memory
 #
 # LOGGING AND ACCOUNTING
 AccountingStorageEnforce=associations,limits,qos,safe
-AccountingStorageHost={control_machine}
+AccountingStorageHost=controller
 #AccountingStorageLoc=
 #AccountingStoragePass=
 #AccountingStoragePort=
@@ -470,37 +542,29 @@ JobAcctGatherType=jobacct_gather/none
 SlurmctldDebug=info
 SlurmctldLogFile={apps_dir}/slurm/log/slurmctld.log
 SlurmdDebug=debug
-SlurmdLogFile=/var/log/slurm/slurmd-%n.log
+SlurmdLogFile={apps_dir}/slurm/log/slurmd-%n.log
 #
 #
 # POWER SAVE SUPPORT FOR IDLE NODES (optional)
 SuspendProgram={apps_dir}/slurm/scripts/suspend.py
 ResumeProgram={apps_dir}/slurm/scripts/resume.py
 SuspendTimeout=300
-ResumeTimeout=1800
+ResumeTimeout=300
 #ResumeRate=
 #SuspendExcNodes=
 #SuspendExcParts=
 SuspendRate=0
-SuspendTime=2100
+SuspendTime=600
 #
 #
 # COMPUTE NODES
-""".format(apps_dir        = APPS_DIR,
-           cluster_name    = CLUSTER_NAME,
-           control_machine = CONTROL_MACHINE,
-           def_mem_per_cpu = def_mem_per_cpu)
+""".format(cluster_name = CLUSTER_NAME, apps_dir = APPS_DIR,
+        def_mem_per_cpu = def_mem_per_cpu)
 
-    conf += ' '.join(("NodeName=DEFAULT",
-                      "Sockets="        + str(machine['sockets']),
-                      "CoresPerSocket=" + str(machine['cores']),
-                      "ThreadsPerCore=" + str(machine['threads']),
-                      "RealMemory="     + str(machine['memory']),
-                      "State=UNKNOWN"))
-
-    if GPU_TYPE:
-        conf += " Gres=gpu:" + str(GPU_COUNT)
-    conf += "\n"
+    conf += """
+NodeName=DEFAULT Sockets=%d CoresPerSocket=%d ThreadsPerCore=%d RealMemory=%d State=UNKNOWN
+""" % (machine['sockets'], machine['cores'], machine['threads'],
+        machine['memory'])
 
     static_range = ""
     if STATIC_NODE_COUNT and STATIC_NODE_COUNT > 1:
@@ -514,16 +578,16 @@ SuspendTime=2100
 
     if static_range:
         conf += """
-SuspendExcNodes={1}-compute{0}
-NodeName={1}-compute{0}
-""".format(static_range, CLUSTER_NAME)
+SuspendExcNodes=compute{0}
+NodeName=compute{0}
+""".format(static_range)
 
     if cloud_range:
-        conf += "NodeName={0}-compute{1} State=CLOUD".format(CLUSTER_NAME, cloud_range)
+        conf += "NodeName=compute%s State=CLOUD" % cloud_range
 
     conf += """
-PartitionName=debug Nodes={0}-compute[1-{1:d}] Default=YES MaxTime=INFINITE State=UP
-""".format(CLUSTER_NAME, MAX_NODE_COUNT)
+PartitionName=debug Nodes=compute[1-%d] Default=YES MaxTime=INFINITE State=UP
+""" % MAX_NODE_COUNT
 
     etc_dir = SLURM_PREFIX + '/etc'
     if not os.path.exists(etc_dir):
@@ -546,7 +610,7 @@ def install_slurmdbd_conf():
 #ArchiveUsage=no
 
 AuthType=auth/munge
-DbdHost={control_machine}
+DbdHost=controller
 DebugLevel=debug2
 
 #PurgeEventAfter=1month
@@ -568,7 +632,7 @@ StorageType=accounting_storage/mysql
 #StorageUser=database_mgr
 #StoragePass=shazaam
 
-""".format(apps_dir = APPS_DIR, control_machine = CONTROL_MACHINE)
+""".format(apps_dir = APPS_DIR)
     etc_dir = SLURM_PREFIX + '/etc'
     if not os.path.exists(etc_dir):
         os.makedirs(etc_dir)
@@ -588,7 +652,7 @@ ConstrainCores=yes
 ConstrainRamSpace=yes
 ConstrainSwapSpace=yes
 TaskAffinity=no
-ConstrainDevices=yes
+#ConstrainDevices=yes
 """
 
     etc_dir = SLURM_PREFIX + '/etc'
@@ -596,14 +660,6 @@ ConstrainDevices=yes
     f.write(conf)
     f.close()
 
-    f = open(etc_dir + '/cgroup_allowed_devices_file.conf', 'w')
-    f.write("")
-    f.close()
-
-    f = open(etc_dir + '/gres.conf', 'w')
-    f.write("NodeName=%s-compute[1-%d] Name=gpu File=/dev/nvidia[0-%d]"
-            % (CLUSTER_NAME, MAX_NODE_COUNT, (GPU_COUNT - 1)))
-    f.close()
 #END install_cgroup_conf()
 
 
@@ -793,104 +849,24 @@ PATH=$PATH:$S_PATH/bin:$S_PATH/sbin
 """ % APPS_DIR)
     f.close()
 
-    if GPU_TYPE and (INSTANCE_TYPE == "compute"):
-        f = open('/etc/profile.d/cuda.sh', 'w')
-        f.write("""
-CUDA_PATH=/usr/local/cuda
-PATH=$CUDA_PATH/bin${PATH:+:${PATH}}
-LD_LIBRARY_PATH=$CUDA_PATH/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-""")
-        f.close()
-
 #END setup_bash_profile()
 
-def setup_nfs_apps_vols():
-
-    f = open('/etc/fstab', 'a')
-    if not NFS_APPS_SERVER:
-        if ((INSTANCE_TYPE != "controller")):
-            f.write("""
-{1}:{0}    {0}     nfs      rw,sync,hard,intr  0     0
-""".format(APPS_DIR, CONTROL_MACHINE))
-    else:
-        f.write("""
-{1}:{0}    {0}     nfs      rw,sync,hard,intr  0     0
-""".format(APPS_DIR, NFS_APPS_SERVER))
-    f.close()
-
-#END setup_nfs_apps_vols()
-
-def setup_nfs_home_vols():
-
-    f = open('/etc/fstab', 'a')
-    if not NFS_HOME_SERVER:
-        if ((INSTANCE_TYPE != "controller")):
-            f.write("""
-{0}:/home    /home     nfs      rw,sync,hard,intr  0     0
-""".format(CONTROL_MACHINE))
-    else:
-        f.write("""
-{0}:/home    /home     nfs      rw,sync,hard,intr  0     0
-""".format(NFS_HOME_SERVER))
-    f.close()
-
-#END setup_nfs_home_vols()
-
-def setup_nfs_sec_vols():
-    f = open('/etc/fstab', 'a')
-
-    if CONTROLLER_SECONDARY_DISK:
-        if ((INSTANCE_TYPE != "controller")):
-            f.write("""
-{1}:{0}    {0}     nfs      rw,sync,hard,intr  0     0
-""".format(SEC_DISK_DIR, CONTROL_MACHINE))
-    f.close()
-
-#END setup_nfs_sec_vols()
-
-def setup_secondary_disks():
-
-    subprocess.call(shlex.split("sudo mkfs.ext4 -m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/sdb"))
-    f = open('/etc/fstab', 'a')
-
-    f.write("""
-/dev/sdb    {0}  ext4    discard,defaults,nofail  0  2
-""".format(SEC_DISK_DIR))
-    f.close()
-
-#END setup_secondary_disks()
 
 def mount_nfs_vols():
+
+    f = open('/etc/fstab', 'a')
+    f.write("""
+controller:{0}    {0}     nfs      rw,sync,hard,intr  0     0
+controller:/home  /home   nfs      rw,sync,hard,intr  0     0
+""".format(APPS_DIR))
+    f.close()
+
     while subprocess.call(['mount', '-a']):
         print "Waiting for " + APPS_DIR + " and /home to be mounted"
         time.sleep(5)
 
 #END mount_nfs_vols()
 
-# Tune the NFS server to support many mounts
-def setup_nfs_threads():
-
-    f = open('/etc/sysconfig/nfs', 'a')
-    f.write("""
-# Added by Google
-RPCNFSDCOUNT=256
-""".format(APPS_DIR))
-    f.close()
-
-# END setup_nfs_threads()
-
-def setup_slurmd_cronjob():
-    #subprocess.call(shlex.split('crontab < /apps/slurm/scripts/cron'))
-    os.system("echo '*/2 * * * * if [ `systemctl status slurmd | grep -c inactive` -gt 0 ]; then mount -a; systemctl restart slurmd; fi' | crontab -u root -")
-# END setup_slurmd_cronjob()
-
-def format_disk():
-    subprocess.call(shlex.split("sudo mkfs.ext4 -m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/sdb"))
-    #subprocess.call(shlex.split("sudo mkdir -p " + SEC_DISK_DIR))
-    subprocess.call(shlex.split("sudo mount -o discard,defaults /dev/sdb " + SEC_DISK_DIR))
-    subprocess.call(shlex.split("sudo chmod a+w " + SEC_DISK_DIR))
-
-# END format_disk()
 
 def main():
     # Disable SELinux
@@ -907,51 +883,36 @@ def main():
         while not have_internet():
             print "Waiting for internet connection"
 
-    if not os.path.exists(APPS_DIR + '/slurm'):
-        os.makedirs(APPS_DIR + '/slurm')
-        print "ww Created Slurm Folders"
-
-    if CONTROLLER_SECONDARY_DISK:
-        if not os.path.exists(SEC_DISK_DIR):
-            os.makedirs(SEC_DISK_DIR)
-
-    start_motd()
-
-    if not os.path.exists('/var/log/slurm'):
-        os.makedirs('/var/log/slurm')
-
     add_slurm_user()
+    start_motd()
     install_packages()
     setup_munge()
+
     setup_bash_profile()
 
-    if (CONTROLLER_SECONDARY_DISK and (INSTANCE_TYPE == "controller")):
-        setup_secondary_disks()
+    subprocess.call(shlex.split('systemctl enable munge'))
+    subprocess.call(shlex.split('systemctl start munge'))
 
-    setup_nfs_apps_vols()
-    setup_nfs_home_vols()
-    setup_nfs_sec_vols()
-    mount_nfs_vols()
+    if not os.path.exists(APPS_DIR + '/slurm'):
+        os.makedirs(APPS_DIR + '/slurm')
 
-    start_munge()
+    if INSTANCE_TYPE != "controller":
+        mount_nfs_vols()
 
     if INSTANCE_TYPE == "controller":
-
         install_slurm()
-
-        # Add any additional installation functions here
-
+        install_neuron()
         install_controller_service_scripts()
 
         subprocess.call(shlex.split('systemctl enable mariadb'))
         subprocess.call(shlex.split('systemctl start mariadb'))
 
         subprocess.call(['mysql', '-u', 'root', '-e',
-            "create user 'slurm'@'localhost'"])
+        "create user 'slurm'@'localhost'"])
         subprocess.call(['mysql', '-u', 'root', '-e',
-            "grant all on slurm_acct_db.* TO 'slurm'@'localhost';"])
+        "grant all on slurm_acct_db.* TO 'slurm'@'localhost';"])
         subprocess.call(['mysql', '-u', 'root', '-e',
-            "grant all on slurm_acct_db.* TO 'slurm'@'{0}';".format(CONTROL_MACHINE)])
+        "grant all on slurm_acct_db.* TO 'slurm'@'controller';"])
 
         subprocess.call(shlex.split('systemctl enable slurmdbd'))
         subprocess.call(shlex.split('systemctl start slurmdbd'))
@@ -959,38 +920,31 @@ def main():
         # Wait for slurmdbd to come up
         time.sleep(5)
 
-        oslogin_chars = ['@', '.']
-
-        SLURM_USERS = DEF_SLURM_USERS
-
-        for char in oslogin_chars:
-            SLURM_USERS = SLURM_USERS.replace(char, '_')
-
         subprocess.call(shlex.split(SLURM_PREFIX + '/bin/sacctmgr -i add cluster ' + CLUSTER_NAME))
         subprocess.call(shlex.split(SLURM_PREFIX + '/bin/sacctmgr -i add account ' + DEF_SLURM_ACCT))
-        subprocess.call(shlex.split(SLURM_PREFIX + '/bin/sacctmgr -i add user ' + SLURM_USERS + ' account=' + DEF_SLURM_ACCT))
+        subprocess.call(shlex.split(SLURM_PREFIX + '/bin/sacctmgr -i add user ' + DEF_SLURM_USERS + ' account=' + DEF_SLURM_ACCT))
 
         subprocess.call(shlex.split('systemctl enable slurmctld'))
         subprocess.call(shlex.split('systemctl start slurmctld'))
-        setup_nfs_threads()
+
         # Export at the end to signal that everything is up
         subprocess.call(shlex.split('systemctl enable nfs-server'))
         subprocess.call(shlex.split('systemctl start nfs-server'))
         setup_nfs_exports()
-        print "ww Done installing controller"
-        subprocess.call(shlex.split('gcloud compute instances remove-metadata '+ CONTROL_MACHINE + ' --zone=' + ZONE + ' --keys=startup-script'))
+
+        # add cron job to shut down nodes
+        subprocess.call(shlex.split('wget https://storage.googleapis.com/slurm-gcp/check_up.sh')) # wget script
+        subprocess.call(shlex.split('chmod ug+x check_up.sh')) # wget script
+        subprocess.call(shlex.split('crontab -l > mycron')) #write out current crontab
+        subprocess.call(shlex.split('echo "*/5 * * * * check_up.sh >> check_up.log 2>&1" >> mycron')) #echo new cron into cron file
+        subprocess.call(shlex.split('crontab mycron'))  #install new cron file
+        subprocess.call(shlex.split('rm mycron'))
+
 
     elif INSTANCE_TYPE == "compute":
         install_compute_service_scripts()
-
-        hostname = socket.gethostname()
-
-        # Add any additional installation functions here
-
         subprocess.call(shlex.split('systemctl enable slurmd'))
-        setup_slurmd_cronjob()
         subprocess.call(shlex.split('systemctl start slurmd'))
-        subprocess.call(shlex.split('gcloud compute instances remove-metadata '+ hostname + ' --zone=' + ZONE + ' --keys=startup-script'))
 
     end_motd()
 
@@ -999,3 +953,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+

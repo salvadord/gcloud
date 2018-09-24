@@ -192,9 +192,9 @@ def install_packages():
 
     custom_group_packages = ['Development Tools']
 
-    # while subprocess.call(['yum', 'install', '-y', 'https://centos7.iuscommunity.org/ius-release.rpm']):
-    #     print "yum failed to add rpm"
-    #     time.sleep(5)
+    while subprocess.call(['yum', 'install', '-y', 'https://centos7.iuscommunity.org/ius-release.rpm']):
+        print "yum failed to add rpm"
+        time.sleep(5)
 
     while subprocess.call(['yum', 'update']):
         print "yum failed to add rpm"
@@ -216,11 +216,11 @@ def install_packages():
         print "failed to upgrade pip. Trying again 5 seconds."
         time.sleep(5)
 
-    while subprocess.call(['pip', 'install', '-y', '--upgrade', 'google-api-python-client']):
+    while subprocess.call(['pip', 'install', '--upgrade', 'google-api-python-client']):
         print "failed to install google python api client. Trying again 5 seconds."
         time.sleep(5)
 
-    while subprocess.call(['pip', 'install', '-y', '--upgrade', 'oauth2client']): 
+    while subprocess.call(['pip', 'install', '--upgrade', 'oauth2client']): 
         print "failed to install oauth2 api client. Trying again 5 seconds." 
         time.sleep(5)
 
