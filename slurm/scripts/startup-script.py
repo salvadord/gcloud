@@ -306,7 +306,7 @@ def install_neuron():
     #cd nrniv
     #sudo git clone ssh://salvadord@no.neurosim.downstate.edu//usr/site/nrniv/local
     #cd local/python
-    #sudo git clone -b development https://github.com/Neurosim-lab/netpyne.git
+    #sudo git clone -b development_py3 https://github.com/Neurosim-lab/netpyne.git
 
 
 
