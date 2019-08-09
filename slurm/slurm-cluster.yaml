@@ -25,13 +25,13 @@ resources:
   properties:
     cluster_name            : gcn
     static_node_count       : 0
-    max_node_count          : 1 #64000
+    max_node_count          : 1300 #64000
     zone                    : us-central1-b
     region                  : us-central1
     cidr                    : 10.10.0.0/16
 
-    controller_machine_type : n1-standard-4  # n1-highmem-32
-    compute_machine_type    : n1-standard-96
+    controller_machine_type : n1-highmem-16  # n1-highmem-32
+    compute_machine_type    : n1-standard-1
     login_machine_type      : n1-standard-1
 
     slurm_version           : 17.11.9-2
@@ -42,7 +42,7 @@ resources:
     controller_disk_size_gb : 1000   # 2000
     login_disk_size_gb      : 10
     compute_disk_size_gb    : 10
-    preemptible_bursting    : False
+    preemptible_bursting    : True
 
     # Optional compute configuration fields
     #external_compute_ips    : False
