@@ -1,0 +1,282 @@
+* 19Sep12 Updating gcloud slurm version
+** Make sure keep previous features/improvements
+- fast ramping up and down
+- script to shut down nodes
+** link to GCP/slurm
+https://cloud.google.com/blog/products/compute/hpc-made-easy-announcing-new-features-for-slurm-on-gcp
+** Possible option to facilitate NFS - cloud filestore
+https://cloud.google.com/filestore/
+** Getting started
+This new release was built by the Slurm experts at SchedMD. You can download this release in SchedMD’s GitHub repository.-- https://github.com/SchedMD/slurm-gcp
+
+For more information, check out the included README. And if you need help getting started with Slurm check out the quick start guide -- https://slurm.schedmd.com/quickstart.html, 
+ 
+ and for help with the Slurm features for GCP check out the Slurm Auto-Scaling Cluster -- https://codelabs.developers.google.com/codelabs/hpc-slurm-on-gcp/#0
+  
+  and Slurm Cluster Federation codelabs -- https://codelabs.developers.google.com/codelabs/hpc-slurm-federated-on-gcp/#0
+
+If you have further questions, you can post on the Slurm on GCP Google discussion group -- https://groups.google.com/forum/#!forum/google-cloud-slurm-discuss
+
+or contact SchedMD directly -- https://groups.google.com/forum/#!forum/google-cloud-slurm-discuss
+** Steps
+Following https://codelabs.developers.google.com/codelabs/hpc-slurm-on-gcp/#0
+*** 1) update gcloud 
+/gcloud % pip install -U gcloud
+
+Collecting gcloud
+  Downloading https://files.pythonhosted.org/packages/11/ab/d0cee58db2d8445c26e6f5db25d9b1f1aa14a3ab30eea8ce77ae808d10ef/gcloud-0.18.3.tar.gz (454kB)
+    100% |████████████████████████████████| 460kB 4.8MB/s 
+Collecting httplib2>=0.9.1 (from gcloud)
+  Downloading https://files.pythonhosted.org/packages/60/55/3902b9f33ad9c15abf447ad91b86ef2d0835a1ae78530f1410c115cf8fe3/httplib2-0.13.1-py3-none-any.whl (94kB)
+    100% |████████████████████████████████| 102kB 12.9MB/s 
+Collecting googleapis-common-protos (from gcloud)
+  Downloading https://files.pythonhosted.org/packages/eb/ee/e59e74ecac678a14d6abefb9054f0bbcb318a6452a30df3776f133886d7d/googleapis-common-protos-1.6.0.tar.gz
+Collecting oauth2client>=2.0.1 (from gcloud)
+  Downloading https://files.pythonhosted.org/packages/95/a9/4f25a14d23f0786b64875b91784607c2277eff25d48f915e39ff0cff505a/oauth2client-4.1.3-py2.py3-none-any.whl (98kB)
+    100% |████████████████████████████████| 102kB 11.4MB/s 
+Requirement already satisfied, skipping upgrade: protobuf!=3.0.0.b2.post1,>=3.0.0b2 in /usr/local/lib/python3.7/site-packages/protobuf-3.8.0rc1-py3.7-macosx-10.12-x86_64.egg (from gcloud) (3.8.0rc1)
+Requirement already satisfied, skipping upgrade: six in /u/salvadord/Library/Python/3.7/lib/python/site-packages (from gcloud) (1.11.0)
+Collecting rsa>=3.1.4 (from oauth2client>=2.0.1->gcloud)
+  Downloading https://files.pythonhosted.org/packages/02/e5/38518af393f7c214357079ce67a317307936896e961e35450b70fad2a9cf/rsa-4.0-py2.py3-none-any.whl
+Collecting pyasn1>=0.1.7 (from oauth2client>=2.0.1->gcloud)
+  Downloading https://files.pythonhosted.org/packages/a1/71/8f0d444e3a74e5640a3d5d967c1c6b015da9c655f35b2d308a55d907a517/pyasn1-0.4.7-py2.py3-none-any.whl (76kB)
+    100% |████████████████████████████████| 81kB 8.0MB/s 
+Collecting pyasn1-modules>=0.0.5 (from oauth2client>=2.0.1->gcloud)
+  Downloading https://files.pythonhosted.org/packages/be/70/e5ea8afd6d08a4b99ebfc77bd1845248d56cfcf43d11f9dc324b9580a35c/pyasn1_modules-0.2.6-py2.py3-none-any.whl (95kB)
+    100% |████████████████████████████████| 102kB 5.7MB/s 
+Requirement already satisfied, skipping upgrade: setuptools in /usr/local/lib/python3.7/site-packages (from protobuf!=3.0.0.b2.post1,>=3.0.0b2->gcloud) (39.0.1)
+Building wheels for collected packages: gcloud, googleapis-common-protos
+  Running setup.py bdist_wheel for gcloud ... done
+  Stored in directory: /u/salvadord/Library/Caches/pip/wheels/b9/9b/9c/a01be401658fea33b93a35d03921b0c638266821b264dc8662
+  Running setup.py bdist_wheel for googleapis-common-protos ... done
+  Stored in directory: /u/salvadord/Library/Caches/pip/wheels/9e/3d/a2/1bec8bb7db80ab3216dbc33092bb7ccd0debfb8ba42b5668d5
+Successfully built gcloud googleapis-common-protos
+Installing collected packages: httplib2, googleapis-common-protos, pyasn1, rsa, pyasn1-modules, oauth2client, gcloud
+Successfully installed gcloud-0.18.3 googleapis-common-protos-1.6.0 httplib2-0.13.1 oauth2client-4.1.3 pyasn1-0.4.7 pyasn1-modules-0.2.6 rsa-4.0
+ 
+ 
+ /gcloud % gcloud components update
+
+
+Your current Cloud SDK version is: 243.0.0
+You will be upgraded to version: 262.0.0
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      These components will be updated.                      │
+├─────────────────────────────────────────────────────┬────────────┬──────────┤
+│                         Name                        │  Version   │   Size   │
+├─────────────────────────────────────────────────────┼────────────┼──────────┤
+│ BigQuery Command Line Tool                          │     2.0.47 │  < 1 MiB │
+│ BigQuery Command Line Tool (Platform Specific)      │     2.0.46 │  < 1 MiB │
+│ Cloud SDK Core Libraries                            │ 2019.09.06 │ 11.7 MiB │
+│ Cloud SDK Core Libraries (Platform Specific)        │ 2019.08.16 │  < 1 MiB │
+│ Cloud Storage Command Line Tool                     │       4.42 │  3.6 MiB │
+│ Cloud Storage Command Line Tool (Platform Specific) │       4.42 │  < 1 MiB │
+│ gcloud Alpha Commands                               │ 2019.05.17 │  < 1 MiB │
+│ gcloud cli dependencies                             │ 2019.08.16 │  3.3 MiB │
+└─────────────────────────────────────────────────────┴────────────┴──────────┘
+
+A lot has changed since your last upgrade.  For the latest full release notes,
+please visit:
+  https://cloud.google.com/sdk/release_notes
+
+Do you want to continue (Y/n)?  
+
+╔════════════════════════════════════════════════════════════╗
+╠═ Creating update staging area                             ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: BigQuery Command Line Tool                 ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: BigQuery Command Line Tool (Platform Sp... ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: Cloud SDK Core Libraries                   ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: Cloud SDK Core Libraries (Platform Spec... ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: Cloud Storage Command Line Tool            ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: Cloud Storage Command Line Tool (Platfo... ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: gcloud Alpha Commands                      ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Uninstalling: gcloud cli dependencies                    ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: BigQuery Command Line Tool                   ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: BigQuery Command Line Tool (Platform Spec... ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: Cloud SDK Core Libraries                     ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: Cloud SDK Core Libraries (Platform Specific) ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: Cloud Storage Command Line Tool              ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: Cloud Storage Command Line Tool (Platform... ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: gcloud Alpha Commands                        ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Installing: gcloud cli dependencies                      ═╣
+╠════════════════════════════════════════════════════════════╣
+╠═ Creating backup and activating new installation          ═╣
+╚════════════════════════════════════════════════════════════╝
+
+Performing post processing steps...⠧                                                                                                                                             
+
+Update done!
+
+To revert your SDK to the previously installed version, you may run:
+  $ gcloud components update --version 243.0.0  
+
+*** 2) download new gcloud-gcp scripts
+- clone v3 development version -- forum said is version that has option for controller image
+git clone https://github.com/SchedMD/slurm-gcp.git
+
+ /gcloud % git clone https://github.com/SchedMD/slurm-gcp.git
+Cloning into 'slurm-gcp'...
+remote: Enumerating objects: 140, done.
+remote: Counting objects: 100% (140/140), done.
+remote: Compressing objects: 100% (64/64), done.
+remote: Total 801 (delta 93), reused 121 (delta 76), pack-reused 661
+Receiving objects: 100% (801/801), 199.14 KiB | 4.24 MiB/s, done.
+Resolving deltas: 100% (534/534), done.
+
+
+*** 3) Configure Slurm Deployment YAML
+
+**** Note on using prebuilts images:
+    ## The 'compute_image' field allows you to override the default CentOS 7 image.
+    ## Find your image URI on the Images page in the GCP console, click "Equivalent REST", and input the 'selfLink' field below.
+    #compute_image              : projects/centos-cloud/global/images/family/centos-7
+
+**** Note on mounting disks
+    # The 'network_storage' array allows you to specify multiple network
+    # mounts. Supported filesystems: nfs, cifs, gcsfuse, and lustre.
+    #
+    # All entries will be added to /etc/fstab, and if necessary the filesystem
+    # packages will be installed for supported filesystem.
+    #
+    # If using gcsfuse, enter the bucket name in the remote_mount field, and
+    # "gcs" in the server_ip field. To enable automatic mounting for users, in
+    # "mount_options" enter
+    # "defaults,nonempty,_netdev,allow_other,uid=XXXX,gid=XXXX", replacing the
+    # "XXXX" with your OSLogin UID and GID. If not using OSLogin use your unix
+    # UID and GID. See
+    # https://github.com/GoogleCloudPlatform/gcsfuse/blob/master/docs/mounting.md
+    # for more information.
+
+*** 4) Test that deployment works without any customization
+worked ok:
+
+ /scripts % ./create.sh slurm ../slurm-cluster.yaml
+The fingerprint of the deployment is B8bhRlnRAC7VB1aZyqFXcw==
+Waiting for create [operation-1568312597149-5925f3b3ff774-c9102e49-c3ce7aa2]...done.                                                                                   
+WARNING: Create operation operation-1568312597149-5925f3b3ff774-c9102e49-c3ce7aa2 completed with warnings:
+---
+code: EXTERNAL_API_WARNING
+data:
+- key: disk_size_gb
+  value: '1000'
+- key: image_size_gb
+  value: '10'
+message: "Disk size: '1000 GB' is larger than image size: '10 GB'. You might need\
+  \ to resize the root repartition manually if the operating system does not support\
+  \ automatic resizing. See https://cloud.google.com/compute/docs/disks/add-persistent-disk#resize_pd\
+  \ for details."
+
+NAME                           TYPE                   STATE      ERRORS  INTENT
+g1-all-internal-firewall-rule  compute.v1.firewall    COMPLETED  []
+g1-compute-image               compute.v1.instance    COMPLETED  []
+g1-compute1                    compute.v1.instance    COMPLETED  []
+g1-compute2                    compute.v1.instance    COMPLETED  []
+g1-controller                  compute.v1.instance    COMPLETED  []
+g1-login1                      compute.v1.instance    COMPLETED  []
+g1-router                      compute.v1.router      COMPLETED  []
+g1-slurm-network               compute.v1.network     COMPLETED  []
+g1-slurm-subnet                compute.v1.subnetwork  COMPLETED  []
+g1-ssh-firewall-rule           compute.v1.firewall    COMPLETED  []
+
+
+
+*** 5) Create disk image
+[NEURON instructions adapted from here: https://www.neuron.yale.edu/neuron/download/compile_linux]
+
+[create VM instance with centos7, 1TB]
+[ssh into VM]
+sudo su root
+yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+yum update -y
+
+yum -y install epel-release
+yum -y install python36-devel.x86_64
+yum -y install libX11-devel
+yum -y group install "Development Tools"
+yum -y install xorg-x11-fonts-100dpi 
+yum -y install python36-Cython
+yum -y install python36-pip
+yum -y install ncurses-devel
+yum -y install openmpi openmpi-devel
+yum -y install libXext libXext-devel
+yum -y install git hg bison cmake
+yum -y install libtool vim wget
+yum -y install screen 
+
+/usr/local/bin/pip3 install --upgrade pip
+/usr/local/bin/pip3 install --upgrade google-api-python-client
+/usr/local/bin/pip3 install --upgrade oauth2client
+/usr/local/bin/pip3 install numpy matplotlib scipy pandas seaborn
+/usr/local/bin/pip3 install future matplotlib_scalebar
+/usr/local/bin/pip3 install inspyred pyspike ipython
+
+export PATH=$PATH:/usr/lib64/openmpi/bin
+/usr/local/bin/pip3 install mpi4py
+
+git clone https://github.com/neuronsimulator/nrn 
+cd nrn
+./build.sh
+./configure --with-iv --with-paranrn --with-nrnpython=python3 --without-iv
+make -j
+make install -j
+cd src/nrnpython
+sudo python3 setup.py install
+
+exit [exit su]
+
+cd /usr/local
+mkdir python
+mkdir site
+cd python
+sudo git clone -b development https://github.com/Neurosim-lab/netpyne.git
+
+cd ..
+cd site
+sudo git clone https://github.com/suny-downstate-medical-center/nrniv-local.git
+sudo git clone https://github.com/suny-downstate-medical-center/neurosim-scripts.git
+sudo git clone https://github.com/suny-downstate-medical-center/neurosim-config.git
+
+
+sudo vim ~/.bashrc
+    export N=root/nrn
+    export CPU=x86_64
+    export PATH="$N/$CPU/bin:/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$SITE/scripts/:$SITE/config:$PATH"
+    export PYTHONPATH=$N/lib/python:$NB/share/python/lib64/python:/usr/local/python:/usr/local/python/netpyne:$PYTHONPATH
+    export SITE=/usr/local/site
+    export NEURONHOME=$N/share/nrn
+    export MODL_INCLUDE=$SITE/local/mod
+    export HOC_LIBRARY_PATH=$N/share/nrn/lib/hoc:$SITE/local/hoc
+
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l' 
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+
+[TESTED NETPYNE HHTUT WITH MPI AND ALL OK!!]
