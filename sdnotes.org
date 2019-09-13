@@ -198,6 +198,7 @@ g1-ssh-firewall-rule           compute.v1.firewall    COMPLETED  []
 
 
 *** 5) Create disk image
+
 [NEURON instructions adapted from here: https://www.neuron.yale.edu/neuron/download/compile_linux]
 
 [create VM instance with centos7, 1TB]
@@ -280,3 +281,67 @@ sudo vim ~/.bashrc
     alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
 
 [TESTED NETPYNE HHTUT WITH MPI AND ALL OK!!]
+
+*** 6) Test deployment with disk image
+- note dont need to set up NFS -- by default /home is NFS shared (don't need /apps)
+
+*** Issue with permissions (forum)
+
+**** question
+I created a disk image and I am using it for all the nodes in my slurm cluster. The cluster is created correctly, but when I try to log in (ssh) in the nodes I get this error:
+
+ERROR: (gcloud.compute.ssh) User [salvad...@gmail.com] does not have permission to access user [salvadordura@gmail.com:importSshPublicKey] (or it may not exist): Insufficient IAM permissions. The instance belongs to an external organization. You must be granted the roles/compute.osLoginExternalUser IAM role on the external organization to configure POSIX account information.
+
+If I do not images (remove them from .yaml file) I can log in without issues into the nodes.
+
+I created the image from the same account, by 1st creating a VM, ssh'ing to install everything, and then creating an image from the VM disk. 
+
+Below is my .yaml script:
+
+**** responses
+Salvador,
+
+You'll need to provide Compute Image User access to both your compute engine service account and the deployment manager service accounts.
+If your image is hosted in Project A, and you deploy in Project B, then the service accounts of Project B will need access granted in Project A.
+
+On Friday, September 13, 2019 at 10:49:28 AM UTC-6, Maxime Hugues wrote:
+Hi Salvador,
+
+Are you able to connect to a VM that:
+ - uses the image you created
+ - has OSLogin enabled 
+
+More information on OSLogin here
+https://cloud.google.com/compute/docs/instances/managing-instance-access
+
+**** what I did
+- enabled OSLogin project-wide (via metadata)
+- added Compute Image User access as role of my user (salvadordura@gmail.com)
+- added salvadordura@gmail.com roles:
+    Compute Image User
+    Compute OS Admin Login
+    Compute OS Login
+    Owner
+
+- Still getting:
+ /scripts % gcloud compute ssh g1-login1
+ERROR: (gcloud.compute.ssh) User [salvadordura@gmail.com] does not have permission to access user [salvadordura@gmail.com:importSshPublicKey] (or it may not exist): Insufficient IAM permissions. The instance belongs to an external organization. You must be granted the roles/compute.osLoginExternalUser IAM role on the external organization to configure POSIX account information.
+
+**** more responses
+- Under the organization node you need to add "OS login external user" role to the Gmail account. You may need an organization admin to set that permission.
+[I requested this to Zaid]
+
+- You will also need to modify your user account in slurm to "ext_salvadordura_gmail_com" 
+
+*** Issue with NFS mounting
+**** question
+I would like to mount the /home folder via NFS from the controller so it's available in the login and compute nodes.
+
+I noticed there is a section in the .yaml to do this, but haven't found much doc or examples. Could you please help me fill in these parameters for my case?
+
+    #network_storage :
+    #     - server_ip           :
+    #       remote_mount        :
+    #       local_mount         :
+    #       fs_type             :
+    #       mount_options       :
