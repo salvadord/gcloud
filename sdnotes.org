@@ -345,3 +345,114 @@ I noticed there is a section in the .yaml to do this, but haven't found much doc
     #       local_mount         :
     #       fs_type             :
     #       mount_options       :
+**** attempted to solve by Wyatt via hangout (but got same error)
+changes to startup_script.py:
+
+    if EXTERNAL_MOUNT_HOME == 0:
+        os.system("sed -i '/\/home/d' /etc/exports")
+        f = open('/etc/exports', 'w')
+        f.write("""
+/home  *(rw,no_subtree_check,no_root_squash)
+""")
+        f.close()
+    if EXTERNAL_MOUNT_APPS == 0:
+        os.system("sed -i '/\{}/d' /etc/exports".format(APPS_DIR))
+        f = open('/etc/exports', 'w')
+        f.write("""
+%s  *(rw,no_subtree_check,no_root_squash)
+""" % APPS_DIR)
+        f.close()
+    if EXTERNAL_MOUNT_MUNGE == 0:
+        os.system("sed -i '/\/etc\/munge/d' /etc/exports")
+        f = open('/etc/exports', 'w')
+        f.write("""
+/etc/munge *(rw,no_subtree_check,no_root_squash)
+""")
+        f.close()
+    if CONTROLLER_SECONDARY_DISK:
+        os.system("sed -i '/{}/d' /etc/exports".format(SEC_DISK_DIR))
+        f = open('/etc/exports', 'w')
+        f.write("""
+%s  *(rw,no_subtree_check,no_root_squash)
+""" % SEC_DISK_DIR)
+        f.close()
+
+    subprocess.call(shlex.split("exportfs -a"))
+
+
+**** email from Wyatt
+ey Salvador,
+
+Here's what the exports function should look like:
+
+def setup_nfs_exports():
+
+    if EXTERNAL_MOUNT_HOME == 0:
+        os.system("sed -i '/\/home/d' /etc/exports")
+        f = open('/etc/exports', 'w')
+        f.write("""
+/home  *(rw,no_subtree_check,no_root_squash)
+""")
+        f.close()
+    if EXTERNAL_MOUNT_APPS == 0:
+        os.system("sed -i '/\{}/d' /etc/exports".format(APPS_DIR))
+        f = open('/etc/exports', 'a')
+        f.write("""
+%s  *(rw,no_subtree_check,no_root_squash)
+""" % APPS_DIR)
+        f.close()
+    if EXTERNAL_MOUNT_MUNGE == 0:
+        os.system("sed -i '/\/etc\/munge/d' /etc/exports")
+        f = open('/etc/exports', 'a')
+        f.write("""
+/etc/munge *(rw,no_subtree_check,no_root_squash)
+""")
+        f.close()
+    if CONTROLLER_SECONDARY_DISK:
+        os.system("sed -i '/{}/d' /etc/exports".format(SEC_DISK_DIR))
+        f.write("""
+%s  *(rw,no_subtree_check,no_root_squash)
+""" % SEC_DISK_DIR)
+        f.close()
+
+    subprocess.call(shlex.split("exportfs -a"))
+
+#END setup_nfs_exports()
+
+
+
+The difference with my prev is 'a' instead 'w' and a missing f.open(''):
+def setup_nfs_exports():
+
+    if EXTERNAL_MOUNT_HOME == 0:
+        os.system("sed -i '/\/home/d' /etc/exports")
+        f = open('/etc/exports', 'w')
+        f.write("""
+/home  *(rw,no_subtree_check,no_root_squash)
+""")
+        f.close()
+    if EXTERNAL_MOUNT_APPS == 0:
+        os.system("sed -i '/\{}/d' /etc/exports".format(APPS_DIR))
+        f = open('/etc/exports', 'w')
+        f.write("""
+%s  *(rw,no_subtree_check,no_root_squash)
+""" % APPS_DIR)
+        f.close()
+    if EXTERNAL_MOUNT_MUNGE == 0:
+        os.system("sed -i '/\/etc\/munge/d' /etc/exports")
+        f = open('/etc/exports', 'w')
+        f.write("""
+/etc/munge *(rw,no_subtree_check,no_root_squash)
+""")
+        f.close()
+    if CONTROLLER_SECONDARY_DISK:
+        os.system("sed -i '/{}/d' /etc/exports".format(SEC_DISK_DIR))
+        f = open('/etc/exports', 'w')
+        f.write("""
+%s  *(rw,no_subtree_check,no_root_squash)
+""" % SEC_DISK_DIR)
+        f.close()
+
+    subprocess.call(shlex.split("exportfs -a"))
+
+#END setup_nfs_exports()
