@@ -456,3 +456,49 @@ def setup_nfs_exports():
     subprocess.call(shlex.split("exportfs -a"))
 
 #END setup_nfs_exports()
+
+
+**** further discussion with wyatt (30Oct2019)
+Sorry, I didn't add them back. If you modify the slurm.jinja and resume.py to point to your image instead of the centos-7 image, that will work.
+
+On Wed, Oct 30, 2019, 16:34 Salvador Dura <salvadordura@gmail.com> wrote:
+In the latest version GCP-Slurm version you sent me, how do you specify in the .yaml the disk image to use? I don’t see the “controller_image”, "login_image" and "compute_image”  fields in the .yaml file or in slurm.jinja
+
+The NFS mounting works, but now the disk image feature is missing.
+
+Thanks
+
+On Oct 30, 2019, at 1:54 AM, Wyatt Gorman <wyattgorman@google.com> wrote:
+
+No need, should mount across all nodes on it's own by default and be hosted on the controller. If you want to use filestore or something else you also could by entering it in the "login_network_storage" or the partition's "network_storage" fields.
+
+**** message posted in gcp-slurm forum
+link: https://groups.google.com/forum/#!topic/google-cloud-slurm-discuss/TzJHDO8hgdU
+
+I have now tracked down the issue, but I'm not sure how to fix it.
+
+The NFS mounting fails during the startup-script.py because the googleapiclient package is not installed for Pyton 2.7. This is because I use a custom disk image setup with Python 3.6, so the ‘googleapiclient’ package is installed for python3.6 (in /usr/local/lib/python3.6/site-packages/) but not python2.7 (/usr/lib/python2.7/site-packages/ ).
+
+I created my custom image starting from the GCP centos-7 image. To check, I just created a single VM with centos-7 as the boot disk, and it does not either include the ‘googleapiclient’ package. 
+
+However, if I deploy a gcp-slurm cluster with centos-7 as the boot disk, the nodes do include googleapiclient for Python 2.7, so it seems somewhere along the deployment process this package is installed.
+
+ At what point is the googleapiclient package installed and how can I make sure it’s installed for python2.7?  Any other suggestions on how to solve this?
+
+Thanks
+Salva
+---
+answer:
+https://github.com/SchedMD/slurm-gcp/blob/d2a4d8c822696f1cdebea2c682b1a551ba82071b/scripts/startup-script.py#L226 is where we pip install the python libs
+**** Final solution
+
+Solved by modifying startup-script.py to use the python2 version of pip ('/usr/bin/pip') and adding '--skip-broken' to yum install:
+
+    while subprocess.call(['yum', 'install', '-y', '--skip-broken'] + packages):
+        print "yum failed to install packages. Trying again in 5 seconds"
+        time.sleep(5)
+
+    while subprocess.call(['/usr/bin/pip', 'install', '--upgrade',
+        'google-api-python-client']):
+        print "failed to install google python api client. Trying again 5 seconds."
+        time.sleep(5)
