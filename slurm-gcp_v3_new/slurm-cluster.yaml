@@ -1,0 +1,169 @@
+# Copyright 2017 SchedMD LLC.
+# Modified for use with the Slurm Resource Manager.
+#
+# Copyright 2019 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START cluster_yaml]
+imports:
+- path: slurm.jinja
+
+resources:
+- name: slurm-cluster
+  type: slurm.jinja
+  properties:
+    cluster_name            : g2
+    default_users           : ext_salvadordura_gmail_com
+    #slurm_version           : 19.05-latest
+    #default_account         : default
+
+    zone                    : us-central1-b
+    region                  : us-central1
+    cidr                    : 10.10.0.0/16
+
+    # Optional network configuration fields
+    # READ slurm.jinja.schema for prerequisites
+    vpc_net                 : default
+    vpc_subnet              : default
+    #shared_vpc_host_proj    : < my-shared-vpc-project-name >
+
+    # Slurm controller instance configuration
+    controller_machine_type : n1-standard-8
+    #controller_image         : projects/ecas-2019/global/images/centos-7-neuron-7-7
+
+    #controller_disk_type       : pd-standard
+    controller_disk_size_gb    : 1000
+    #controller_labels          :
+    #     key1 : value1
+    #     key2 : value2
+    #controller_secondary_disk          : True
+    #controller_secondary_disk_type     : pd-standard
+    #controller_secondary_disk_size_gb  : 300
+
+    ## Login Node(s) Configuration
+    #login_node_count       : 0
+    login_machine_type      : n1-standard-2
+    #login_image             : projects/ecas-2019/global/images/centos-7-neuron-7-7
+    #login_disk_type        : pd-standard
+    login_disk_size_gb      : 10
+    #login_labels           :
+    #     key1 : value1
+    #     key2 : value2
+    # login_network_storage :
+    # - server_ip           : 10.81.133.186
+    #   remote_mount        : home
+    #   local_mount         : /home
+    #   fs_type             : nfs
+    #      - server_ip           : gcsfuse
+    #        remote_mount        : wg_bucket_base
+    #        local_mount         : /mnt/gcs
+    #        fs_type             : gcsfuse
+
+    #      - server_ip           : lustre2-mds1
+    #        remote_mount        : lustre
+    #        local_mount         : /mnt/lustre
+    #        fs_type             : lustre
+    #        #mount_options       :
+
+    ## Compute Node(s) Configuration
+    # static_node_count       : 2
+    # max_node_count          : 10
+    # compute_machine_type    : n1-standard-2
+    # ## The 'compute_image' field allows you to override the default CentOS 7 image.
+    # ## Find your image URI on the Images page in the GCP console, click "Equivalent REST", and input the 'selfLink' field below.
+    # compute_image              : projects/ecas-2019/global/images/centos-7-neuron-7-7
+
+
+
+
+    # Login/interactive instance(s) configuration
+    #login_node_count        : 0
+    #login_machine_type      : n1-standard-2
+    #login_disk_type            : pd-standard
+    #login_disk_size_gb         : 10
+    #login_labels               :
+    #     key1 : value1
+    #     key2 : value2
+    #login_node_service_account : default
+    #login_node_scopes          :
+    #       -  https://www.googleapis.com/auth/devstorage.read_only
+    #       -  https://www.googleapis.com/auth/logging.write
+    #
+
+
+    # Optional compute configuration fields
+    #external_compute_ips       : False
+    #private_google_access      : True
+    #
+    #compute_node_service_account : default
+    #compute_node_scopes          :
+    #       -  https://www.googleapis.com/auth/devstorage.read_only
+    #       -  https://www.googleapis.com/auth/logging.write
+
+    # Optional timer fields
+    #suspend_time               : 300
+
+    partitions :
+
+           - name              : debug
+             machine_type      : n1-standard-2
+             static_node_count : 2
+             max_node_count    : 2
+             zone              : us-central1-b
+             #  Optional compute configuration fields
+             #cpu_platform               : Intel Skylake
+             #preemptible_bursting       : False
+             #compute_disk_type          : pd-standard
+             compute_disk_size_gb       : 10
+             #compute_labels             :
+             #     key1 : value1
+             #     key2 : value2
+
+             #  Optional GPU configuration fields
+             #  gpu_type                   : nvidia-tesla-v100
+             #  gpu_count                  : 8
+
+            #  network_storage :
+            #       - server_ip           : 10.81.133.186
+            #         remote_mount        : home
+            #         local_mount         : /home
+            #         fs_type             : nfs
+                  # - server_ip           : gcs
+                  #   remote_mount        : wg_bucket_base
+                  #   local_mount         : /mnt/gcs
+                  #   fs_type             : gcsfuse
+                  # - server_ip           : lustre2-mds1
+                  #   remote_mount        : /lustre
+                  #   local_mount         : /mnt/lustre
+                  #   fs_type             : lustre
+                    #mount_options       :
+
+           #- name           : partition2
+             #machine_type   : n1-standard-16
+             #max_node_count : 20
+             #zone           : us-central1-b
+             # Optional compute configuration fields
+             #cpu_platform               : Intel Skylake
+             #preemptible_bursting       : False
+             #compute_disk_type          : pd-standard
+             #compute_disk_size_gb       : 10
+             #compute_labels             :
+             #     key1 : value1
+             #     key2 : value2
+
+             # Optional GPU configuration fields
+             #gpu_type                   : nvidia-tesla-v100
+             #gpu_count                  : 8
+
+#  [END cluster_yaml]
