@@ -19,6 +19,7 @@ If you have further questions, you can post on the Slurm on GCP Google discussio
 
 or contact SchedMD directly -- https://groups.google.com/forum/#!forum/google-cloud-slurm-discuss
 ** Steps
+
 Following https://codelabs.developers.google.com/codelabs/hpc-slurm-on-gcp/#0
 *** 1) update gcloud 
 /gcloud % pip install -U gcloud
@@ -334,6 +335,7 @@ ERROR: (gcloud.compute.ssh) User [salvadordura@gmail.com] does not have permissi
 - You will also need to modify your user account in slurm to "ext_salvadordura_gmail_com" 
 
 *** Issue with NFS mounting
+
 **** question
 I would like to mount the /home folder via NFS from the controller so it's available in the login and compute nodes.
 
@@ -492,6 +494,7 @@ answer:
 https://github.com/SchedMD/slurm-gcp/blob/d2a4d8c822696f1cdebea2c682b1a551ba82071b/scripts/startup-script.py#L226 is where we pip install the python libs
 **** Final solution
 
+
 Solved by modifying startup-script.py to use the python2 version of pip ('/usr/bin/pip') and adding '--skip-broken' to yum install:
 
     while subprocess.call(['yum', 'install', '-y', '--skip-broken'] + packages):
@@ -502,3 +505,88 @@ Solved by modifying startup-script.py to use the python2 version of pip ('/usr/b
         'google-api-python-client']):
         print "failed to install google python api client. Trying again 5 seconds."
         time.sleep(5)
+* 19Nov10 Running network evol optim
+** setup cluster for toy model Test
+
+# Copyright 2017 SchedMD LLC.
+# Modified for use with the Slurm Resource Manager.
+#
+# Copyright 2019 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START cluster_yaml]
+imports:
+- path: slurm.jinja
+
+resources:
+- name: slurm-cluster
+  type: slurm.jinja
+  properties:
+    cluster_name            : g1
+    default_users           : ext_salvadordura_gmail_com
+    #slurm_version           : 19.05-latest
+    #default_account         : default
+
+    zone                    : us-central1-b
+    region                  : us-central1
+    cidr                    : 10.10.0.0/16
+
+    # Optional network configuration fields
+    # READ slurm.jinja.schema for prerequisites
+    vpc_net                 : default
+    vpc_subnet              : default
+    #shared_vpc_host_proj    : < my-shared-vpc-project-name >
+
+    # Slurm controller instance configuration
+    controller_machine_type : n1-standard-8
+    #controller_image         : projects/ecas-2019/global/images/centos-7-neuron-7-7
+
+    #controller_disk_type       : pd-standard
+    controller_disk_size_gb    : 1000
+
+    ## Login Node(s) Configuration
+    #login_node_count       : 0
+    login_machine_type      : n1-standard-2
+    #login_image             : projects/ecas-2019/global/images/centos-7-neuron-7-7
+    #login_disk_type        : pd-standard
+    login_disk_size_gb      : 10
+
+    partitions :
+
+           - name              : compute
+             machine_type      : n1-standard-2
+             static_node_count : 10
+             max_node_count    : 8
+             zone              : us-central1-b
+             #  Optional compute configuration fields
+             #cpu_platform               : Intel Skylake
+             #preemptible_bursting       : False
+             #compute_disk_type          : pd-standard
+             compute_disk_size_gb       : 10
+
+
+#  [END cluster_yaml]
+** commands on nodes
+cp /home/salvadord/.bashrc ~/. 
+
+git clone https://github.com/suny-downstate-medical-center/M1.git m1
+
+nrnivmodl
+
+ln -s mod/x86_64/ x86_64
+
+sudo cp ../data/setup/help_data.dat /usr/local/lib64/python3.6/site-packages/neuron/.
+** updated disk image
+added commands above
+updated to latest netpyne version (with fix for evol batch)
