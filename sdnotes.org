@@ -589,9 +589,12 @@ sudo cp ../data/setup/help_data.dat /usr/local/lib64/python3.6/site-packages/neu
 ** updated disk image
 added commands above
 updated to latest netpyne version (with fix for evol batch)
+** issue with slurm manager not responding
+if cluster deployed had too many nodes (eg >16?) required controller with more cores / mem  (8 cores -> 16 cores; standard -> highmem) 
 
 
 * 19Nov13 Created disk image with CoreNEURON
+
 ** steps
 sudo su root
 yum install -y https://centos7.iuscommunity.org/ius-release.rpm
@@ -25707,7 +25710,13 @@ ERROR: (gcloud.beta.compute.ssh) [/usr/bin/ssh] exited with return code [255].
  /~ % 
 
 ** GIthub issues
+
 - https://github.com/BlueBrain/CoreNeuron/issues/220
 
 -  
 #+END_COMMENThttps://github.com/BlueBrain/CoreNeuron/issues/219
+* 19Nov28 Copying data from VM to bucket
+https://superuser.com/questions/969666/copy-files-from-google-compute-engine-instance-to-google-cloud-storage-bucket
+https://cloud.google.com/filestore/docs/copying-data
+https://cloud.google.com/storage/docs/downloading-objects
+https://cloud.google.com/storage/docs/quickstart-gsutil#create
