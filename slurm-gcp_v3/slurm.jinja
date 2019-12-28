@@ -93,7 +93,7 @@ resources:
       boot: true
       autoDelete: true
       initializeParams:
-        sourceImage: https://www.googleapis.com/compute/v1/projects/ecas-2019/global/images/centos-7-neuron-7-7-netpyne
+        sourceImage: https://www.googleapis.com/compute/v1/projects/ecas-2019/global/images/centos-7-neuron-7-8-debug
         diskType: https://www.googleapis.com/compute/v1/projects/{{ env["project"] }}/zones/{{ properties["zone"] }}/diskTypes/{{ properties["controller_disk_type"] }}
         diskSizeGb: {{ properties["controller_disk_size_gb"] }}
 {% if properties['controller_secondary_disk'] %}
@@ -224,7 +224,7 @@ resources:
       boot: true
       autoDelete: true
       initializeParams:
-        sourceImage: https://www.googleapis.com/compute/v1/projects/ecas-2019/global/images/centos-7-neuron-7-7-netpyne
+        sourceImage: https://www.googleapis.com/compute/v1/projects/ecas-2019/global/images/centos-7-neuron-7-8-debug
         diskType: https://www.googleapis.com/compute/v1/projects/{{ env["project"] }}/zones/{{ properties["zone"] }}/diskTypes/{{ properties["login_disk_type"] }}
         diskSizeGb: {{ properties["login_disk_size_gb"] }}
   {% if (properties ['vpc_subnet'] and properties ['shared_vpc_host_proj'])  %}
@@ -300,7 +300,7 @@ resources:
       boot: true
       autoDelete: true
       initializeParams:
-        sourceImage: https://www.googleapis.com/compute/v1/projects/ecas-2019/global/images/centos-7-neuron-7-7-netpyne
+        sourceImage: https://www.googleapis.com/compute/v1/projects/ecas-2019/global/images/centos-7-neuron-7-8-debug
         diskType: https://www.googleapis.com/compute/v1/projects/{{ env["project"] }}/zones/{{ properties["partitions"][i]["zone"] }}/diskTypes/{{ properties["partitions"][i]["compute_disk_type"] }}
         diskSizeGb: {{ properties["partitions"][i]["compute_disk_size_gb"] }}
   {% if (properties ['vpc_subnet'] and properties ['shared_vpc_host_proj'])  %}
@@ -380,7 +380,7 @@ resources:
       boot: true
       autoDelete: true
       initializeParams:
-        sourceImage: https://www.googleapis.com/compute/v1/projects/ecas-2019/global/images/centos-7-neuron-7-7-netpyne
+        sourceImage: https://www.googleapis.com/compute/v1/projects/ecas-2019/global/images/centos-7-neuron-7-8-debug
         diskType: https://www.googleapis.com/compute/v1/projects/{{ env["project"] }}/zones/{{ properties["partitions"][i]["zone"] }}/diskTypes/{{ properties["partitions"][i]["compute_disk_type"] }}
         diskSizeGb: 10
   {% if (properties ['vpc_subnet'] and properties ['shared_vpc_host_proj'])  %}

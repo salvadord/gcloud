@@ -238,7 +238,7 @@ cd nrn
 make -j
 make install -j
 cd src/nrnpython
-sudo python3 setup.py install
+python3 setup.py install
 
 exit [exit su]
 
@@ -615,6 +615,8 @@ yum -y install libtool vim wget
 yum -y install screen 
 
 sudo pip3 install numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future
+[exit
+pip3 install --user numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future]
 
 mkdir downloads
 cd downloads
@@ -644,7 +646,96 @@ ln -s /usr/bin/cython3.6 /usr/bin/cython3
 cmake .. -DPYTHON_EXECUTABLE=which python3 -DNRN_ENABLE_INTERVIEWS=OFF -DNRN_ENABLE_RX3D=ON -DNRN_ENABLE_CORENEURON=ON
 sudo make
 sudo make install
+** steps (not root)
+sudo su root
+yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+yum update -y
 
+yum -y install epel-release
+yum -y install python36-devel.x86_64
+yum -y install libX11-devel
+yum -y group install "Development Tools"
+yum -y install xorg-x11-fonts-100dpi 
+yum -y install python36-Cython
+yum -y install python36-pip
+yum -y install ncurses-devel
+yum -y install openmpi openmpi-devel
+yum -y install libXext libXext-devel
+yum -y install git hg bison cmake
+yum -y install libtool vim wget
+yum -y install screen 
+
+exit
+pip3 install --user numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future
+
+[updated gcc - https://linuxhostsupport.com/blog/how-to-install-gcc-on-centos-7/]
+screen -U -S gcc
+wget http://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-7.3.0/gcc-7.3.0.tar.gz
+tar zxf gcc-7.3.0.tar.gz
+cd gcc-7.3.0
+./contrib/download_prerequisites
+./configure --disable-multilib --enable-languages=c,c++
+make -j 4  [takes >2h]
+make install
+[move or remove prev gcc; otherwise cmake uses it]
+sudo mv /usr/bin/cc /usr/bin/cc_old
+sudo mv /usr/bin/gcc /usr/bin/gcc_old
+
+git clone https://github.com/neuronsimulator/nrn.git
+cd nrn
+git checkout cmake
+mkdir build
+cd build
+
+[UPDATE cmake to >v3.7] (http://jotmynotes.blogspot.com/2016/10/updating-cmake-from-2811-to-362-or.html)
+sudo yum remove cmake -y
+wget https://cmake.org/files/v3.13/cmake-3.13.3.tar.gz
+tar -zxvf cmake-3.13.3.tar.gz
+cd cmake-3.13.3
+sudo ./bootstrap --prefix=/usr/local
+sudo make
+sudo make install
+
+[update ~/.bash_profile]
+PYTHONPATH=$PYTHONPATH:~/nrn/build/lib64/python/:/usr/lib64/python3.6/site-packages/:~/netpyne/
+export PYTHONPATH
+export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/usr/local/lib64:/usr/lib64
+PATH=/usr/local/bin:/usr/lib64/openmpi/bin:$PATH:$HOME/.local/bin:$HOME/bin
+export PATH
+
+source ~/.bash_profile
+
+ln -s /usr/bin/cython3.6 /usr/bin/cython3
+
+[cmake .. -DPYTHON_EXECUTABLE=/usr/bin/python3 -DNRN_ENABLE_INTERVIEWS=OFF -DNRN_ENABLE_RX3D=ON -DNRN_ENABLE_CORENEURON=ON -> rxd error (see below)]
+cmake .. -DPYTHON_EXECUTABLE=/usr/bin/python3 -DNRN_ENABLE_INTERVIEWS=OFF -DNRN_ENABLE_RX3D=OFF -DNRN_ENABLE_CORENEURON=ON
+sudo make
+sudo make install
+
+** [NEW error rxd]
+
+- probably forgot this line: ln -s /usr/bin/cython3.6 /usr/bin/cython3 (or adding cython package to PYTHONPATH)
+
+
+building 'neuron.hoc' extension
+creating build/temp.linux-x86_64-3.6
+/usr/local/bin/gcc -Wno-unused-result -Wsign-compare -DNDEBUG -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -D_GNU_SOURCE -fPIC -fwrapv -fPIC -DNRNCMAKE=1 -I/home/ext_salvadordura_gmail_com/nrn/src/oc -I../oc -I/home/ext_salvadordura_gmail_com/nrn/src/nrnmpi -I/usr/include/python3.6m -c inithoc.cpp -o build/temp.linux-x86_64-3.6/inithoc.o
+/usr/local/bin/c++ -pthread -shared -Wl,-z,relro -g build/temp.linux-x86_64-3.6/inithoc.o -L/usr/local/lib -L/../lib -L/home/ext_salvadordura_gmail_com/nrn/build/lib -L/usr/lib64 -lnrniv -lpython3.6m -o build/lib.linux-x86_64-3.6/neuron/hoc.cpython-36m-x86_64-linux-gnu.so -Wl,-R/usr/local/lib -Wl,-R/../lib
+building 'neuron.rxd.geometry3d.graphicsPrimitives' extension
+creating share
+creating share/lib
+creating share/lib/python
+creating share/lib/python/neuron
+creating share/lib/python/neuron/rxd
+creating share/lib/python/neuron/rxd/geometry3d
+/usr/local/bin/gcc -Wno-unused-result -Wsign-compare -DNDEBUG -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -D_GNU_SOURCE -fPIC -fwrapv -fPIC -I/home/ext_salvadordura_gmail_com/nrn/share/lib/python/neuron/rxd/geometry3d -I. -I/home/ext_salvadordura_gmail_com/.local/lib/python3.6/site-packages/numpy/core/include -I/usr/include/python3.6m -c ../../share/lib/python/neuron/rxd/geometry3d/graphicsPrimitives.cpp -o build/temp.linux-x86_64-3.6/../../share/lib/python/neuron/rxd/geometry3d/graphicsPrimitives.o -O0
+gcc: error: ../../share/lib/python/neuron/rxd/geometry3d/graphicsPrimitives.cpp: No such file or directory
+gcc: fatal error: no input files
+compilation terminated.
+error: command '/usr/local/bin/gcc' failed with exit status 1
+make[2]: *** [hoc_module] Error 1
+make[1]: *** [src/nrnpython/CMakeFiles/hoc_module.dir/all] Error 2
+make: *** [all] Error 2
 ** CMakeList options
 if(cmake_generator_tolower MATCHES "makefile")
   message(STATUS "Some things you can do now:")
@@ -25713,10 +25804,39 @@ ERROR: (gcloud.beta.compute.ssh) [/usr/bin/ssh] exited with return code [255].
 
 - https://github.com/BlueBrain/CoreNeuron/issues/220
 
--  
-#+END_COMMENThttps://github.com/BlueBrain/CoreNeuron/issues/219
+-  https://github.com/BlueBrain/CoreNeuron/issues/219
+
+
 * 19Nov28 Copying data from VM to bucket
 https://superuser.com/questions/969666/copy-files-from-google-compute-engine-instance-to-google-cloud-storage-bucket
 https://cloud.google.com/filestore/docs/copying-data
 https://cloud.google.com/storage/docs/downloading-objects
 https://cloud.google.com/storage/docs/quickstart-gsutil#create
+
+* 19Dec27 Install modified NEURON to debug nrn_timeout
+** issues
+https://github.com/Neurosim-lab/netpyne/issues/461#issuecomment-569340357
+https://github.com/neuronsimulator/nrn/commit/d40331ecd4ff137110e70010d2d83b55d6919c6c
+** mh suggestions
+git fetch
+git pull collective-timeout-debug
+Build and run as normal and see if it prints anything from the printf
+
+printf("%d calls %d but 0 calls %d\n", nrnmpi_myid, i, buf);
+** steps
+start from previous disk image
+
+install in different location and modify $N so points to this folder
+
+[git clone https://github.com/neuronsimulator/nrn ]
+git clone --single-branch --branch collective-timeout-debug https://github.com/neuronsimulator/nrn nrn_debug
+
+export PATH=$PATH:/usr/lib64/openmpi/bin
+
+cd nrn
+./build.sh
+./configure --with-iv --with-paranrn --with-nrnpython=python3 --without-iv
+make -j
+make install -j
+cd src/nrnpython
+sudo python3 setup.py install
