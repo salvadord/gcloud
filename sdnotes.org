@@ -256,7 +256,7 @@ sudo git clone https://github.com/suny-downstate-medical-center/neurosim-config.
 
 
 sudo vim ~/.bashrc
-    export N=root/nrn
+    export N=root/nrnm
     export CPU=x86_64
     export PATH="$N/$CPU/bin:/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$SITE/scripts/:$SITE/config:$PATH"
     export PYTHONPATH=$N/lib/python:$NB/share/python/lib64/python:/usr/local/python:/usr/local/python/netpyne:$PYTHONPATH
@@ -25828,15 +25828,28 @@ start from previous disk image
 
 install in different location and modify $N so points to this folder
 
+sudo su root
+
 [git clone https://github.com/neuronsimulator/nrn ]
 git clone --single-branch --branch collective-timeout-debug https://github.com/neuronsimulator/nrn nrn_debug
 
-export PATH=$PATH:/usr/lib64/openmpi/bin
+[export PATH=$PATH:/usr/lib64/openmpi/bin]
+export PATH=/usr/lib64/openmpi/bin:/scripts/:/config:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/ext_salvadordura_gmail_com/.local/bin
 
-cd nrn
+cd nrn_debug
 ./build.sh
 ./configure --with-iv --with-paranrn --with-nrnpython=python3 --without-iv
 make -j
 make install -j
 cd src/nrnpython
 sudo python3 setup.py install
+
+
+git clone --single-branch --branch paper2019_py3 https://github.com/suny-downstate-medical-center/M1.git m1
+
+https://github.com/xianyi/OpenBLAS/issues/1668:
+export OMP_NUM_THREADS=1
+export USE_SIMPLE_THREADED_LEVEL3=1
+
+** deployed GCP cluster with the new neuron-debug image
+** rerun v56_batch2 missing sims (used remove.py)
