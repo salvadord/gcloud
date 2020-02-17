@@ -25,19 +25,13 @@ resources:
   properties:
     cluster_name            : g1
     static_node_count       : 0
-    max_node_count          : 64
+    max_node_count          : 500
 
     default_users           : ext_salvadordura_gmail_com
 
     zone                    : us-central1-b
     region                  : us-central1
     cidr                    : 10.10.0.0/16
-
-    # Optional network configuration fields
-    # READ slurm.jinja.schema for prerequisites
-    #vpc_net                 : < my-vpc >
-    #vpc_subnet              : < my-subnet >
-    #shared_vpc_host_proj    : < my-shared-vpc-project-name >
 
     controller_machine_type : n1-highmem-64
     controller_node_scopes          :
@@ -47,6 +41,7 @@ resources:
 
     compute_machine_type    : n1-standard-96
     compute_disk_size_gb    : 10
+    preemptible_bursting     : True
 
     login_machine_type      : n1-standard-8
     login_disk_size_gb      : 10
@@ -55,49 +50,4 @@ resources:
            -  https://www.googleapis.com/auth/logging.write
 
            
-    #login_node_count        : 0
-
-    # Optional compute configuration fields
-    #cpu_platform               : Intel Skylake
-    #preemptible_bursting       : False
-    #external_compute_ips       : False
-    #private_google_access      : True
-
-    #controller_disk_type       : pd-standard
-    #controller_disk_size_gb    : 50
-    #controller_labels          :
-    #     key1 : value1
-    #     key2 : value2
-
-
-    #login_disk_type            : pd-standard
-    #login_disk_size_gb         : 10
-    #login_labels               :
-    #     key1 : value1
-    #     key2 : value2
-
-    #compute_disk_type          : pd-standard
-    #compute_disk_size_gb       : 10
-    #compute_labels             :
-    #     key1 : value1
-    #     key2 : value2
-
-    #nfs_apps_server            :
-    #nfs_apps_dir               : /apps
-    #nfs_home_server            :
-    #nfs_home_dir               : /home
-    #controller_secondary_disk          : True
-    #controller_secondary_disk_type     : pd-standard
-    #controller_secondary_disk_size_gb  : 300
-
-    # Optional GPU configuration fields
-    #gpu_type                   : nvidia-tesla-v100
-    #gpu_count                  : 8
-
-    # Optional timer fields
-    #suspend_time               : 300
-
-    #slurm_version           : 19.05-latest
-    #default_account         : default
-
 #  [END cluster_yaml]
