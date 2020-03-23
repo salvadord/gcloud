@@ -25853,3 +25853,2390 @@ export USE_SIMPLE_THREADED_LEVEL3=1
 
 ** deployed GCP cluster with the new neuron-debug image
 ** rerun v56_batch2 missing sims (used remove.py)
+* 20Mar19 Testing netpyne tut2.py and m1 models with latest coreneuron
+** log of steps to test tut2.py -- works ok
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ git clone --recursive https://github.com/BlueBrain/CoreNeuron.git
+Cloning into 'CoreNeuron'...
+remote: Enumerating objects: 73, done.
+remote: Counting objects: 100% (73/73), done.
+remote: Compressing objects: 100% (53/53), done.
+remote: Total 11597 (delta 33), reused 32 (delta 19), pack-reused 11524
+Receiving objects: 100% (11597/11597), 35.31 MiB | 32.16 MiB/s, done.
+Resolving deltas: 100% (8813/8813), done.
+Submodule 'external/CLI11' (https://github.com/CLIUtils/CLI11.git) registered for path 'external/CLI11'
+Submodule 'external/Random123' (https://github.com/BlueBrain/Random123.git) registered for path 'external/Random123'
+Submodule 'external/mod2c' (https://github.com/BlueBrain/mod2c) registered for path 'external/mod2c'
+Submodule 'external/nmodl' (https://github.com/BlueBrain/nmodl) registered for path 'external/nmodl'
+Cloning into 'external/CLI11'...
+remote: Enumerating objects: 6765, done.
+remote: Total 6765 (delta 0), reused 0 (delta 0), pack-reused 6765
+Receiving objects: 100% (6765/6765), 3.61 MiB | 0 bytes/s, done.
+Resolving deltas: 100% (4595/4595), done.
+Submodule path 'external/CLI11': checked out 'dd0d8e4fe729e5b1110232c7a5c9566dad884686'
+Submodule 'extern/googletest' (https://github.com/google/googletest.git) registered for path 'extern/googletest'
+Cloning into 'extern/googletest'...
+remote: Enumerating objects: 34, done.
+remote: Counting objects: 100% (34/34), done.
+remote: Compressing objects: 100% (29/29), done.
+remote: Total 19878 (delta 14), reused 18 (delta 4), pack-reused 19844
+Receiving objects: 100% (19878/19878), 7.35 MiB | 0 bytes/s, done.
+Resolving deltas: 100% (14684/14684), done.
+Submodule path 'external/CLI11/extern/googletest': checked out '2fe3bd994b3189899d93f1d5a881e725e046fdc2'
+Cloning into 'external/Random123'...
+remote: Enumerating objects: 2012, done.
+remote: Counting objects: 100% (2012/2012), done.
+remote: Compressing objects: 100% (346/346), done.
+remote: Total 2012 (delta 1653), reused 2011 (delta 1653), pack-reused 0
+Receiving objects: 100% (2012/2012), 1.25 MiB | 0 bytes/s, done.
+Resolving deltas: 100% (1653/1653), done.
+Submodule path 'external/Random123': checked out '5dfcec8313a47b2608728c76b07adbbf9ba39faf'
+Cloning into 'external/mod2c'...
+remote: Enumerating objects: 2352, done.
+remote: Total 2352 (delta 0), reused 0 (delta 0), pack-reused 2352
+Receiving objects: 100% (2352/2352), 1.02 MiB | 0 bytes/s, done.
+Resolving deltas: 100% (1550/1550), done.
+Submodule path 'external/mod2c': checked out 'ab00557515ae58ab71d3e41c57e909c7a9d36c0e'
+Cloning into 'external/nmodl'...
+remote: Enumerating objects: 7125, done.
+remote: Total 7125 (delta 0), reused 0 (delta 0), pack-reused 7125
+Receiving objects: 100% (7125/7125), 14.62 MiB | 25.00 MiB/s, done.
+Resolving deltas: 100% (4937/4937), done.
+Submodule path 'external/nmodl': checked out '7debe7095a0b5d082b7f42119e0be5075e576d1e'
+Submodule 'cmake/hpc-coding-conventions' (https://github.com/BlueBrain/hpc-coding-conventions.git) registered for path 'cmake/hpc-coding-conventions'
+Submodule 'ext/cli11' (https://github.com/CLIUtils/CLI11.git) registered for path 'ext/cli11'
+Submodule 'ext/eigen' (https://github.com/eigenteam/eigen-git-mirror.git) registered for path 'ext/eigen'
+Submodule 'ext/fmt' (https://github.com/fmtlib/fmt.git) registered for path 'ext/fmt'
+Submodule 'ext/pybind11' (https://github.com/pybind/pybind11.git) registered for path 'ext/pybind11'
+Submodule 'ext/spdlog' (https://github.com/BlueBrain/spdlog.git) registered for path 'ext/spdlog'
+Cloning into 'cmake/hpc-coding-conventions'...
+remote: Enumerating objects: 15, done.
+remote: Counting objects: 100% (15/15), done.
+remote: Compressing objects: 100% (15/15), done.
+remote: Total 746 (delta 5), reused 1 (delta 0), pack-reused 731
+Receiving objects: 100% (746/746), 177.88 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (488/488), done.
+Submodule path 'external/nmodl/cmake/hpc-coding-conventions': checked out 'a1813c26dd75b8360b08893be5b2ecb485b816c4'
+Cloning into 'ext/cli11'...
+remote: Enumerating objects: 6765, done.
+remote: Total 6765 (delta 0), reused 0 (delta 0), pack-reused 6765
+Receiving objects: 100% (6765/6765), 3.61 MiB | 0 bytes/s, done.
+Resolving deltas: 100% (4595/4595), done.
+Submodule path 'external/nmodl/ext/cli11': checked out 'dd0d8e4fe729e5b1110232c7a5c9566dad884686'
+Submodule 'extern/googletest' (https://github.com/google/googletest.git) registered for path 'extern/googletest'
+Cloning into 'extern/googletest'...
+remote: Enumerating objects: 34, done.
+remote: Counting objects: 100% (34/34), done.
+remote: Compressing objects: 100% (29/29), done.
+remote: Total 19878 (delta 14), reused 18 (delta 4), pack-reused 19844
+Receiving objects: 100% (19878/19878), 7.35 MiB | 0 bytes/s, done.
+Resolving deltas: 100% (14684/14684), done.
+Submodule path 'external/nmodl/ext/cli11/extern/googletest': checked out '2fe3bd994b3189899d93f1d5a881e725e046fdc2'
+Cloning into 'ext/eigen'...
+remote: Enumerating objects: 103968, done.
+remote: Total 103968 (delta 0), reused 0 (delta 0), pack-reused 103968
+Receiving objects: 100% (103968/103968), 98.96 MiB | 25.03 MiB/s, done.
+Resolving deltas: 100% (84399/84399), done.
+Submodule path 'external/nmodl/ext/eigen': checked out 'b138753b1007d1eb0aeafddb558c1f4805c77003'
+Cloning into 'ext/fmt'...
+remote: Enumerating objects: 46, done.
+remote: Counting objects: 100% (46/46), done.
+remote: Compressing objects: 100% (29/29), done.
+remote: Total 20261 (delta 20), reused 26 (delta 11), pack-reused 20215
+Receiving objects: 100% (20261/20261), 9.83 MiB | 0 bytes/s, done.
+Resolving deltas: 100% (13781/13781), done.
+Submodule path 'external/nmodl/ext/fmt': checked out 'ee2b828b9a04ef6b9595e779a7878d4d27018cee'
+Cloning into 'ext/pybind11'...
+remote: Enumerating objects: 11332, done.
+remote: Total 11332 (delta 0), reused 0 (delta 0), pack-reused 11332
+Receiving objects: 100% (11332/11332), 4.16 MiB | 0 bytes/s, done.
+Resolving deltas: 100% (7649/7649), done.
+Submodule path 'external/nmodl/ext/pybind11': checked out '9bb3313162c0b856125e481ceece9d8faa567716'
+Submodule 'tools/clang' (https://github.com/wjakob/clang-cindex-python3) registered for path 'tools/clang'
+Cloning into 'tools/clang'...
+remote: Enumerating objects: 8, done.
+remote: Counting objects: 100% (8/8), done.
+remote: Compressing objects: 100% (8/8), done.
+remote: Total 361 (delta 2), reused 2 (delta 0), pack-reused 353
+Receiving objects: 100% (361/361), 147.50 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (151/151), done.
+Submodule path 'external/nmodl/ext/pybind11/tools/clang': checked out '6a00cbc4a9b8e68b71caf7f774b3f9c753ae84d5'
+Cloning into 'ext/spdlog'...
+remote: Enumerating objects: 19651, done.
+remote: Total 19651 (delta 0), reused 0 (delta 0), pack-reused 19651
+Receiving objects: 100% (19651/19651), 39.01 MiB | 20.50 MiB/s, done.
+Resolving deltas: 100% (13111/13111), done.
+Submodule path 'external/nmodl/ext/spdlog': checked out '7e81928f42824db990d855544e42f913cc2114c2'
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ export CC=mpicc
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ export CXX=mpicxx
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ pwd
+/home/ext_salvadordura_gmail_com
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ cd CoreNeuron/
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ cmake ..
+CMake Error: The source directory "/home/ext_salvadordura_gmail_com" does not appear to contain CMakeLists.txt.
+Specify --help for usage, or press the help button on the CMake GUI.
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ ls
+CMake  CMakeLists.txt  coreneuron  CREDIT.txt  doc  external  extra  LICENSE.txt  README.md  tests
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ cmake .
+-- The C compiler identification is GNU 7.3.0
+-- The CXX compiler identification is GNU 7.3.0
+-- Check for working C compiler: /usr/lib64/openmpi/bin/mpicc
+-- Check for working C compiler: /usr/lib64/openmpi/bin/mpicc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: /usr/lib64/openmpi/bin/mpicxx
+-- Check for working CXX compiler: /usr/lib64/openmpi/bin/mpicxx -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Setting build type to 'RelWithDebInfo' as none was specified.
+-- Found Random123: /home/ext_salvadordura_gmail_com/CoreNeuron/external/Random123  
+-- Found CLI11: /home/ext_salvadordura_gmail_com/CoreNeuron/external/CLI11  
+-- Found Doxygen: /usr/bin/doxygen (found version "1.8.5") found components:  doxygen missing components:  dot
+-- Found MPI_C: /usr/lib64/openmpi/bin/mpicc (found version "3.0") 
+-- Found MPI_CXX: /usr/lib64/openmpi/bin/mpicxx (found version "3.0") 
+-- Found MPI: TRUE (found version "3.0")  
+-- Found MOD2C: /home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c  
+-- Using mod2c submodule from /home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c
+-- CXX Compile flags from BUILD_TYPE (RELWITHDEBINFO): -g  -O2
+-- Boost not found, unit tests disabled
+-- 
+-- Configured CoreNEURON 0.18.0
+-- 
+-- Some things you can do now:
+-- --------------------+--------------------------------------------------------
+-- Command             |   Description
+-- --------------------+--------------------------------------------------------
+-- make install        | Will install CoreNEURON to: /usr/local
+-- --------------------+--------------------------------------------------------
+--  Build option       | Status
+-- --------------------+--------------------------------------------------------
+-- COMPILE FLAGS       | -g  -O2  -Wno-unknown-pragmas -fopenmp 
+-- MPI                 | ON
+--   INC               | 
+-- OpenMP              | ON
+-- NMODL               | OFF
+-- MOD2C               | /home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c
+-- GPU Support         | OFF
+-- Auto Timeout        | ON
+-- Wrap exp()          | OFF
+-- SplayTree Queue     | ON
+-- NetReceive Buffer   | ON
+-- Caliper             | OFF
+-- Likwid              | OFF
+-- Unit Tests          | ON
+-- ReportingLib        | OFF
+--   SONATA support    | OFF
+-- --------------+--------------------------------------------------------------
+--  See documentation : https://github.com/BlueBrain/CoreNeuron/
+-- --------------+--------------------------------------------------------------
+-- 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/ext_salvadordura_gmail_com/CoreNeuron
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ ls
+bin                         CMakeFiles           CPackSourceConfig.cmake  external     Makefile      tests
+CMake                       cmake_install.cmake  CREDIT.txt               extra        mod2c-prefix
+CMakeCache.txt              CMakeLists.txt       CTestTestfile.cmake      include      README.md
+CMakeDoxyfile.in            coreneuron           DartConfiguration.tcl    lib          share
+CMakeDoxygenDefaults.cmake  CPackConfig.cmake    doc                      LICENSE.txt  Testing
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ make -j
+Scanning dependencies of target mod2c
+Scanning dependencies of target scopmath
+Scanning dependencies of target link_units
+[  1%] Creating directories for 'mod2c'
+[  1%] Built target link_units
+[  2%] Building CXX object coreneuron/CMakeFiles/scopmath.dir/sim/scopmath/abort.cpp.o
+[  3%] Building CXX object coreneuron/CMakeFiles/scopmath.dir/sim/scopmath/crout_thread.cpp.o
+[  4%] Building CXX object coreneuron/CMakeFiles/scopmath.dir/sim/scopmath/newton_thread.cpp.o
+[  5%] Building CXX object coreneuron/CMakeFiles/scopmath.dir/sim/scopmath/sparse_thread.cpp.o
+[  6%] No download step for 'mod2c'
+[  7%] Building CXX object coreneuron/CMakeFiles/scopmath.dir/sim/scopmath/ssimplic_thread.cpp.o
+[  8%] No patch step for 'mod2c'
+[  9%] No update step for 'mod2c'
+[ 10%] Performing configure step for 'mod2c'
+-- The C compiler identification is GNU 7.3.0
+-- The CXX compiler identification is GNU 7.3.0
+-- Check for working C compiler: /usr/local/bin/gcc
+-- Check for working C compiler: /usr/local/bin/gcc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+[ 11%] Linking CXX static library ../lib/libscopmath.a
+[ 11%] Built target scopmath
+-- Detecting C compile features - done
+-- Check for working CXX compiler: /usr/local/bin/g++
+-- Check for working CXX compiler: /usr/local/bin/g++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- mod2c is used as APPLICATION_NAME
+-- Found BISON: /usr/bin/bison (found version "3.0.4") 
+-- Found FLEX: /usr/bin/flex (found version "2.5.37") 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/ext_salvadordura_gmail_com/CoreNeuron/mod2c-prefix/src/mod2c-build
+[ 12%] Performing build step for 'mod2c'
+[  4%] [FLEX][lex] Building scanner with flex 2.5.37
+[  8%] [BISON][diffeq] Building parser with bison 3.0.4
+[ 12%] [BISON][parse1] Building parser with bison 3.0.4
+diffeq.y: warning: 5 shift/reduce conflicts [-Wconflicts-sr]
+Scanning dependencies of target mod2c_core
+[ 16%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/consist.c.o
+[ 20%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/nocpout.c.o
+[ 24%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/io.c.o
+[ 28%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/list.c.o
+[ 32%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/solve.c.o
+[ 36%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/partial.c.o
+[ 40%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/version.c.o
+[ 44%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/discrete.c.o
+[ 48%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/kinetic.c.o
+[ 52%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/modl.c.o
+[ 56%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/parsact.c.o
+[ 60%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/sens.c.o
+[ 64%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/symbol.c.o
+[ 68%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/deriv.c.o
+[ 72%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/init.c.o
+/home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c/src/mod2c_core/sens.c: In function ‘sensmassage’:
+/home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c/src/mod2c_core/sens.c:150:6: warning: type of ‘fn’ defaults to ‘int’ [-Wimplicit-int]
+ void sensmassage(type, qfun, fn)
+      ^~~~~~~~~~~
+[ 76%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/noccout.c.o
+[ 80%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/simultan.c.o
+[ 84%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/units.c.o
+[ 88%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/diffeq.c.o
+[ 92%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/parse1.c.o
+[ 96%] Building C object src/mod2c_core/CMakeFiles/mod2c_core.dir/lex.c.o
+/home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c/src/mod2c_core/units.c: In function ‘pu’:
+/home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c/src/mod2c_core/units.c:615:12: warning: type of ‘u’ defaults to ‘int’ [-Wimplicit-int]
+ static int pu(u, i, f)
+            ^~
+/home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c/src/mod2c_core/units.c:615:12: warning: type of ‘i’ defaults to ‘int’ [-Wimplicit-int]
+/home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c/src/mod2c_core/units.c:615:12: warning: type of ‘f’ defaults to ‘int’ [-Wimplicit-int]
+/home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c/src/mod2c_core/units.c: In function ‘lookup’:
+/home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c/src/mod2c_core/units.c:689:12: warning: type of ‘den’ defaults to ‘int’ [-Wimplicit-int]
+ static int lookup(name, up, den, c)
+            ^~~~~~
+/home/ext_salvadordura_gmail_com/CoreNeuron/external/mod2c/src/mod2c_core/units.c:689:12: warning: type of ‘c’ defaults to ‘int’ [-Wimplicit-int]
+/home/ext_salvadordura_gmail_com/CoreNeuron/mod2c-prefix/src/mod2c-build/src/mod2c_core/lex.c: In function ‘yy_init_buffer’:
+/home/ext_salvadordura_gmail_com/CoreNeuron/mod2c-prefix/src/mod2c-build/src/mod2c_core/lex.c:1602:40: warning: implicit declaration of function ‘isatty’ [-Wimplicit-function-declaration]
+         b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
+                                        ^~~~~~
+[100%] Linking C executable mod2c_core
+[100%] Built target mod2c_core
+[ 13%] Performing install step for 'mod2c'
+[100%] Built target mod2c_core
+Install the project...
+-- Install configuration: "Release"
+-- Installing: /home/ext_salvadordura_gmail_com/CoreNeuron/share/nrnunits.lib
+-- Installing: /home/ext_salvadordura_gmail_com/CoreNeuron/bin/mod2c_core
+[ 15%] Completed 'mod2c'
+[ 15%] Built target mod2c
+Scanning dependencies of target kin_deriv_header
+[ 16%] Generating expsyn.cpp
+[ 17%] Generating netstim.cpp
+[ 18%] Generating exp2syn.cpp
+[ 19%] Generating hh.cpp
+[ 20%] Generating passive.cpp
+[ 21%] Generating pattern.cpp
+[ 22%] Generating stim.cpp
+Translating  into expsyn.cpp
+cvode_emit=0 cvode_not_allowed=0
+Translating  into netstim.cpp
+Thread Safe
+cvode_emit=0 cvode_not_allowed=0
+Notice: ARTIFICIAL_CELL is a synonym for POINT_PROCESS which hints that it
+only affects and is affected by discrete events. As such it is not
+located in a section and is not associated with an integrator
+Translating  into exp2syn.cpp
+Thread Safe
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into hh.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into stim.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into passive.cpp
+Translating  into pattern.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+cvode_emit=0 cvode_not_allowed=0
+Notice: ARTIFICIAL_CELL is a synonym for POINT_PROCESS which hints that it
+only affects and is affected by discrete events. As such it is not
+located in a section and is not associated with an integrator
+Thread Safe
+[ 23%] Generating kinderiv.h by inspecting MOD files
+[ 23%] Built target kin_deriv_header
+Scanning dependencies of target coreneuron
+[ 24%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/apps/corenrn_parameters.cpp.o
+[ 25%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/gpu/nrn_acc_manager.cpp.o
+[ 26%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/apps/main1.cpp.o
+[ 27%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/io/file_utils.cpp.o
+[ 29%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/io/mk_mech.cpp.o
+[ 30%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/io/global_vars.cpp.o
+[ 31%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/io/nrn_checkpoint.cpp.o
+[ 32%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/io/nrn_filehandler.cpp.o
+[ 33%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/io/nrn_setup.cpp.o
+[ 34%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/io/nrnreport.cpp.o
+[ 35%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/io/output_spikes.cpp.o
+[ 36%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/io/prcellstate.cpp.o
+[ 37%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/io/report_configuration_parser.cpp.o
+[ 38%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/mechanism/capac.cpp.o
+[ 39%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/mechanism/eion.cpp.o
+[ 40%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/mechanism/mech_mapping.cpp.o
+[ 41%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/mechanism/patternstim.cpp.o
+[ 43%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/mechanism/register_mech.cpp.o
+[ 44%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/mpi/mpispike.cpp.o
+[ 45%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/mpi/nrnmpi.cpp.o
+[ 46%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/network/cvodestb.cpp.o
+[ 47%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/network/multisend.cpp.o
+[ 48%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/network/multisend_setup.cpp.o
+[ 49%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/network/netcvode.cpp.o
+[ 50%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/network/netpar.cpp.o
+[ 51%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/network/partrans.cpp.o
+[ 52%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/network/partrans_setup.cpp.o
+[ 53%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/network/tqueue.cpp.o
+[ 54%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/permute/balance.cpp.o
+[ 55%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/permute/cellorder.cpp.o
+[ 56%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/permute/cellorder1.cpp.o
+[ 58%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/permute/cellorder2.cpp.o
+[ 59%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/permute/data_layout.cpp.o
+[ 60%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/permute/node_permute.cpp.o
+[ 61%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/sim/fadvance_core.cpp.o
+[ 62%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/sim/fast_imem.cpp.o
+[ 63%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/sim/finitialize.cpp.o
+[ 64%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/sim/multicore.cpp.o
+[ 65%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/sim/solve_core.cpp.o
+[ 66%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/sim/treeset_core.cpp.o
+[ 67%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/utils/ispc/globals.cpp.o
+[ 68%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/utils/ivocvect.cpp.o
+[ 69%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/utils/lpt.cpp.o
+[ 70%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/utils/memory_utils.cpp.o
+[ 72%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/utils/nrn_stats.cpp.o
+[ 73%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/utils/nrnoc_aux.cpp.o
+[ 74%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/utils/nrntimeout.cpp.o
+[ 75%] Building C object coreneuron/CMakeFiles/coreneuron.dir/utils/progressbar/progressbar.c.o
+[ 76%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/utils/randoms/nrnran123.cpp.o
+[ 77%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/utils/string_utils.cpp.o
+[ 78%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/utils/vrecord.cpp.o
+[ 79%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/expsyn.cpp.o
+[ 80%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/exp2syn.cpp.o
+[ 81%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/hh.cpp.o
+[ 82%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/netstim.cpp.o
+[ 83%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/passive.cpp.o
+[ 84%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/pattern.cpp.o
+[ 86%] Building CXX object coreneuron/CMakeFiles/coreneuron.dir/stim.cpp.o
+[ 87%] Linking CXX shared library ../lib/libcoreneuron.so
+Running nrnivmodl-core with halfgap.mod
+/home/ext_salvadordura_gmail_com/CoreNeuron/tests/integration/ring_gap/mod/halfgap.mod
+[INFO] Running make with params: ROOT=/home/ext_salvadordura_gmail_com/CoreNeuron MODS_PATH=/home/ext_salvadordura_gmail_com/CoreNeuron/tests/integration/ring_gap/mod
+ -> Generating x86_64/core/mod2c/_mod_func.cpp
+ -> MOD2C /home/ext_salvadordura_gmail_com/CoreNeuron/tests/integration/ring_gap/mod/halfgap.mod
+Translating  into x86_64/core/mod2c//halfgap.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+ -> Generating x86_64/core/mod2c/_kinderiv.h
+diff: x86_64/core/mod2c/_mod_func.cpp: No such file or directory
+Replacing mod_func.c
+ -> Compiling x86_64/core/mod2c/_mod_func.cpp
+ -> Compiling x86_64/core/mod2c/_dimplic.cpp
+ -> Compiling x86_64/core/mod2c/halfgap.cpp
+ => LINKING library x86_64/libcorenrnmech.so Mod files: halfgap.mod
+ => LINKING executable x86_64/special-core
+[INFO] mods built successfully.
+[ 94%] Built target coreneuron
+Scanning dependencies of target corenrnmech
+[ 96%] Building CXX object coreneuron/CMakeFiles/corenrnmech.dir/mechanism/mech/enginemech.cpp.o
+[ 96%] Building CXX object coreneuron/CMakeFiles/corenrnmech.dir/mechanism/mech/dimplic.cpp.o
+[ 97%] Linking CXX shared library ../lib/libcorenrnmech.so
+[ 97%] Built target corenrnmech
+Scanning dependencies of target nrniv-core
+[ 98%] Building CXX object coreneuron/CMakeFiles/nrniv-core.dir/apps/coreneuron.cpp.o
+[100%] Linking CXX executable ../bin/nrniv-core
+[100%] Built target nrniv-core
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ ls
+bin                         CMakeFiles           CPackSourceConfig.cmake  external     Makefile      tests
+CMake                       cmake_install.cmake  CREDIT.txt               extra        mod2c-prefix
+CMakeCache.txt              CMakeLists.txt       CTestTestfile.cmake      include      README.md
+CMakeDoxyfile.in            coreneuron           DartConfiguration.tcl    lib          share
+CMakeDoxygenDefaults.cmake  CPackConfig.cmake    doc                      LICENSE.txt  Testing
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ make test
+Running tests...
+Test project /home/ext_salvadordura_gmail_com/CoreNeuron
+No tests were found!!!
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ pwd
+/home/ext_salvadordura_gmail_com/CoreNeuron
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ ls
+bin                         CMakeFiles           CPackSourceConfig.cmake  external     Makefile      tests
+CMake                       cmake_install.cmake  CREDIT.txt               extra        mod2c-prefix
+CMakeCache.txt              CMakeLists.txt       CTestTestfile.cmake      include      README.md
+CMakeDoxyfile.in            coreneuron           DartConfiguration.tcl    lib          share
+CMakeDoxygenDefaults.cmake  CPackConfig.cmake    doc                      LICENSE.txt  Testing
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ make tests
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ cd Testing/
+[ext_salvadordura_gmail_com@coreneuron-2 Testing]$ make test
+make: *** No rule to make target `test'.  Stop.
+[ext_salvadordura_gmail_com@coreneuron-2 Testing]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ cd tests/
+[ext_salvadordura_gmail_com@coreneuron-2 tests]$ ls
+CMakeFiles  cmake_install.cmake  CMakeLists.txt  CTestTestfile.cmake  integration  jenkins  Makefile  unit
+[ext_salvadordura_gmail_com@coreneuron-2 tests]$ make test
+Running tests...
+Test project /home/ext_salvadordura_gmail_com/CoreNeuron/tests
+No tests were found!!!
+[ext_salvadordura_gmail_com@coreneuron-2 tests]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ export OMP_NUM_THREADS=2
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ pwd
+/home/ext_salvadordura_gmail_com/CoreNeuron
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ cd Testing/
+[ext_salvadordura_gmail_com@coreneuron-2 Testing]$ ls
+Temporary
+[ext_salvadordura_gmail_com@coreneuron-2 Testing]$ cd Temporary/
+[ext_salvadordura_gmail_com@coreneuron-2 Temporary]$ lsl
+-bash: lsl: command not found
+[ext_salvadordura_gmail_com@coreneuron-2 Temporary]$ ls
+CTestCostData.txt  LastTest.log
+[ext_salvadordura_gmail_com@coreneuron-2 Temporary]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 Testing]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ ls
+bin                         CMakeFiles           CPackSourceConfig.cmake  external     Makefile      tests
+CMake                       cmake_install.cmake  CREDIT.txt               extra        mod2c-prefix
+CMakeCache.txt              CMakeLists.txt       CTestTestfile.cmake      include      README.md
+CMakeDoxyfile.in            coreneuron           DartConfiguration.tcl    lib          share
+CMakeDoxygenDefaults.cmake  CPackConfig.cmake    doc                      LICENSE.txt  Testing
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ cd tests
+[ext_salvadordura_gmail_com@coreneuron-2 tests]$ lsl
+-bash: lsl: command not found
+[ext_salvadordura_gmail_com@coreneuron-2 tests]$ ls
+CMakeFiles  cmake_install.cmake  CMakeLists.txt  CTestTestfile.cmake  integration  jenkins  Makefile  Testing  unit
+[ext_salvadordura_gmail_com@coreneuron-2 tests]$ cd Testing/
+[ext_salvadordura_gmail_com@coreneuron-2 Testing]$ ls
+Temporary
+[ext_salvadordura_gmail_com@coreneuron-2 Testing]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 tests]$ cd jenkins/
+[ext_salvadordura_gmail_com@coreneuron-2 jenkins]$ ls
+_env_setup.sh          Jenkinsfile       nrnivmodl-core.sh  run_corenrn_restore.sh  run_neuron.sh
+install_coreneuron.sh  mod               nrnivmodl.sh       run_corenrn.sh          spack_setup.sh
+install_neuron.sh      neuron_direct.py  ringtest.sh        run_neuron_direct.sh
+[ext_salvadordura_gmail_com@coreneuron-2 jenkins]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 tests]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ pwd
+/home/ext_salvadordura_gmail_com/CoreNeuron
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$  cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ pwd
+/home/ext_salvadordura_gmail_com
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ git clone https://github.com/nrnhines/ringtest.git
+Cloning into 'ringtest'...
+remote: Enumerating objects: 206, done.
+remote: Total 206 (delta 0), reused 0 (delta 0), pack-reused 206
+Receiving objects: 100% (206/206), 69.25 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (116/116), done.
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ cd ringtest/
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ pwd
+/home/ext_salvadordura_gmail_com/ringtest
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ ls
+args.py   celluniform.hoc  mod         README.md  ringtest.py     scripts      testchkpnt.sh
+cell.hoc  commonutils.py   ranparm.py  ring.py    ringuniform.py  settings.py
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ nrnivmodl mod
+Creating x86_64 directory for .o files.
+
+/home/ext_salvadordura_gmail_com/ringtest
+ls: cannot access mod/*.inc: No such file or directory
+mod/halfgap.mod
+halfgap.mod
+mkdir -p x86_64
+ -> Compiling mod_func.c
+/usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c mod_func.c -o mod_func.o
+ -> MOD2C halfgap.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl halfgap.mod
+Translating halfgap.mod into halfgap.c
+Thread Safe
+ -> Compiling x86_64/halfgap.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/halfgap.c -o x86_64/halfgap.o)
+ => LINKING library x86_64/libnrnmech.0.0.so Mod files: halfgap.mod
+(cd .. ; /usr/local/bin/c++ -g  -O2  -std=c++11 -shared -fPIC  -I /usr/local/include -o x86_64/libnrnmech.0.0.so -Wl,-soname,libnrnmech.0.0.so \
+  x86_64/mod_func.o x86_64/halfgap.o -L/usr/local/lib -lnrniv -Wl,-rpath,/usr/local/lib    -lreadline -lpython3 /usr/lib64/openmpi/lib/libmpi.so)
+(cd .. ; rm -f x86_64/.libs/libnrnmech.so ; mkdir -p x86_64/.libs ; ln -s ../../x86_64/libnrnmech.0.0.so x86_64/.libs/libnrnmech.so)
+Successfully created x86_64/special
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ ../CoreNeuron/bin/nrniv-core mod
+ERROR: Unknown arguments
+   mod
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ ../CoreNeuron/bin/nrniv-core 
+args.py          commonutils.py   ranparm.py       ringtest.py      settings.py      
+cell.hoc         .git/            README.md        ringuniform.py   testchkpnt.sh    
+celluniform.hoc  mod/             ring.py          scripts/         x86_64/          
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ ../CoreNeuron/bin/nrniv-core mod/
+ERROR: Unknown arguments
+   mod/
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ ../CoreNeuron/bin/nrnivmodl-core mod
+mod/halfgap.mod
+[INFO] Running make with params: ROOT=/home/ext_salvadordura_gmail_com/CoreNeuron MODS_PATH=mod
+ -> Generating x86_64/core/mod2c/_mod_func.cpp
+ -> MOD2C mod/halfgap.mod
+Translating  into x86_64/core/mod2c//halfgap.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+diff: x86_64/core/mod2c/_mod_func.cpp: No such file or directory
+Replacing mod_func.c
+ -> Generating x86_64/core/mod2c/_kinderiv.h
+ -> Compiling x86_64/core/mod2c/_dimplic.cpp
+ -> Compiling x86_64/core/mod2c/_mod_func.cpp
+ -> Compiling x86_64/core/mod2c/halfgap.cpp
+ => LINKING library x86_64/libcorenrnmech.so Mod files: halfgap.mod
+ => LINKING executable x86_64/special-core
+[INFO] mods built successfully.
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ ls
+args.py   celluniform.hoc  enginemech.o  ranparm.py  ring.py      ringuniform.py  settings.py    x86_64
+cell.hoc  commonutils.py   mod           README.md   ringtest.py  scripts         testchkpnt.sh
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ cd mod
+[ext_salvadordura_gmail_com@coreneuron-2 mod]$ ls
+halfgap.mod
+[ext_salvadordura_gmail_com@coreneuron-2 mod]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ ../CoreNeuron/bin/nrniv 
+args.py          commonutils.py   mod/             ring.py          scripts/         x86_64/          
+cell.hoc         enginemech.o     ranparm.py       ringtest.py      settings.py      
+celluniform.hoc  .git/            README.md        ringuniform.py   testchkpnt.sh    
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ ../CoreNeuron/bin/nrniv ringtest.py
+-bash: ../CoreNeuron/bin/nrniv: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ ../CoreNeuron/bin/nrniv-core ringtest.py
+ERROR: Unknown arguments
+   ringtest.py
+[ext_salvadordura_gmail_com@coreneuron-2 ringtest]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ pwd
+/home/ext_salvadordura_gmail_com
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ cd CoreNeuron/
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ nrniv 
+bin/                        CMakeLists.txt              external/                   Makefile
+.clang-format               coreneuron/                 extra/                      mod2c-prefix/
+CMake/                      CPackConfig.cmake           .git/                       README.md
+CMakeCache.txt              CPackSourceConfig.cmake     .gitmodules                 share/
+CMakeDoxyfile.in            CREDIT.txt                  .gitreview                  Testing/
+CMakeDoxygenDefaults.cmake  CTestTestfile.cmake         include/                    tests/
+CMakeFiles/                 DartConfiguration.tcl       lib/                        .travis.yml
+cmake_install.cmake         doc/                        LICENSE.txt                 
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ nrniv -python tests/jenkins/neuron_direct.py 
+NEURON -- VERSION 7.8.0-52-gb819d6e+ master (b819d6e+) 2019-12-22
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2019
+See http://neuron.yale.edu/neuron/credits
+
+Traceback (most recent call last):
+  File "tests/jenkins/neuron_direct.py", line 14, in <module>
+    h.soma.insert("CaDynamics_E2")
+ValueError: argument not a density mechanism name.
+>>> 
+>>> 
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ 
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ pwd
+/home/ext_salvadordura_gmail_com/CoreNeuron
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ cd jenkings
+-bash: cd: jenkings: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ cd jenkins
+-bash: cd: jenkins: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ cd tests/jenkins/
+[ext_salvadordura_gmail_com@coreneuron-2 jenkins]$ ls
+_env_setup.sh          Jenkinsfile       nrnivmodl-core.sh  run_corenrn_restore.sh  run_neuron.sh
+install_coreneuron.sh  mod               nrnivmodl.sh       run_corenrn.sh          spack_setup.sh
+install_neuron.sh      neuron_direct.py  ringtest.sh        run_neuron_direct.sh
+[ext_salvadordura_gmail_com@coreneuron-2 jenkins]$ nrnivmodl mod
+Creating x86_64 directory for .o files.
+
+/home/ext_salvadordura_gmail_com/CoreNeuron/tests/jenkins
+ls: cannot access mod/*.inc: No such file or directory
+mod/CaDynamics_E2.mod
+CaDynamics_E2.mod
+mkdir -p x86_64
+ -> Compiling mod_func.c
+/usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c mod_func.c -o mod_func.o
+ -> MOD2C CaDynamics_E2.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl CaDynamics_E2.mod
+Translating CaDynamics_E2.mod into CaDynamics_E2.c
+Thread Safe
+ -> Compiling x86_64/CaDynamics_E2.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/CaDynamics_E2.c -o x86_64/CaDynamics_E2.o)
+ => LINKING library x86_64/libnrnmech.0.0.so Mod files: CaDynamics_E2.mod
+(cd .. ; /usr/local/bin/c++ -g  -O2  -std=c++11 -shared -fPIC  -I /usr/local/include -o x86_64/libnrnmech.0.0.so -Wl,-soname,libnrnmech.0.0.so \
+  x86_64/mod_func.o x86_64/CaDynamics_E2.o -L/usr/local/lib -lnrniv -Wl,-rpath,/usr/local/lib    -lreadline -lpython3 /usr/lib64/openmpi/lib/libmpi.so)
+(cd .. ; rm -f x86_64/.libs/libnrnmech.so ; mkdir -p x86_64/.libs ; ln -s ../../x86_64/libnrnmech.0.0.so x86_64/.libs/libnrnmech.so)
+Successfully created x86_64/special
+[ext_salvadordura_gmail_com@coreneuron-2 jenkins]$ ../CoreNeuron/bin/nrnivmodl-core mod
+-bash: ../CoreNeuron/bin/nrnivmodl-core: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 jenkins]$ ../../CoreNeuron/bin/nrnivmodl-core mod
+-bash: ../../CoreNeuron/bin/nrnivmodl-core: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 jenkins]$ ../../bin/nrnivmodl-core mod
+mod/CaDynamics_E2.mod
+[INFO] Running make with params: ROOT=/home/ext_salvadordura_gmail_com/CoreNeuron MODS_PATH=mod
+ -> Generating x86_64/core/mod2c/_mod_func.cpp
+ -> MOD2C mod/CaDynamics_E2.mod
+Translating  into x86_64/core/mod2c//CaDynamics_E2.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+ -> Generating x86_64/core/mod2c/_kinderiv.h
+diff: x86_64/core/mod2c/_mod_func.cpp: No such file or directory
+Replacing mod_func.c
+ -> Compiling x86_64/core/mod2c/_mod_func.cpp
+ -> Compiling x86_64/core/mod2c/_dimplic.cpp
+ -> Compiling x86_64/core/mod2c/CaDynamics_E2.cpp
+ => LINKING library x86_64/libcorenrnmech.so Mod files: CaDynamics_E2.mod
+ => LINKING executable x86_64/special-core
+[INFO] mods built successfully.
+[ext_salvadordura_gmail_com@coreneuron-2 jenkins]$ nrniv -python neuron_direct.py 
+NEURON -- VERSION 7.8.0-52-gb819d6e+ master (b819d6e+) 2019-12-22
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2019
+See http://neuron.yale.edu/neuron/credits
+
+loading membrane mechanisms from x86_64/.libs/libnrnmech.so
+Additional mechanisms from files
+ mod/CaDynamics_E2.mod
+ 
+ Duke, Yale, and the BlueBrain Project -- Copyright 1984-2019
+ version id unimplemented
+ 
+ Additional mechanisms from files
+ CaDynamics_E2.mod
+
+ Memory (MBs) :             After mk_mech : Max 29.3203, Min 29.3203, Avg 29.3203 
+ Memory (MBs) :            After MPI_Init : Max 29.3203, Min 29.3203, Avg 29.3203 
+ Memory (MBs) :          Before nrn_setup : Max 29.3203, Min 29.3203, Avg 29.3203 
+ Setup Done   : 0.00 seconds 
+ Memory (MBs) :          After nrn_setup  : Max 29.5312, Min 29.5312, Avg 29.5312 
+
+--spikebuf = 100000      --spkcompress = 0        --prcellgid = -1
+--cell-permute = 0       --nwarp = 0              --ms-subintervals = 2
+--ms-phases = 2          --multiple = 1           --extracon = 0
+--seed = -1              --report-buffer-size = 4 --pattern = not set
+--datpath = .            --checkpoint = not set   --restore = not set
+--filesdat = files.dat   --outpath = .            --write-config = not set
+--read-config = not set  --report-conf = not set  --tstop = 5
+--dt = 0.025             --dt_io = 0.1            --voltage = -65
+--celsius = 6.3          --forwardskip = 0        --mindelay = 10
+--help = not set         --threading = not set    --gpu = not set
+-mpi = not set           --show = not set         --multisend = not set
+--binqueue = not set     --skip-mpi-finalize = set
+
+ Start time (t) = 0
+
+ Memory (MBs) :  After mk_spikevec_buffer : Max 29.5312, Min 29.5312, Avg 29.5312 
+
+ WARNING: nrn_nrn_wrote_conc support on GPU need to validate!
+ Memory (MBs) :     After nrn_finitialize : Max 29.5312, Min 29.5312, Avg 29.5312 
+
+ psolve |========================================================| t: 5.00   ETA: 0h00m00s
+
+Solver Time : 0.000457048
+
+
+ Simulation Statistics
+ Number of cells: 1
+ Number of compartments: 3
+ Number of presyns: 1
+ Number of input presyns: 0
+ Number of synapses: 0
+ Number of point processes: 1
+ Number of transfer (gap) targets: 0
+ Number of spikes: 0
+ Number of spikes with non negative gid-s: 0
+
+
+Voltage times and i_membrane_ are same and difference is less than 1e-10
+[ext_salvadordura_gmail_com@coreneuron-2 jenkins]$ pwd
+/home/ext_salvadordura_gmail_com/CoreNeuron/tests/jenkins
+[ext_salvadordura_gmail_com@coreneuron-2 jenkins]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 tests]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 CoreNeuron]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ cd netpyne/
+[ext_salvadordura_gmail_com@coreneuron-2 netpyne]$ git pull
+remote: Enumerating objects: 328, done.
+remote: Counting objects: 100% (328/328), done.
+remote: Compressing objects: 100% (71/71), done.
+remote: Total 493 (delta 288), reused 289 (delta 257), pack-reused 165
+Receiving objects: 100% (493/493), 199.19 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (336/336), completed with 57 local objects.
+From https://github.com/Neurosim-lab/netpyne
+   17bf810..8216bb8  development -> origin/development
+ * [new branch]      doc_update -> origin/doc_update
+   d228d43..16626df  master     -> origin/master
+ * [new branch]      my_branch  -> origin/my_branch
+   f1b1621..1df5cee  neuroml_updates -> origin/neuroml_updates
+ * [new branch]      saveSynWeights -> origin/saveSynWeights
+ * [new branch]      temp       -> origin/temp
+From https://github.com/Neurosim-lab/netpyne
+ * [new tag]         v0.9.5     -> v0.9.5
+Updating 17bf810..8216bb8
+Fast-forward
+ .github/ISSUE_TEMPLATE/bug_report.md                |  35 ++++
+ .github/ISSUE_TEMPLATE/documentation-improvement.md |  12 ++
+ .github/ISSUE_TEMPLATE/feature_request.md           |  28 +++
+ .github/ISSUE_TEMPLATE/other-issues.md              |  12 ++
+ .github/ISSUE_TEMPLATE/question.md                  |  12 ++
+ CHANGES.md                                          |  50 ++++-
+ CODE_OF_CONDUCT.md                                  |  84 +++++++++
+ CONTRIBUTING.md                                     | 265 +++++++++++++-------------
+ doc/source/about.rst                                | 280 +++++++++++++++++++++++++++
+ doc/source/figs/logo_white.png                      | Bin 0 -> 49742 bytes
+ doc/source/index.rst                                |   4 +-
+ doc/source/install.rst                              |   4 +-
+ doc/source/overview.rst                             | 124 ------------
+ doc/source/reference.rst                            | 619 ++++++++++++++++++++++++++++++------------------------------
+ examples/intervalSaveWeights/README                 |  16 ++
+ examples/intervalSaveWeights/cfg.py                 | 209 ++++++++++++++++++++
+ examples/intervalSaveWeights/init.py                |  55 ++++++
+ examples/intervalSaving/README                      |  14 ++
+ examples/intervalSaving/cfg.py                      | 207 ++++++++++++++++++++
+ examples/intervalSaving/init.py                     |  33 ++++
+ examples/sandbox/sandbox.py                         |  54 ++++--
+ examples/saveLoadV1/AA/active_cell_utils.py         |  83 ++++++++
+ examples/saveLoadV1/E2/cell_template.hoc            |  30 +++
+ examples/saveLoadV1/E2/cell_utils.py                | 116 ++++++------
+ examples/saveLoadV1/E4/cell_utils.py                | 119 ++++++------
+ examples/saveLoadV1/getCells.py                     |  18 +-
+ netpyne/.DS_Store                                   | Bin 10244 -> 0 bytes
+ netpyne/__init__.py                                 |   2 +-
+ netpyne/analysis/__init__.py                        |   4 +-
+ netpyne/analysis/info.py                            |   2 +-
+ netpyne/analysis/interactive.py                     | 198 ++++++++++++++++++-
+ netpyne/analysis/network.py                         |  51 ++---
+ netpyne/analysis/spikes.py                          | 148 ++++++++++++++-
+ netpyne/analysis/utils.py                           |   2 +-
+ netpyne/batch/batch.py                              |  25 ++-
+ netpyne/cell/compartCell.py                         |  26 +--
+ netpyne/cell/pointCell.py                           |  19 +-
+ netpyne/network/pop.py                              |  16 +-
+ netpyne/network/subconn.py                          |   9 +-
+ netpyne/sim/gather.py                               |  29 +--
+ netpyne/sim/run.py                                  |   9 +-
+ netpyne/sim/save.py                                 |  27 ++-
+ netpyne/specs/netParams.py                          |   2 +-
+ 43 files changed, 2258 insertions(+), 794 deletions(-)
+ create mode 100644 .github/ISSUE_TEMPLATE/bug_report.md
+ create mode 100644 .github/ISSUE_TEMPLATE/documentation-improvement.md
+ create mode 100644 .github/ISSUE_TEMPLATE/feature_request.md
+ create mode 100644 .github/ISSUE_TEMPLATE/other-issues.md
+ create mode 100644 .github/ISSUE_TEMPLATE/question.md
+ create mode 100644 CODE_OF_CONDUCT.md
+ create mode 100644 doc/source/about.rst
+ create mode 100644 doc/source/figs/logo_white.png
+ delete mode 100644 doc/source/overview.rst
+ create mode 100644 examples/intervalSaveWeights/README
+ create mode 100644 examples/intervalSaveWeights/cfg.py
+ create mode 100644 examples/intervalSaveWeights/init.py
+ create mode 100644 examples/intervalSaving/README
+ create mode 100644 examples/intervalSaving/cfg.py
+ create mode 100644 examples/intervalSaving/init.py
+ create mode 100644 examples/saveLoadV1/AA/active_cell_utils.py
+ create mode 100644 examples/saveLoadV1/E2/cell_template.hoc
+ delete mode 100644 netpyne/.DS_Store
+[ext_salvadordura_gmail_com@coreneuron-2 netpyne]$ cd examples/
+[ext_salvadordura_gmail_com@coreneuron-2 examples]$ pwd
+/home/ext_salvadordura_gmail_com/netpyne/examples
+[ext_salvadordura_gmail_com@coreneuron-2 examples]$ git branch
+ * development
+[ext_salvadordura_gmail_com@coreneuron-2 examples]$ git checkout --track origin/coreneuron
+Branch coreneuron set up to track remote branch coreneuron from origin.
+Switched to a new branch 'coreneuron'
+[ext_salvadordura_gmail_com@coreneuron-2 examples]$ cd coreneuron/
+[ext_salvadordura_gmail_com@coreneuron-2 coreneuron]$ git pull
+Already up-to-date.
+[ext_salvadordura_gmail_com@coreneuron-2 coreneuron]$ python tut2.py
+Traceback (most recent call last):
+  File "tut2.py", line 1, in <module>
+    from netpyne import specs, sim
+  File "/home/ext_salvadordura_gmail_com/netpyne/netpyne/specs/__init__.py", line 13, in <module>
+    from future import standard_library
+ImportError: No module named future
+[ext_salvadordura_gmail_com@coreneuron-2 coreneuron]$ python3 tut2.oy
+python3: can't open file 'tut2.oy': [Errno 2] No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 coreneuron]$ python3 tut2.py
+
+Creating network of 2 cell populations on 1 hosts...
+  Number of cells on node 0: 40 
+  Done; cell creation time = 0.01 s.
+Making connections...
+  Number of connections on node 0: 240 
+  Done; cell connection time = 0.02 s.
+Adding stims...
+  Number of stims on node 0: 40 
+  Done; cell stims creation time = 0.00 s.
+Recording 1 traces of 1 types on node 0
+
+Running simulation for 1000.0 ms...
+  Done; run time = 0.66 s; real-time ratio: 1.52.
+
+Gathering data...
+  Done; gather time = 0.01 s.
+
+Analyzing...
+  Cells: 40
+  Connections: 280 (7.00 per cell)
+  Spikes: 936 (23.40 Hz)
+  Simulated time: 1.0 s; 1 workers
+  Run time: 0.66 s
+Saving output as model_output.json  ... 
+Finished saving!
+  Done; saving time = 0.08 s.
+[ext_salvadordura_gmail_com@coreneuron-2 coreneuron]$ python3 tut2_coreneuron.py 
+
+Creating network of 2 cell populations on 1 hosts...
+  Number of cells on node 0: 40 
+  Done; cell creation time = 0.01 s.
+Making connections...
+  Number of connections on node 0: 240 
+  Done; cell connection time = 0.02 s.
+Adding stims...
+  Number of stims on node 0: 40 
+  Done; cell stims creation time = 0.00 s.
+Recording 1 traces of 1 types on node 0
+
+Running simulation using CoreNEURON for 1000.0 ms...
+ 
+ Duke, Yale, and the BlueBrain Project -- Copyright 1984-2019
+ version id unimplemented
+ 
+ Memory (MBs) :             After mk_mech : Max 67.4492, Min 67.4492, Avg 67.4492 
+ Memory (MBs) :            After MPI_Init : Max 67.4492, Min 67.4492, Avg 67.4492 
+ Memory (MBs) :          Before nrn_setup : Max 67.4492, Min 67.4492, Avg 67.4492 
+ Setup Done   : 0.00 seconds 
+ Memory (MBs) :          After nrn_setup  : Max 67.4492, Min 67.4492, Avg 67.4492 
+
+--spikebuf = 100000      --spkcompress = 0        --prcellgid = -1
+--cell-permute = 0       --nwarp = 0              --ms-subintervals = 2
+--ms-phases = 2          --multiple = 1           --extracon = 0
+--seed = -1              --report-buffer-size = 4 --pattern = not set
+--datpath = .            --checkpoint = not set   --restore = not set
+--filesdat = files.dat   --outpath = .            --write-config = not set
+--read-config = not set  --report-conf = not set  --tstop = 1000
+--dt = 0.025             --dt_io = 0.1            --voltage = -65
+--celsius = 6.3          --forwardskip = 0        --mindelay = 10
+--help = not set         --threading = not set    --gpu = not set
+-mpi = not set           --show = not set         --multisend = not set
+--binqueue = not set     --skip-mpi-finalize = set
+
+ Start time (t) = 0
+
+ Memory (MBs) :  After mk_spikevec_buffer : Max 67.4492, Min 67.4492, Avg 67.4492 
+ Memory (MBs) :     After nrn_finitialize : Max 67.4492, Min 67.4492, Avg 67.4492 
+
+ psolve |========================================================| t: 1000.00 ETA: 0h00m01s
+
+Solver Time : 0.843185
+
+
+ Simulation Statistics
+ Number of cells: 40
+ Number of compartments: 120
+ Number of presyns: 80
+ Number of input presyns: 0
+ Number of synapses: 280
+ Number of point processes: 80
+ Number of transfer (gap) targets: 0
+ Number of spikes: 936
+ Number of spikes with non negative gid-s: 936
+
+
+  Done; run time = 0.85 s; real-time ratio: 1.18.
+
+Gathering data...
+  Done; gather time = 0.02 s.
+
+Analyzing...
+  Cells: 40
+  Connections: 280 (7.00 per cell)
+  Spikes: 0 (0.00 Hz)
+  Simulated time: 1.0 s; 1 workers
+  Run time: 0.85 s
+  Done; saving time = 0.02 s.
+[ext_salvadordura_gmail_com@coreneuron-2 coreneuron]$ python3 compare.py 
+Original  : t=7.8500, id=27
+coreNEURON: t=7.8500, id=27
+
+Original  : t=7.9750, id=18
+coreNEURON: t=7.9750, id=18
+
+... [removed, were all same]
+
+Original  : t=996.0500, id=38
+coreNEURON: t=996.0500, id=38
+
+Original  : t=996.1750, id=37
+coreNEURON: t=996.1750, id=37
+
+Original  : t=996.3000, id=9
+coreNEURON: t=996.3000, id=9
+
+[ext_salvadordura_gmail_com@coreneuron-2 coreneuron]$ ls
+compare.py  m1  model_output.json  out.dat  out_neuron.dat  tut2_coreneuron.py  tut2.py
+** testing m1 log
+[ext_salvadordura_gmail_com@coreneuron-2 coreneuron]$ cd m1
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ls
+cells  cfg.py  compile  conn  init.py  mod  netParams.py  README  runsim
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ cd sim
+-bash: cd: sim: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ cd mod
+[ext_salvadordura_gmail_com@coreneuron-2 mod]$ ls
+ar_traub.mod  canin.mod      h_BS.mod        ican_sidi.mod  kBK.mod      MyExp2SynBB.mod      savedist.mod
+cadad.mod     can_mig.mod    HCN1.mod        IC.mod         kctin.mod    MyExp2SynNMDABB.mod  vecstim.mod
+cadyn.mod     catcb.mod      h_harnett.mod   IKsin.mod      kdmc_BS.mod  nafx.mod
+cagk.mod      cat_mig.mod    hin.mod         kap_BS.mod     kdr_BS.mod   nap_sidi.mod
+cal_mh.mod    cat_traub.mod  h_kole.mod      kapcb.mod      kdrin.mod    nax_BS.mod
+cal_mig.mod   ghk.inc        h_migliore.mod  kapin.mod      misc.h       parameters.multi
+[ext_salvadordura_gmail_com@coreneuron-2 mod]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ nrnivmodl mod
+Creating x86_64 directory for .o files.
+
+/home/ext_salvadordura_gmail_com/netpyne/examples/coreneuron/m1
+mod/ar_traub.mod mod/cadad.mod mod/cadyn.mod mod/cagk.mod mod/cal_mh.mod mod/cal_mig.mod mod/canin.mod mod/can_mig.mod mod/catcb.mod mod/cat_mig.mod mod/cat_traub.mod mod/h_BS.mod mod/HCN1.mod mod/h_harnett.mod mod/hin.mod mod/h_kole.mod mod/h_migliore.mod mod/ican_sidi.mod mod/IC.mod mod/IKsin.mod mod/kap_BS.mod mod/kapcb.mod mod/kapin.mod mod/kBK.mod mod/kctin.mod mod/kdmc_BS.mod mod/kdr_BS.mod mod/kdrin.mod mod/MyExp2SynBB.mod mod/MyExp2SynNMDABB.mod mod/nafx.mod mod/nap_sidi.mod mod/nax_BS.mod mod/savedist.mod mod/vecstim.mod
+ar_traub.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod canin.mod can_mig.mod catcb.mod cat_mig.mod cat_traub.mod h_BS.mod HCN1.mod h_harnett.mod hin.mod h_kole.mod h_migliore.mod ican_sidi.mod IC.mod IKsin.mod kap_BS.mod kapcb.mod kapin.mod kBK.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrin.mod MyExp2SynBB.mod MyExp2SynNMDABB.mod nafx.mod nap_sidi.mod nax_BS.mod savedist.mod vecstim.mod
+mkdir -p x86_64
+ -> Compiling mod_func.c
+/usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c mod_func.c -o mod_func.o
+ -> MOD2C HCN1.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl HCN1.mod
+Translating HCN1.mod into HCN1.c
+Thread Safe
+ -> MOD2C IC.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl IC.mod
+Translating IC.mod into IC.c
+Thread Safe
+ -> MOD2C IKsin.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl IKsin.mod
+Translating IKsin.mod into IKsin.c
+Thread Safe
+ -> MOD2C MyExp2SynBB.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl MyExp2SynBB.mod
+Translating MyExp2SynBB.mod into MyExp2SynBB.c
+Thread Safe
+ -> MOD2C MyExp2SynNMDABB.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl MyExp2SynNMDABB.mod
+ -> MOD2C ar_traub.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl ar_traub.mod
+ -> MOD2C cadad.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl cadad.mod
+Translating cadad.mod into cadad.c
+Thread Safe
+Translating ar_traub.mod into ar_traub.c
+ -> MOD2C cadyn.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl cadyn.mod
+Thread Safe
+Translating MyExp2SynNMDABB.mod into MyExp2SynNMDABB.c
+INCLUDEing ghk.inc
+Warning: celsius undefined. (declared within VERBATIM?)
+Thread Safe
+ -> MOD2C cagk.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl cagk.mod
+Translating cadyn.mod into cadyn.c
+Thread Safe
+ -> MOD2C cal_mh.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl cal_mh.mod
+Translating cal_mh.mod into cal_mh.c
+Thread Safe
+ -> MOD2C cal_mig.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl cal_mig.mod
+Translating cagk.mod into cagk.c
+Translating cal_mig.mod into cal_mig.c
+Thread Safe
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+Thread Safe
+ -> MOD2C can_mig.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl can_mig.mod
+Translating can_mig.mod into can_mig.c
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+Thread Safe
+ -> MOD2C canin.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl canin.mod
+Translating canin.mod into canin.c
+Thread Safe
+ -> MOD2C cat_mig.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl cat_mig.mod
+Translating cat_mig.mod into cat_mig.c
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+Warning: Default 25 of PARAMETER celsius will be ignored and set by NEURON.
+Thread Safe
+ -> MOD2C cat_traub.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl cat_traub.mod
+Translating cat_traub.mod into cat_traub.c
+Thread Safe
+ -> MOD2C catcb.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl catcb.mod
+ -> MOD2C h_BS.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl h_BS.mod
+Translating catcb.mod into catcb.c
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+ -> MOD2C h_harnett.mod
+ -> MOD2C h_kole.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl h_harnett.mod
+Translating h_BS.mod into h_BS.c
+Warning: Default 34 of PARAMETER celsius will be ignored and set by NEURON.
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl h_kole.mod
+Thread Safe
+Translating h_harnett.mod into h_harnett.c
+Thread Safe
+ -> MOD2C h_migliore.mod
+Translating h_kole.mod into h_kole.c
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl h_migliore.mod
+Thread Safe
+Translating h_migliore.mod into h_migliore.c
+ -> MOD2C hin.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl hin.mod
+Thread Safe
+Translating hin.mod into hin.c
+ -> MOD2C ican_sidi.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl ican_sidi.mod
+Warning: Default -10 of PARAMETER ehi will be ignored and set by NEURON.
+Thread Safe
+ -> MOD2C kBK.mod
+Translating ican_sidi.mod into ican_sidi.c
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl kBK.mod
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Thread Safe
+Translating kBK.mod into kBK.c
+ -> MOD2C kap_BS.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl kap_BS.mod
+Thread Safe
+Translating kap_BS.mod into kap_BS.c
+ -> MOD2C kapcb.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl kapcb.mod
+Thread Safe
+ -> MOD2C kapin.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl kapin.mod
+Translating kapcb.mod into kapcb.c
+Thread Safe
+Translating kapin.mod into kapin.c
+ -> MOD2C kctin.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl kctin.mod
+Thread Safe
+Translating kctin.mod into kctin.c
+ -> MOD2C kdmc_BS.mod
+NEURON's CVode method ignores conservation
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl kdmc_BS.mod
+Thread Safe
+Translating kdmc_BS.mod into kdmc_BS.c
+ -> MOD2C kdr_BS.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl kdr_BS.mod
+Thread Safe
+Translating kdr_BS.mod into kdr_BS.c
+ -> MOD2C kdrin.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl kdrin.mod
+Thread Safe
+Translating kdrin.mod into kdrin.c
+ -> MOD2C nafx.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl nafx.mod
+Thread Safe
+Translating nafx.mod into nafx.c
+ -> MOD2C nap_sidi.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl nap_sidi.mod
+Warning: Default 55 of PARAMETER ena will be ignored and set by NEURON.
+Thread Safe
+Translating nap_sidi.mod into nap_sidi.c
+ -> MOD2C nax_BS.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl nax_BS.mod
+Thread Safe
+Translating nax_BS.mod into nax_BS.c
+ -> MOD2C savedist.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl savedist.mod
+Thread Safe
+Translating savedist.mod into savedist.c
+Thread Safe
+ -> MOD2C vecstim.mod
+MODLUNIT=/usr/local/share/nrn/lib/nrnunits.lib \
+  /usr/local/bin/nocmodl vecstim.mod
+ -> Compiling x86_64/HCN1.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/HCN1.c -o x86_64/HCN1.o)
+Translating vecstim.mod into vecstim.c
+Notice: ARTIFICIAL_CELL is a synonym for POINT_PROCESS which hints that it
+only affects and is affected by discrete events. As such it is not
+located in a section and is not associated with an integrator
+Thread Safe
+ -> Compiling x86_64/IC.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/IC.c -o x86_64/IC.o)
+ -> Compiling x86_64/IKsin.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/IKsin.c -o x86_64/IKsin.o)
+ -> Compiling x86_64/MyExp2SynBB.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/MyExp2SynBB.c -o x86_64/MyExp2SynBB.o)
+ -> Compiling x86_64/MyExp2SynNMDABB.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/MyExp2SynNMDABB.c -o x86_64/MyExp2SynNMDABB.o)
+ -> Compiling x86_64/ar_traub.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/ar_traub.c -o x86_64/ar_traub.o)
+ -> Compiling x86_64/cadad.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/cadad.c -o x86_64/cadad.o)
+ -> Compiling x86_64/cadyn.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/cadyn.c -o x86_64/cadyn.o)
+ -> Compiling x86_64/cagk.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/cagk.c -o x86_64/cagk.o)
+ -> Compiling x86_64/cal_mh.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/cal_mh.c -o x86_64/cal_mh.o)
+ -> Compiling x86_64/cal_mig.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/cal_mig.c -o x86_64/cal_mig.o)
+ -> Compiling x86_64/can_mig.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/can_mig.c -o x86_64/can_mig.o)
+ -> Compiling x86_64/canin.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/canin.c -o x86_64/canin.o)
+ -> Compiling x86_64/cat_mig.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/cat_mig.c -o x86_64/cat_mig.o)
+ -> Compiling x86_64/cat_traub.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/cat_traub.c -o x86_64/cat_traub.o)
+ -> Compiling x86_64/catcb.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/catcb.c -o x86_64/catcb.o)
+ -> Compiling x86_64/h_BS.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/h_BS.c -o x86_64/h_BS.o)
+ -> Compiling x86_64/h_harnett.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/h_harnett.c -o x86_64/h_harnett.o)
+ -> Compiling x86_64/h_kole.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/h_kole.c -o x86_64/h_kole.o)
+ -> Compiling x86_64/h_migliore.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/h_migliore.c -o x86_64/h_migliore.o)
+ -> Compiling x86_64/hin.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/hin.c -o x86_64/hin.o)
+ -> Compiling x86_64/ican_sidi.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/ican_sidi.c -o x86_64/ican_sidi.o)
+ -> Compiling x86_64/kBK.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/kBK.c -o x86_64/kBK.o)
+ -> Compiling x86_64/kap_BS.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/kap_BS.c -o x86_64/kap_BS.o)
+ -> Compiling x86_64/kapcb.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/kapcb.c -o x86_64/kapcb.o)
+ -> Compiling x86_64/kapin.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/kapin.c -o x86_64/kapin.o)
+ -> Compiling x86_64/kctin.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/kctin.c -o x86_64/kctin.o)
+ -> Compiling x86_64/kdmc_BS.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/kdmc_BS.c -o x86_64/kdmc_BS.o)
+ -> Compiling x86_64/kdr_BS.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/kdr_BS.c -o x86_64/kdr_BS.o)
+ -> Compiling x86_64/kdrin.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/kdrin.c -o x86_64/kdrin.o)
+ -> Compiling x86_64/nafx.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/nafx.c -o x86_64/nafx.o)
+ -> Compiling x86_64/nap_sidi.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/nap_sidi.c -o x86_64/nap_sidi.o)
+ -> Compiling x86_64/nax_BS.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/nax_BS.c -o x86_64/nax_BS.o)
+ -> Compiling x86_64/savedist.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/savedist.c -o x86_64/savedist.o)
+ -> Compiling x86_64/vecstim.c
+(cd .. ; /usr/local/bin/gcc -g  -O2   -I. -I..   -I/usr/local/include  -I/usr/include/openmpi-x86_64  -fPIC -c x86_64/vecstim.c -o x86_64/vecstim.o)
+ => LINKING library x86_64/libnrnmech.0.0.so Mod files: HCN1.mod IC.mod IKsin.mod MyExp2SynBB.mod MyExp2SynNMDABB.mod ar_traub.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod can_mig.mod canin.mod cat_mig.mod cat_traub.mod catcb.mod h_BS.mod h_harnett.mod h_kole.mod h_migliore.mod hin.mod ican_sidi.mod kBK.mod kap_BS.mod kapcb.mod kapin.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrin.mod nafx.mod nap_sidi.mod nax_BS.mod savedist.mod vecstim.mod
+(cd .. ; /usr/local/bin/c++ -g  -O2  -std=c++11 -shared -fPIC  -I /usr/local/include -o x86_64/libnrnmech.0.0.so -Wl,-soname,libnrnmech.0.0.so \
+  x86_64/mod_func.o x86_64/HCN1.o x86_64/IC.o x86_64/IKsin.o x86_64/MyExp2SynBB.o x86_64/MyExp2SynNMDABB.o x86_64/ar_traub.o x86_64/cadad.o x86_64/cadyn.o x86_64/cagk.o x86_64/cal_mh.o x86_64/cal_mig.o x86_64/can_mig.o x86_64/canin.o x86_64/cat_mig.o x86_64/cat_traub.o x86_64/catcb.o x86_64/h_BS.o x86_64/h_harnett.o x86_64/h_kole.o x86_64/h_migliore.o x86_64/hin.o x86_64/ican_sidi.o x86_64/kBK.o x86_64/kap_BS.o x86_64/kapcb.o x86_64/kapin.o x86_64/kctin.o x86_64/kdmc_BS.o x86_64/kdr_BS.o x86_64/kdrin.o x86_64/nafx.o x86_64/nap_sidi.o x86_64/nax_BS.o x86_64/savedist.o x86_64/vecstim.o -L/usr/local/lib -lnrniv -Wl,-rpath,/usr/local/lib    -lreadline -lpython3 /usr/lib64/openmpi/lib/libmpi.so)
+(cd .. ; rm -f x86_64/.libs/libnrnmech.so ; mkdir -p x86_64/.libs ; ln -s ../../x86_64/libnrnmech.0.0.so x86_64/.libs/libnrnmech.so)
+Successfully created x86_64/special
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ../../bin/nrnivmodl-core mod
+-bash: ../../bin/nrnivmodl-core: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ../CoreNeuron/bin/nrnivmodl-core mod
+-bash: ../CoreNeuron/bin/nrnivmodl-core: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ../CoreNeuron/bin/nrnivmodl-core mod
+-bash: ../CoreNeuron/bin/nrnivmodl-core: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ../../CoreNeuron/bin/nrnivmodl-core mod
+-bash: ../../CoreNeuron/bin/nrnivmodl-core: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ pwd
+/home/ext_salvadordura_gmail_com/netpyne/examples/coreneuron/m1
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ~/CoreNeuron/bin/nrnivmodl-core mod
+mod/ar_traub.mod  mod/canin.mod      mod/HCN1.mod	 mod/IC.mod	 mod/kctin.mod		  mod/nafx.mod
+mod/cadad.mod	  mod/can_mig.mod    mod/h_harnett.mod	 mod/IKsin.mod	 mod/kdmc_BS.mod	  mod/nap_sidi.mod
+mod/cadyn.mod	  mod/catcb.mod      mod/hin.mod	 mod/kap_BS.mod  mod/kdr_BS.mod		  mod/nax_BS.mod
+mod/cagk.mod	  mod/cat_mig.mod    mod/h_kole.mod	 mod/kapcb.mod	 mod/kdrin.mod		  mod/savedist.mod
+mod/cal_mh.mod	  mod/cat_traub.mod  mod/h_migliore.mod  mod/kapin.mod	 mod/MyExp2SynBB.mod	  mod/vecstim.mod
+mod/cal_mig.mod   mod/h_BS.mod	     mod/ican_sidi.mod	 mod/kBK.mod	 mod/MyExp2SynNMDABB.mod
+[INFO] Running make with params: ROOT=/home/ext_salvadordura_gmail_com/CoreNeuron MODS_PATH=mod
+ -> Generating x86_64/core/mod2c/_mod_func.cpp
+ -> MOD2C mod/HCN1.mod
+Translating  into x86_64/core/mod2c//HCN1.cpp
+ -> MOD2C mod/IC.mod
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//IC.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+ -> MOD2C mod/IKsin.mod
+diff: x86_64/core/mod2c/_mod_func.cpp: No such file or directory
+Replacing mod_func.c
+Translating  into x86_64/core/mod2c//IKsin.cpp
+ -> MOD2C mod/MyExp2SynBB.mod
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//MyExp2SynBB.cpp
+ -> MOD2C mod/MyExp2SynNMDABB.mod
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//MyExp2SynNMDABB.cpp
+ -> MOD2C mod/ar_traub.mod
+INCLUDEing mod/ghk.inc
+Warning: celsius undefined. (declared within VERBATIM?)
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//ar_traub.cpp
+ -> MOD2C mod/cadad.mod
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//cadad.cpp
+ -> MOD2C mod/cadyn.mod
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//cadyn.cpp
+ -> MOD2C mod/cagk.mod
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//cagk.cpp
+ -> MOD2C mod/cal_mh.mod
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+ -> MOD2C mod/cal_mig.mod
+Translating  into x86_64/core/mod2c//cal_mh.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//cal_mig.cpp
+ -> MOD2C mod/can_mig.mod
+cvode_emit=0 cvode_not_allowed=0
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+Thread Safe
+Translating  into x86_64/core/mod2c//can_mig.cpp
+ -> MOD2C mod/canin.mod
+cvode_emit=0 cvode_not_allowed=0
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+Thread Safe
+Translating  into x86_64/core/mod2c//canin.cpp
+ -> MOD2C mod/cat_mig.mod
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//cat_mig.cpp
+ -> MOD2C mod/cat_traub.mod
+cvode_emit=0 cvode_not_allowed=0
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+Warning: Default 25 of PARAMETER celsius will be ignored and set by NEURON.
+Thread Safe
+Translating  into x86_64/core/mod2c//cat_traub.cpp
+ -> MOD2C mod/catcb.mod
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//catcb.cpp
+ -> MOD2C mod/h_BS.mod
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+cvode_emit=0 cvode_not_allowed=0
+Translating  into x86_64/core/mod2c//h_BS.cpp
+ -> MOD2C mod/h_harnett.mod
+cvode_emit=0 cvode_not_allowed=0
+Warning: Default 34 of PARAMETER celsius will be ignored and set by NEURON.
+Thread Safe
+ -> MOD2C mod/h_kole.mod
+ -> MOD2C mod/h_migliore.mod
+Translating  into x86_64/core/mod2c//h_harnett.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//h_kole.cpp
+Translating  into x86_64/core/mod2c//h_migliore.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+ -> MOD2C mod/hin.mod
+ -> MOD2C mod/ican_sidi.mod
+Translating  into x86_64/core/mod2c//hin.cpp
+Translating  into x86_64/core/mod2c//ican_sidi.cpp
+cvode_emit=0 cvode_not_allowed=0
+Warning: Default -10 of PARAMETER ehi will be ignored and set by NEURON.
+Thread Safe
+cvode_emit=0 cvode_not_allowed=0
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Thread Safe
+ -> MOD2C mod/kBK.mod
+ -> MOD2C mod/kap_BS.mod
+Translating  into x86_64/core/mod2c//kBK.cpp
+Translating  into x86_64/core/mod2c//kap_BS.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+ -> MOD2C mod/kapcb.mod
+ -> MOD2C mod/kapin.mod
+Translating  into x86_64/core/mod2c//kapcb.cpp
+Translating  into x86_64/core/mod2c//kapin.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+ -> MOD2C mod/kctin.mod
+ -> MOD2C mod/kdmc_BS.mod
+Translating  into x86_64/core/mod2c//kctin.cpp
+Translating  into x86_64/core/mod2c//kdmc_BS.cpp
+NEURON's CVode method ignores conservation
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+ -> MOD2C mod/kdr_BS.mod
+ -> MOD2C mod/kdrin.mod
+Translating  into x86_64/core/mod2c//kdr_BS.cpp
+Translating  into x86_64/core/mod2c//kdrin.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+ -> MOD2C mod/nafx.mod
+ -> MOD2C mod/nap_sidi.mod
+Translating  into x86_64/core/mod2c//nafx.cpp
+cvode_emit=0 cvode_not_allowed=0
+Warning: Default 55 of PARAMETER ena will be ignored and set by NEURON.
+Thread Safe
+ -> MOD2C mod/nax_BS.mod
+Translating  into x86_64/core/mod2c//nap_sidi.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//nax_BS.cpp
+ -> MOD2C mod/savedist.mod
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+Translating  into x86_64/core/mod2c//savedist.cpp
+cvode_emit=0 cvode_not_allowed=0
+Thread Safe
+ -> MOD2C mod/vecstim.mod
+Translating  into x86_64/core/mod2c//vecstim.cpp
+cvode_emit=0 cvode_not_allowed=0
+Notice: ARTIFICIAL_CELL is a synonym for POINT_PROCESS which hints that it
+only affects and is affected by discrete events. As such it is not
+located in a section and is not associated with an integrator
+Thread Safe
+ -> Generating x86_64/core/mod2c/_kinderiv.h
+ -> Compiling x86_64/core/mod2c/_dimplic.cpp
+ -> Compiling x86_64/core/mod2c/_mod_func.cpp
+ -> Compiling x86_64/core/mod2c/HCN1.cpp
+ -> Compiling x86_64/core/mod2c/IC.cpp
+ -> Compiling x86_64/core/mod2c/IKsin.cpp
+ -> Compiling x86_64/core/mod2c/MyExp2SynBB.cpp
+ -> Compiling x86_64/core/mod2c/MyExp2SynNMDABB.cpp
+ -> Compiling x86_64/core/mod2c/ar_traub.cpp
+ -> Compiling x86_64/core/mod2c/cadad.cpp
+ -> Compiling x86_64/core/mod2c/cadyn.cpp
+ -> Compiling x86_64/core/mod2c/cagk.cpp
+ -> Compiling x86_64/core/mod2c/cal_mh.cpp
+ -> Compiling x86_64/core/mod2c/cal_mig.cpp
+ -> Compiling x86_64/core/mod2c/can_mig.cpp
+ -> Compiling x86_64/core/mod2c/canin.cpp
+ -> Compiling x86_64/core/mod2c/cat_mig.cpp
+ -> Compiling x86_64/core/mod2c/cat_traub.cpp
+ -> Compiling x86_64/core/mod2c/catcb.cpp
+x86_64/core/mod2c/catcb.cpp:32:0: warning: "_STRIDE" redefined
+ #define _STRIDE 1
+ 
+In file included from /home/ext_salvadordura_gmail_com/CoreNeuron/include/coreneuron/sim/scopmath/newton_struct.h:4:0,
+                 from x86_64/core/mod2c/catcb.cpp:18:
+/home/ext_salvadordura_gmail_com/CoreNeuron/include/coreneuron/mechanism/mech/mod2c_core_thread.hpp:16:0: note: this is the location of the previous definition
+ #define _STRIDE _cntml_padded + _iml
+ 
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_init__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:34:18: error: ‘void coreneuron::_nrn_init__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+ #define nrn_init _nrn_init__catcb
+                  ^
+x86_64/core/mod2c/catcb.cpp:433:13: note: in expansion of macro ‘nrn_init’
+ static void nrn_init(NrnThread* _nt, Memb_list* _ml, int _type){
+             ^~~~~~~~
+x86_64/core/mod2c/catcb.cpp:34:18: note: previous declaration of ‘void coreneuron::_nrn_init__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’
+ #define nrn_init _nrn_init__catcb
+                  ^
+x86_64/core/mod2c/catcb.cpp:212:6: note: in expansion of macro ‘nrn_init’
+ void nrn_init(NrnThread*, Memb_list*, int);
+      ^~~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_init__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:442:10: error: ‘_vec_v’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+          ^~~~~~
+x86_64/core/mod2c/catcb.cpp:442:17: error: ‘_nd_idx’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+                 ^~~~~~~
+x86_64/core/mod2c/catcb.cpp:443:5: error: ‘_PRCELLSTATE_V’ was not declared in this scope
+     _PRCELLSTATE_V
+     ^~~~~~~~~~~~~~
+x86_64/core/mod2c/catcb.cpp:74:19: error: ‘_nt_data’ was not declared in this scope
+ #define _ion_cai  _nt_data[_ppvar[0*_STRIDE]]
+                   ^
+x86_64/core/mod2c/catcb.cpp:445:9: note: in expansion of macro ‘_ion_cai’
+   cai = _ion_cai;
+         ^~~~~~~~
+x86_64/core/mod2c/catcb.cpp:74:19: note: suggested alternative: ‘pnt_name’
+ #define _ion_cai  _nt_data[_ppvar[0*_STRIDE]]
+                   ^
+x86_64/core/mod2c/catcb.cpp:445:9: note: in expansion of macro ‘_ion_cai’
+   cai = _ion_cai;
+         ^~~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_cur__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:35:17: error: ‘void coreneuron::_nrn_cur__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+ #define nrn_cur _nrn_cur__catcb
+                 ^
+x86_64/core/mod2c/catcb.cpp:454:13: note: in expansion of macro ‘nrn_cur’
+ static void nrn_cur(NrnThread* _nt, Memb_list* _ml, int _type){
+             ^~~~~~~
+x86_64/core/mod2c/catcb.cpp:35:17: note: previous declaration of ‘void coreneuron::_nrn_cur__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’
+ #define nrn_cur _nrn_cur__catcb
+                 ^
+x86_64/core/mod2c/catcb.cpp:214:7: note: in expansion of macro ‘nrn_cur’
+  void nrn_cur(NrnThread*, Memb_list*, int);
+       ^~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_cur__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:463:10: error: ‘_vec_v’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+          ^~~~~~
+x86_64/core/mod2c/catcb.cpp:463:17: error: ‘_nd_idx’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+                 ^~~~~~~
+x86_64/core/mod2c/catcb.cpp:464:5: error: ‘_PRCELLSTATE_V’ was not declared in this scope
+     _PRCELLSTATE_V
+     ^~~~~~~~~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_jacob__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:37:19: error: ‘void coreneuron::_nrn_jacob__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+ #define nrn_jacob _nrn_jacob__catcb
+                   ^
+x86_64/core/mod2c/catcb.cpp:468:13: note: in expansion of macro ‘nrn_jacob’
+ static void nrn_jacob(NrnThread* _nt, Memb_list* _ml, int _type){
+             ^~~~~~~~~
+x86_64/core/mod2c/catcb.cpp:37:19: note: previous declaration of ‘void coreneuron::_nrn_jacob__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’
+ #define nrn_jacob _nrn_jacob__catcb
+                   ^
+x86_64/core/mod2c/catcb.cpp:215:7: note: in expansion of macro ‘nrn_jacob’
+  void nrn_jacob(NrnThread*, Memb_list*, int);
+       ^~~~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_state__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:38:19: error: ‘void coreneuron::_nrn_state__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+ #define nrn_state _nrn_state__catcb
+                   ^
+x86_64/core/mod2c/catcb.cpp:481:13: note: in expansion of macro ‘nrn_state’
+ static void nrn_state(NrnThread* _nt, Memb_list* _ml, int _type){
+             ^~~~~~~~~
+x86_64/core/mod2c/catcb.cpp:38:19: note: previous declaration of ‘void coreneuron::_nrn_state__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’
+ #define nrn_state _nrn_state__catcb
+                   ^
+x86_64/core/mod2c/catcb.cpp:213:6: note: in expansion of macro ‘nrn_state’
+ void nrn_state(NrnThread*, Memb_list*, int);
+      ^~~~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_state__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:490:10: error: ‘_vec_v’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+          ^~~~~~
+x86_64/core/mod2c/catcb.cpp:490:17: error: ‘_nd_idx’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+                 ^~~~~~~
+x86_64/core/mod2c/catcb.cpp:491:5: error: ‘_PRCELLSTATE_V’ was not declared in this scope
+     _PRCELLSTATE_V
+     ^~~~~~~~~~~~~~
+x86_64/core/mod2c/catcb.cpp:494:1: error: expected ‘;’ before ‘{’ token
+ {
+ ^
+ -> Compiling x86_64/core/mod2c/h_BS.cpp
+make: *** [x86_64/core/build/catcb.o] Error 1
+make: *** Waiting for unfinished jobs....
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ mv mod/h_
+h_BS.mod        h_harnett.mod   h_kole.mod      h_migliore.mod  
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ mv mod/h_
+h_BS.mod        h_harnett.mod   h_kole.mod      h_migliore.mod  
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ mv mod/h_BS.mod mod/h_BS.unused
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ~/CoreNeuron/bin/nrnivmodl-core mod
+[INFO] Loading definitions from previous nrnivmodl-core execution
+ + # nrnivmodl-core options. Mods location: mod
+ + params_MODS_PATH="mod"
+mod/ar_traub.mod  mod/canin.mod      mod/h_harnett.mod	 mod/IKsin.mod	 mod/kdmc_BS.mod	  mod/nap_sidi.mod
+mod/cadad.mod	  mod/can_mig.mod    mod/hin.mod	 mod/kap_BS.mod  mod/kdr_BS.mod		  mod/nax_BS.mod
+mod/cadyn.mod	  mod/catcb.mod      mod/h_kole.mod	 mod/kapcb.mod	 mod/kdrin.mod		  mod/savedist.mod
+mod/cagk.mod	  mod/cat_mig.mod    mod/h_migliore.mod  mod/kapin.mod	 mod/MyExp2SynBB.mod	  mod/vecstim.mod
+mod/cal_mh.mod	  mod/cat_traub.mod  mod/ican_sidi.mod	 mod/kBK.mod	 mod/MyExp2SynNMDABB.mod
+mod/cal_mig.mod   mod/HCN1.mod	     mod/IC.mod		 mod/kctin.mod	 mod/nafx.mod
+[INFO] Running make with params: ROOT=/home/ext_salvadordura_gmail_com/CoreNeuron MODS_PATH=mod
+ -> Generating x86_64/core/mod2c/_mod_func.cpp
+ -> Generating x86_64/core/mod2c/_kinderiv.h
+Files x86_64/core/mod2c/_mod_func.cpp.tmp and x86_64/core/mod2c/_mod_func.cpp differ
+Replacing mod_func.c
+ -> Compiling x86_64/core/mod2c/_mod_func.cpp
+ -> Compiling x86_64/core/mod2c/catcb.cpp
+ -> Compiling x86_64/core/mod2c/h_harnett.cpp
+ -> Compiling x86_64/core/mod2c/h_kole.cpp
+ -> Compiling x86_64/core/mod2c/h_migliore.cpp
+x86_64/core/mod2c/catcb.cpp:32:0: warning: "_STRIDE" redefined
+ #define _STRIDE 1
+ 
+In file included from /home/ext_salvadordura_gmail_com/CoreNeuron/include/coreneuron/sim/scopmath/newton_struct.h:4:0,
+                 from x86_64/core/mod2c/catcb.cpp:18:
+/home/ext_salvadordura_gmail_com/CoreNeuron/include/coreneuron/mechanism/mech/mod2c_core_thread.hpp:16:0: note: this is the location of the previous definition
+ #define _STRIDE _cntml_padded + _iml
+ 
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_init__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:34:18: error: ‘void coreneuron::_nrn_init__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+ #define nrn_init _nrn_init__catcb
+                  ^
+x86_64/core/mod2c/catcb.cpp:433:13: note: in expansion of macro ‘nrn_init’
+ static void nrn_init(NrnThread* _nt, Memb_list* _ml, int _type){
+             ^~~~~~~~
+x86_64/core/mod2c/catcb.cpp:34:18: note: previous declaration of ‘void coreneuron::_nrn_init__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’
+ #define nrn_init _nrn_init__catcb
+                  ^
+x86_64/core/mod2c/catcb.cpp:212:6: note: in expansion of macro ‘nrn_init’
+ void nrn_init(NrnThread*, Memb_list*, int);
+      ^~~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_init__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:442:10: error: ‘_vec_v’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+          ^~~~~~
+x86_64/core/mod2c/catcb.cpp:442:17: error: ‘_nd_idx’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+                 ^~~~~~~
+x86_64/core/mod2c/catcb.cpp:443:5: error: ‘_PRCELLSTATE_V’ was not declared in this scope
+     _PRCELLSTATE_V
+     ^~~~~~~~~~~~~~
+x86_64/core/mod2c/catcb.cpp:74:19: error: ‘_nt_data’ was not declared in this scope
+ #define _ion_cai  _nt_data[_ppvar[0*_STRIDE]]
+                   ^
+x86_64/core/mod2c/catcb.cpp:445:9: note: in expansion of macro ‘_ion_cai’
+   cai = _ion_cai;
+         ^~~~~~~~
+x86_64/core/mod2c/catcb.cpp:74:19: note: suggested alternative: ‘pnt_name’
+ #define _ion_cai  _nt_data[_ppvar[0*_STRIDE]]
+                   ^
+x86_64/core/mod2c/catcb.cpp:445:9: note: in expansion of macro ‘_ion_cai’
+   cai = _ion_cai;
+         ^~~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_cur__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:35:17: error: ‘void coreneuron::_nrn_cur__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+ #define nrn_cur _nrn_cur__catcb
+                 ^
+x86_64/core/mod2c/catcb.cpp:454:13: note: in expansion of macro ‘nrn_cur’
+ static void nrn_cur(NrnThread* _nt, Memb_list* _ml, int _type){
+             ^~~~~~~
+x86_64/core/mod2c/catcb.cpp:35:17: note: previous declaration of ‘void coreneuron::_nrn_cur__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’
+ #define nrn_cur _nrn_cur__catcb
+                 ^
+x86_64/core/mod2c/catcb.cpp:214:7: note: in expansion of macro ‘nrn_cur’
+  void nrn_cur(NrnThread*, Memb_list*, int);
+       ^~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_cur__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:463:10: error: ‘_vec_v’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+          ^~~~~~
+x86_64/core/mod2c/catcb.cpp:463:17: error: ‘_nd_idx’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+                 ^~~~~~~
+x86_64/core/mod2c/catcb.cpp:464:5: error: ‘_PRCELLSTATE_V’ was not declared in this scope
+     _PRCELLSTATE_V
+     ^~~~~~~~~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_jacob__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:37:19: error: ‘void coreneuron::_nrn_jacob__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+ #define nrn_jacob _nrn_jacob__catcb
+                   ^
+x86_64/core/mod2c/catcb.cpp:468:13: note: in expansion of macro ‘nrn_jacob’
+ static void nrn_jacob(NrnThread* _nt, Memb_list* _ml, int _type){
+             ^~~~~~~~~
+x86_64/core/mod2c/catcb.cpp:37:19: note: previous declaration of ‘void coreneuron::_nrn_jacob__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’
+ #define nrn_jacob _nrn_jacob__catcb
+                   ^
+x86_64/core/mod2c/catcb.cpp:215:7: note: in expansion of macro ‘nrn_jacob’
+  void nrn_jacob(NrnThread*, Memb_list*, int);
+       ^~~~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_state__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:38:19: error: ‘void coreneuron::_nrn_state__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+ #define nrn_state _nrn_state__catcb
+                   ^
+x86_64/core/mod2c/catcb.cpp:481:13: note: in expansion of macro ‘nrn_state’
+ static void nrn_state(NrnThread* _nt, Memb_list* _ml, int _type){
+             ^~~~~~~~~
+x86_64/core/mod2c/catcb.cpp:38:19: note: previous declaration of ‘void coreneuron::_nrn_state__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’
+ #define nrn_state _nrn_state__catcb
+                   ^
+x86_64/core/mod2c/catcb.cpp:213:6: note: in expansion of macro ‘nrn_state’
+ void nrn_state(NrnThread*, Memb_list*, int);
+      ^~~~~~~~~
+x86_64/core/mod2c/catcb.cpp: In function ‘void coreneuron::_nrn_state__catcb(coreneuron::NrnThread*, coreneuron::Memb_list*, int)’:
+x86_64/core/mod2c/catcb.cpp:490:10: error: ‘_vec_v’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+          ^~~~~~
+x86_64/core/mod2c/catcb.cpp:490:17: error: ‘_nd_idx’ was not declared in this scope
+     _v = _vec_v[_nd_idx];
+                 ^~~~~~~
+x86_64/core/mod2c/catcb.cpp:491:5: error: ‘_PRCELLSTATE_V’ was not declared in this scope
+     _PRCELLSTATE_V
+     ^~~~~~~~~~~~~~
+x86_64/core/mod2c/catcb.cpp:494:1: error: expected ‘;’ before ‘{’ token
+ {
+ ^
+make: *** [x86_64/core/build/catcb.o] Error 1
+make: *** Waiting for unfinished jobs....
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ mv mod/catcb.mod mod/catcv.unused
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ mv mod/catcv.unused mod/catcb.unused
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ~/CoreNeuron/bin/nrnivmodl-core mod
+[INFO] Loading definitions from previous nrnivmodl-core execution
+ + # nrnivmodl-core options. Mods location: mod
+ + params_MODS_PATH="mod"
+mod/ar_traub.mod  mod/canin.mod      mod/hin.mod	 mod/kap_BS.mod   mod/kdr_BS.mod	   mod/nax_BS.mod
+mod/cadad.mod	  mod/can_mig.mod    mod/h_kole.mod	 mod/kapcb.mod	  mod/kdrin.mod		   mod/savedist.mod
+mod/cadyn.mod	  mod/cat_mig.mod    mod/h_migliore.mod  mod/kapin.mod	  mod/MyExp2SynBB.mod	   mod/vecstim.mod
+mod/cagk.mod	  mod/cat_traub.mod  mod/ican_sidi.mod	 mod/kBK.mod	  mod/MyExp2SynNMDABB.mod
+mod/cal_mh.mod	  mod/HCN1.mod	     mod/IC.mod		 mod/kctin.mod	  mod/nafx.mod
+mod/cal_mig.mod   mod/h_harnett.mod  mod/IKsin.mod	 mod/kdmc_BS.mod  mod/nap_sidi.mod
+[INFO] Running make with params: ROOT=/home/ext_salvadordura_gmail_com/CoreNeuron MODS_PATH=mod
+ -> Generating x86_64/core/mod2c/_mod_func.cpp
+ -> Generating x86_64/core/mod2c/_kinderiv.h
+Files x86_64/core/mod2c/_mod_func.cpp.tmp and x86_64/core/mod2c/_mod_func.cpp differ
+Replacing mod_func.c
+ -> Compiling x86_64/core/mod2c/_mod_func.cpp
+ -> Compiling x86_64/core/mod2c/hin.cpp
+ -> Compiling x86_64/core/mod2c/ican_sidi.cpp
+ -> Compiling x86_64/core/mod2c/kBK.cpp
+ -> Compiling x86_64/core/mod2c/kap_BS.cpp
+ -> Compiling x86_64/core/mod2c/kapcb.cpp
+ -> Compiling x86_64/core/mod2c/kapin.cpp
+ -> Compiling x86_64/core/mod2c/kctin.cpp
+ -> Compiling x86_64/core/mod2c/kdmc_BS.cpp
+ -> Compiling x86_64/core/mod2c/kdr_BS.cpp
+ -> Compiling x86_64/core/mod2c/kdrin.cpp
+ -> Compiling x86_64/core/mod2c/nafx.cpp
+ -> Compiling x86_64/core/mod2c/nap_sidi.cpp
+ -> Compiling x86_64/core/mod2c/nax_BS.cpp
+ -> Compiling x86_64/core/mod2c/savedist.cpp
+ -> Compiling x86_64/core/mod2c/vecstim.cpp
+ => LINKING library x86_64/libcorenrnmech.so Mod files: HCN1.mod IC.mod IKsin.mod MyExp2SynBB.mod MyExp2SynNMDABB.mod ar_traub.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod can_mig.mod canin.mod cat_mig.mod cat_traub.mod h_harnett.mod h_kole.mod h_migliore.mod hin.mod ican_sidi.mod kBK.mod kap_BS.mod kapcb.mod kapin.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrin.mod nafx.mod nap_sidi.mod nax_BS.mod savedist.mod vecstim.mod
+ => LINKING executable x86_64/special-core
+[INFO] mods built successfully.
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ls
+cells  cfg.py  compile  conn  enginemech.o  init.py  mod  netParams.py  README  runsim  x86_64
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ python3 netParams.py 
+	0 
+Traceback (most recent call last):
+  File "netParams.py", line 124, in <module>
+    fileName='cells/PTcell.hoc', cellName='PTcell', cellArgs=[ihMod2str[cfg.ihModel], cfg.ihSlope], somaAtOrigin=True)
+  File "/home/ext_salvadordura_gmail_com/netpyne/netpyne/specs/netParams.py", line 339, in importCellParams
+    secs, secLists, synMechs, globs = conversion.importCell(fileName, cellName, cellArgs, cellInstance)
+  File "/home/ext_salvadordura_gmail_com/netpyne/netpyne/conversion/neuronPyHoc.py", line 202, in importCell
+    secDic, secListDic, synMechs, globs = getCellParams(cell, varList, origGlob)
+  File "/home/ext_salvadordura_gmail_com/netpyne/netpyne/conversion/neuronPyHoc.py", line 285, in getCellParams
+    dirCellObject = getattr(cell, dirCellName)
+  File "/home/ext_salvadordura_gmail_com/nrn/build/lib64/python/neuron/doc.py", line 209, in get_docstring
+    f = open(os.path.join(os.path.split(neuron.__file__)[0], 'help_data.dat'), 'rb')
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ext_salvadordura_gmail_com/nrn/build/lib64/python/neuron/help_data.dat'
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ nrniv -python netParams.py 
+NEURON -- VERSION 7.8.0-52-gb819d6e+ master (b819d6e+) 2019-12-22
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2019
+See http://neuron.yale.edu/neuron/credits
+
+loading membrane mechanisms from x86_64/.libs/libnrnmech.so
+Additional mechanisms from files
+ mod/ar_traub.mod mod/cadad.mod mod/cadyn.mod mod/cagk.mod mod/cal_mh.mod mod/cal_mig.mod mod/canin.mod mod/can_mig.mod mod/catcb.mod mod/cat_mig.mod mod/cat_traub.mod mod/h_BS.mod mod/HCN1.mod mod/h_harnett.mod mod/hin.mod mod/h_kole.mod mod/h_migliore.mod mod/ican_sidi.mod mod/IC.mod mod/IKsin.mod mod/kap_BS.mod mod/kapcb.mod mod/kapin.mod mod/kBK.mod mod/kctin.mod mod/kdmc_BS.mod mod/kdr_BS.mod mod/kdrin.mod mod/MyExp2SynBB.mod mod/MyExp2SynNMDABB.mod mod/nafx.mod mod/nap_sidi.mod mod/nax_BS.mod mod/savedist.mod mod/vecstim.mod
+	0 
+Traceback (most recent call last):
+  File "netParams.py", line 124, in <module>
+    fileName='cells/PTcell.hoc', cellName='PTcell', cellArgs=[ihMod2str[cfg.ihModel], cfg.ihSlope], somaAtOrigin=True)
+  File "/home/ext_salvadordura_gmail_com/netpyne/netpyne/specs/netParams.py", line 339, in importCellParams
+    secs, secLists, synMechs, globs = conversion.importCell(fileName, cellName, cellArgs, cellInstance)
+  File "/home/ext_salvadordura_gmail_com/netpyne/netpyne/conversion/neuronPyHoc.py", line 202, in importCell
+    secDic, secListDic, synMechs, globs = getCellParams(cell, varList, origGlob)
+  File "/home/ext_salvadordura_gmail_com/netpyne/netpyne/conversion/neuronPyHoc.py", line 285, in getCellParams
+    dirCellObject = getattr(cell, dirCellName)
+  File "/home/ext_salvadordura_gmail_com/nrn/build/lib64/python/neuron/doc.py", line 209, in get_docstring
+    f = open(os.path.join(os.path.split(neuron.__file__)[0], 'help_data.dat'), 'rb')
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ext_salvadordura_gmail_com/nrn/build/lib64/python/neuron/help_data.dat'
+>>> 
+>>> 
+>>> 
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 coreneuron]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 examples]$ pwd
+/home/ext_salvadordura_gmail_com/netpyne/examples
+[ext_salvadordura_gmail_com@coreneuron-2 examples]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 netpyne]$ ls
+CHANGES.md  doc  examples  LICENSE  MANIFEST.in  netpyne  README.md  sdnotes.org  setup.cfg  setup.py
+[ext_salvadordura_gmail_com@coreneuron-2 netpyne]$ cd doc
+[ext_salvadordura_gmail_com@coreneuron-2 doc]$ ls
+build.sh  Makefile  source
+[ext_salvadordura_gmail_com@coreneuron-2 doc]$ cd source
+[ext_salvadordura_gmail_com@coreneuron-2 source]$ ls
+advanced.rst  conf.py  index.rst    overview.rst   _static     tutorial.rst
+code          figs     install.rst  reference.rst  _templates
+[ext_salvadordura_gmail_com@coreneuron-2 source]$ cd code
+[ext_salvadordura_gmail_com@coreneuron-2 code]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 source]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 doc]$ cd ~
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ cd m1
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ cd data/
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ cd set
+-bash: cd: set: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ cd setup
+-bash: cd: setup: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ git pull
+Username for 'https://github.com': salvadord
+Password for 'https://salvadord@github.com': 
+remote: Invalid username or password.
+fatal: Authentication failed for 'https://github.com/suny-downstate-medical-center/M1.git/'
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ git pull
+Username for 'https://github.com': salvadord
+Password for 'https://salvadord@github.com': 
+remote: Enumerating objects: 280, done.
+remote: Counting objects: 100% (280/280), done.
+remote: Compressing objects: 100% (14/14), done.
+remote: Total 473 (delta 268), reused 277 (delta 266), pack-reused 193
+Receiving objects: 100% (473/473), 1.26 MiB | 0 bytes/s, done.
+Resolving deltas: 100% (352/352), completed with 26 local objects.
+From https://github.com/suny-downstate-medical-center/M1
+   3119e81..923a8a2  paper2019_py3 -> origin/paper2019_py3
+   4de0f64..92251ea  master     -> origin/master
+Updating 3119e81..923a8a2
+Fast-forward
+ analysis/paper.py  | 326 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------
+ analysis/schi15.py | 413 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ analysis/utils.py  |   3 +
+ sdnotes.org        | 344 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ sim/batch.py       | 115 ++++++++++++++++++++------
+ sim/cfg.py         |  25 +++---
+ sim/init.py        |  43 +++++++++-
+ sim/netParams.py   |   9 +--
+ 8 files changed, 1145 insertions(+), 133 deletions(-)
+ create mode 100644 analysis/schi15.py
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ cd set
+-bash: cd: set: No such file or directory
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ ls
+backup.py  cellDensity  conn  csp_syn_input_v6  recordings  remove.py  tech  v56_batch2
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ git branch
+  master
+ * paper2019_py3
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ git checkout master
+Switched to branch 'master'
+Your branch is behind 'origin/master' by 41 commits, and can be fast-forwarded.
+  (use "git pull" to update your local branch)
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ git pull
+Username for 'https://github.com': salvadord
+Password for 'https://salvadord@github.com': 
+remote: Invalid username or password.
+fatal: Authentication failed for 'https://github.com/suny-downstate-medical-center/M1.git/'
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ git pull
+Username for 'https://github.com': salvadord
+Password for 'https://salvadord@github.com': 
+Updating 4de0f64..92251ea
+Fast-forward
+ analysis/evolAnalysis.py                                            |  132 ++++
+ sdnotes.org                                                         |  704 +++++++++++++++++++
+ sim/batch.py                                                        |  217 +++---
+ sim/cells/CT6_reduced_cellParams.pkl                                |  Bin 45599 -> 33128 bytes
+ sim/cells/IT2_reduced_cellParams.pkl                                |  Bin 45620 -> 33128 bytes
+ sim/cells/IT4_reduced_cellParams.pkl                                |  Bin 46031 -> 33128 bytes
+ sim/cells/IT5A_full_cellParams.pkl                                  |  Bin 1889221 -> 1117671 bytes
+ sim/cells/IT5A_reduced_cellParams.pkl                               |  Bin 45644 -> 33128 bytes
+ sim/cells/IT5B_reduced_cellParams.pkl                               |  Bin 45610 -> 33128 bytes
+ sim/cells/IT6_reduced_cellParams.pkl                                |  Bin 45589 -> 33128 bytes
+ sim/cells/NGF_simple_weightNorm.pkl                                 |  Bin 174 -> 0 bytes
+ sim/cells/PT5B_full_cellParams.pkl                                  |  Bin 2727499 -> 1672143 bytes
+ sim/cells/PT5B_reduced_cellParams.pkl                               |  Bin 43665 -> 32725 bytes
+ sim/cells/PV_reduced_cellParams.pkl                                 |  Bin 0 -> 7436 bytes
+ sim/cells/PV_simple_cellParams.pkl                                  | 1631 -------------------------------------------
+ sim/cells/{SOM_simple_cellParams.pkl => SOM_reduced_cellParams.pkl} |  Bin 7356 -> 7357 bytes
+ sim/cells/VIP_reduced_weightNorm.pkl                                |  Bin 285 -> 0 bytes
+ sim/cells/cellDensity.pkl                                           |  Bin 1207 -> 1207 bytes
+ sim/cells/cellDensity.py                                            |    2 +-
+ sim/cfg.py                                                          |   38 +-
+ sim/conn/NGF_reduced_weightNorm.pkl                                 |  Bin 0 -> 174 bytes
+ sim/conn/{PV_simple_weightNorm.pkl => PV_reduced_weightNorm.pkl}    |    0
+ sim/conn/{SOM_simple_weightNorm.pkl => SOM_reduced_weightNorm.pkl}  |    0
+ sim/conn/VIP_reduced_weightNorm.pkl                                 |  Bin 0 -> 285 bytes
+ sim/conn/conn.pkl                                                   |  Bin 24741 -> 24741 bytes
+ sim/conn/conn.py                                                    |   16 +-
+ sim/netParams.py                                                    |   90 +--
+ 27 files changed, 1031 insertions(+), 1799 deletions(-)
+ create mode 100644 analysis/evolAnalysis.py
+ delete mode 100644 sim/cells/NGF_simple_weightNorm.pkl
+ create mode 100644 sim/cells/PV_reduced_cellParams.pkl
+ delete mode 100644 sim/cells/PV_simple_cellParams.pkl
+ rename sim/cells/{SOM_simple_cellParams.pkl => SOM_reduced_cellParams.pkl} (98%)
+ delete mode 100644 sim/cells/VIP_reduced_weightNorm.pkl
+ create mode 100644 sim/conn/NGF_reduced_weightNorm.pkl
+ rename sim/conn/{PV_simple_weightNorm.pkl => PV_reduced_weightNorm.pkl} (100%)
+ rename sim/conn/{SOM_simple_weightNorm.pkl => SOM_reduced_weightNorm.pkl} (100%)
+ create mode 100644 sim/conn/VIP_reduced_weightNorm.pkl
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ cd setup/
+[ext_salvadordura_gmail_com@coreneuron-2 setup]$ ls
+help_data.dat
+[ext_salvadordura_gmail_com@coreneuron-2 setup]$ cp help_data.dat /home/ext_salvadordura_gmail_com/nrn/build/lib64/python/neuron/.
+[ext_salvadordura_gmail_com@coreneuron-2 setup]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 data]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ pwd
+/home/ext_salvadordura_gmail_com/m1
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 ~]$ cd netpyne/
+[ext_salvadordura_gmail_com@coreneuron-2 netpyne]$ cd examples/
+[ext_salvadordura_gmail_com@coreneuron-2 examples]$ lsl
+-bash: lsl: command not found
+[ext_salvadordura_gmail_com@coreneuron-2 examples]$ ls
+batchCell   evolutionary  HybridTut     M1          netClamp       PTcell  rxd_buffering  sandbox     saving
+coreneuron  HHTut         LFPrecording  M1detailed  NeuroMLImport  RL_arm  rxd_net        saveLoadV1  sonata_300_cells
+[ext_salvadordura_gmail_com@coreneuron-2 examples]$ cd M1
+[ext_salvadordura_gmail_com@coreneuron-2 M1]$ ls
+izhi2007b.mod  M1_export.py  M1.py  M1_run.py
+[ext_salvadordura_gmail_com@coreneuron-2 M1]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 examples]$ cd coreneuron/
+[ext_salvadordura_gmail_com@coreneuron-2 coreneuron]$ cd m1
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ lsl
+-bash: lsl: command not found
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ls
+cells  cfg.py  compile  conn  enginemech.o  init.py  mod  netParams.py  __pycache__  README  runsim  x86_64
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ nrniv -python netParams.py 
+NEURON -- VERSION 7.8.0-52-gb819d6e+ master (b819d6e+) 2019-12-22
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2019
+See http://neuron.yale.edu/neuron/credits
+
+loading membrane mechanisms from x86_64/.libs/libnrnmech.so
+Additional mechanisms from files
+ mod/ar_traub.mod mod/cadad.mod mod/cadyn.mod mod/cagk.mod mod/cal_mh.mod mod/cal_mig.mod mod/canin.mod mod/can_mig.mod mod/catcb.mod mod/cat_mig.mod mod/cat_traub.mod mod/h_BS.mod mod/HCN1.mod mod/h_harnett.mod mod/hin.mod mod/h_kole.mod mod/h_migliore.mod mod/ican_sidi.mod mod/IC.mod mod/IKsin.mod mod/kap_BS.mod mod/kapcb.mod mod/kapin.mod mod/kBK.mod mod/kctin.mod mod/kdmc_BS.mod mod/kdr_BS.mod mod/kdrin.mod mod/MyExp2SynBB.mod mod/MyExp2SynNMDABB.mod mod/nafx.mod mod/nap_sidi.mod mod/nax_BS.mod mod/savedist.mod mod/vecstim.mod
+	0 
+>>> 
+>>> 
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ 
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ nrniv -python init.py 
+NEURON -- VERSION 7.8.0-52-gb819d6e+ master (b819d6e+) 2019-12-22
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2019
+See http://neuron.yale.edu/neuron/credits
+
+loading membrane mechanisms from x86_64/.libs/libnrnmech.so
+Additional mechanisms from files
+ mod/ar_traub.mod mod/cadad.mod mod/cadyn.mod mod/cagk.mod mod/cal_mh.mod mod/cal_mig.mod mod/canin.mod mod/can_mig.mod mod/catcb.mod mod/cat_mig.mod mod/cat_traub.mod mod/h_BS.mod mod/HCN1.mod mod/h_harnett.mod mod/hin.mod mod/h_kole.mod mod/h_migliore.mod mod/ican_sidi.mod mod/IC.mod mod/IKsin.mod mod/kap_BS.mod mod/kapcb.mod mod/kapin.mod mod/kBK.mod mod/kctin.mod mod/kdmc_BS.mod mod/kdr_BS.mod mod/kdrin.mod mod/MyExp2SynBB.mod mod/MyExp2SynNMDABB.mod mod/nafx.mod mod/nap_sidi.mod mod/nax_BS.mod mod/savedist.mod mod/vecstim.mod
+	0 
+Starting sim ...
+
+Creating network of 22 cell populations on 1 hosts...
+  Number of cells on node 0: 151 
+  Done; cell creation time = 1.38 s.
+Making connections...
+  Distributing synapses based on subcellular connectivity rules...
+  Number of connections on node 0: 5058 
+  Number of synaptic contacts on node 0: 22231 
+  Done; cell connection time = 7.51 s.
+  Number of stims on node 0: 0 
+  Done; cell stims creation time = 0.00 s.
+Recording 2 traces of 1 types on node 0
+
+Running simulation using CoreNEURON for 50.0 ms...
+ 
+ Duke, Yale, and the BlueBrain Project -- Copyright 1984-2019
+ version id unimplemented
+ 
+ Additional mechanisms from files
+ HCN1.mod IC.mod IKsin.mod MyExp2SynBB.mod MyExp2SynNMDABB.mod ar_traub.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod can_mig.mod canin.mod cat_mig.mod cat_traub.mod h_harnett.mod h_kole.mod h_migliore.mod hin.mod ican_sidi.mod kBK.mod kap_BS.mod kapcb.mod kapin.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrin.mod nafx.mod nap_sidi.mod nax_BS.mod savedist.mod vecstim.mod
+
+ Memory (MBs) :             After mk_mech : Max 173.7969, Min 173.7969, Avg 173.7969 
+ Memory (MBs) :            After MPI_Init : Max 173.7969, Min 173.7969, Avg 173.7969 
+ Memory (MBs) :          Before nrn_setup : Max 173.7969, Min 173.7969, Avg 173.7969 
+error: catcb mechanism does not exist
+Aborted
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ pwd
+/home/ext_salvadordura_gmail_com/netpyne/examples/coreneuron/m1
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ls
+cells  cfg.py  compile  conn  enginemech.o  init.py  mod  netParams.py  __pycache__  README  runsim  x86_64
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ls mod
+ar_traub.mod  canin.mod      h_BS.unused     ican_sidi.mod  kBK.mod      MyExp2SynBB.mod      savedist.mod
+cadad.mod     can_mig.mod    HCN1.mod        IC.mod         kctin.mod    MyExp2SynNMDABB.mod  vecstim.mod
+cadyn.mod     catcb.unused   h_harnett.mod   IKsin.mod      kdmc_BS.mod  nafx.mod
+cagk.mod      cat_mig.mod    hin.mod         kap_BS.mod     kdr_BS.mod   nap_sidi.mod
+cal_mh.mod    cat_traub.mod  h_kole.mod      kapcb.mod      kdrin.mod    nax_BS.mod
+cal_mig.mod   ghk.inc        h_migliore.mod  kapin.mod      misc.h       parameters.multi
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ls mod/*.unused
+mod/catcb.unused  mod/h_BS.unused
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ls
+cells  cfg.py  compile  conn  enginemech.o  init.py  mod  netParams.py  __pycache__  README  runsim  x86_64
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ vim netParams.py 
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ grep catcb *.py
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ grep catcb cells/*.hoc
+cells/LTS3.hoc:soma_catcb=0.003 
+cells/LTS3.hoc:     insert catcb
+cells/LTS3.hoc:     gcatbar_catcb=soma_catcb
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ vim netParams.py 
+
+[No write since last change]
+/bin/bash: q: command not found
+
+shell returned 127
+
+Press ENTER or type command to continue
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ 
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ cd cells
+[ext_salvadordura_gmail_com@coreneuron-2 cells]$ vim 
+cellDensity.pkl                IT5B_full_cellParams.pkl       PT5B_full_cellParams.pkl
+cellDensity.py                 IT5B_reduced_cellParams.pkl    PT5B_reduced_cellParams.pkl
+CT6_reduced_cellParams.pkl     IT6_reduced_cellParams.pkl     PTcell.hoc
+FS3.hoc                        ITcell.py                      PT_full_cellParams.pkl
+IT2_reduced_cellParams.pkl     IT_full_BS1578_cellParams.pkl  PV_simple_cellParams.pkl
+IT4_reduced_cellParams.pkl     IT_full_BS1579_cellParams.pkl  SOM_simple_cellParams.pkl
+IT5A_full_cellParams.pkl       LTS3.hoc                       
+IT5A_reduced_cellParams.pkl    popColors.pkl                  
+[ext_salvadordura_gmail_com@coreneuron-2 cells]$ vim LTS3.hoc 
+[ext_salvadordura_gmail_com@coreneuron-2 cells]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ vim netParams.py 
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ nrniv -python init.py 
+NEURON -- VERSION 7.8.0-52-gb819d6e+ master (b819d6e+) 2019-12-22
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2019
+See http://neuron.yale.edu/neuron/credits
+
+loading membrane mechanisms from x86_64/.libs/libnrnmech.so
+Additional mechanisms from files
+ mod/ar_traub.mod mod/cadad.mod mod/cadyn.mod mod/cagk.mod mod/cal_mh.mod mod/cal_mig.mod mod/canin.mod mod/can_mig.mod mod/catcb.mod mod/cat_mig.mod mod/cat_traub.mod mod/h_BS.mod mod/HCN1.mod mod/h_harnett.mod mod/hin.mod mod/h_kole.mod mod/h_migliore.mod mod/ican_sidi.mod mod/IC.mod mod/IKsin.mod mod/kap_BS.mod mod/kapcb.mod mod/kapin.mod mod/kBK.mod mod/kctin.mod mod/kdmc_BS.mod mod/kdr_BS.mod mod/kdrin.mod mod/MyExp2SynBB.mod mod/MyExp2SynNMDABB.mod mod/nafx.mod mod/nap_sidi.mod mod/nax_BS.mod mod/savedist.mod mod/vecstim.mod
+	0 
+nrniv: syntax error
+ in LTS3.hoc near line 19
+ #soma_catcb=0.003 
+ ^
+        xopen("LTS3.hoc")
+      execute1("{xopen("LT...")
+    load_file("cells/LTS3.hoc")
+Segmentation fault
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ cd cells
+[ext_salvadordura_gmail_com@coreneuron-2 cells]$ vim LTS3.hoc 
+[ext_salvadordura_gmail_com@coreneuron-2 cells]$ cd ..
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ nrniv -python init.py 
+NEURON -- VERSION 7.8.0-52-gb819d6e+ master (b819d6e+) 2019-12-22
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2019
+See http://neuron.yale.edu/neuron/credits
+
+loading membrane mechanisms from x86_64/.libs/libnrnmech.so
+Additional mechanisms from files
+ mod/ar_traub.mod mod/cadad.mod mod/cadyn.mod mod/cagk.mod mod/cal_mh.mod mod/cal_mig.mod mod/canin.mod mod/can_mig.mod mod/catcb.mod mod/cat_mig.mod mod/cat_traub.mod mod/h_BS.mod mod/HCN1.mod mod/h_harnett.mod mod/hin.mod mod/h_kole.mod mod/h_migliore.mod mod/ican_sidi.mod mod/IC.mod mod/IKsin.mod mod/kap_BS.mod mod/kapcb.mod mod/kapin.mod mod/kBK.mod mod/kctin.mod mod/kdmc_BS.mod mod/kdr_BS.mod mod/kdrin.mod mod/MyExp2SynBB.mod mod/MyExp2SynNMDABB.mod mod/nafx.mod mod/nap_sidi.mod mod/nax_BS.mod mod/savedist.mod mod/vecstim.mod
+	0 
+Balancing each compartment to -64 mV
+Starting sim ...
+
+Creating network of 22 cell populations on 1 hosts...
+  Number of cells on node 0: 151 
+  Done; cell creation time = 1.39 s.
+Making connections...
+  Distributing synapses based on subcellular connectivity rules...
+  Number of connections on node 0: 5058 
+  Number of synaptic contacts on node 0: 22231 
+  Done; cell connection time = 7.71 s.
+  Number of stims on node 0: 0 
+  Done; cell stims creation time = 0.00 s.
+Recording 2 traces of 1 types on node 0
+
+Running simulation using CoreNEURON for 50.0 ms...
+ 
+ Duke, Yale, and the BlueBrain Project -- Copyright 1984-2019
+ version id unimplemented
+ 
+ Additional mechanisms from files
+ HCN1.mod IC.mod IKsin.mod MyExp2SynBB.mod MyExp2SynNMDABB.mod ar_traub.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod can_mig.mod canin.mod cat_mig.mod cat_traub.mod h_harnett.mod h_kole.mod h_migliore.mod hin.mod ican_sidi.mod kBK.mod kap_BS.mod kapcb.mod kapin.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrin.mod nafx.mod nap_sidi.mod nax_BS.mod savedist.mod vecstim.mod
+
+ Memory (MBs) :             After mk_mech : Max 173.7891, Min 173.7891, Avg 173.7891 
+ Memory (MBs) :            After MPI_Init : Max 173.7891, Min 173.7891, Avg 173.7891 
+ Memory (MBs) :          Before nrn_setup : Max 173.7891, Min 173.7891, Avg 173.7891 
+ Setup Done   : 0.02 seconds 
+ Memory (MBs) :          After nrn_setup  : Max 185.4375, Min 185.4375, Avg 185.4375 
+
+--spikebuf = 100000      --spkcompress = 0        --prcellgid = -1
+--cell-permute = 0       --nwarp = 0              --ms-subintervals = 2
+--ms-phases = 2          --multiple = 1           --extracon = 0
+--seed = -1              --report-buffer-size = 4 --pattern = not set
+--datpath = .            --checkpoint = not set   --restore = not set
+--filesdat = files.dat   --outpath = .            --write-config = not set
+--read-config = not set  --report-conf = not set  --tstop = 50
+--dt = 0.05              --dt_io = 0.1            --voltage = -65
+--celsius = 34           --forwardskip = 0        --mindelay = 10
+--help = not set         --threading = not set    --gpu = not set
+-mpi = not set           --show = not set         --multisend = not set
+--binqueue = not set     --skip-mpi-finalize = set
+
+ Start time (t) = 0
+
+ Memory (MBs) :  After mk_spikevec_buffer : Max 185.4453, Min 185.4453, Avg 185.4453 
+
+ WARNING: nrn_nrn_wrote_conc support on GPU need to validate!
+ Memory (MBs) :     After nrn_finitialize : Max 185.4453, Min 185.4453, Avg 185.4453 
+
+ psolve |========================================================| t: 50.00  ETA: 0h00m16s
+
+Solver Time : 16.6167
+
+
+ Simulation Statistics
+ Number of cells: 81
+ Number of compartments: 11411
+ Number of presyns: 151
+ Number of input presyns: 0
+ Number of synapses: 22231
+ Number of point processes: 11876
+ Number of transfer (gap) targets: 0
+ Number of spikes: 29
+ Number of spikes with non negative gid-s: 29
+
+
+  Done; run time = 16.76 s; real-time ratio: 0.00.
+
+Gathering data...
+  Done; gather time = 1.70 s.
+
+Analyzing...
+  Cells: 151
+  Connections: 5058 (33.50 per cell)
+  Synaptic contacts: 22231 (147.23 per cell)
+  Spikes: 0 (0.00 Hz)
+   IT2 : 0.000 Hz
+   PV2 : 0.000 Hz
+   IT4 : 0.000 Hz
+   IT5A : 0.000 Hz
+   PV5A : 0.000 Hz
+   IT5B : 0.000 Hz
+   PT5B : 0.000 Hz
+   SOM5B : 0.000 Hz
+   PV5B : 0.000 Hz
+   IT6 : 0.000 Hz
+   CT6 : 0.000 Hz
+   PV6 : 0.000 Hz
+   TPO : 0.000 Hz
+   TVL : 0.000 Hz
+   S1 : 0.000 Hz
+   S2 : 0.000 Hz
+   cM1 : 0.000 Hz
+   M2 : 0.000 Hz
+   OC : 0.000 Hz
+  Simulated time: 0.1 s; 1 workers
+  Run time: 16.76 s
+Saving output as ./M1detailed.json  ... 
+Finished saving!
+  Done; saving time = 0.35 s.
+>>> sim.simData['spkt']
+Vector[325]
+>>> list(sim.simData['spkt'])
+[]
+>>> 
+>>> 
+>>> 
+
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ 
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ls
+cells   compile  enginemech.o  M1detailed.json  netParams.py  __pycache__  runsim
+cfg.py  conn     init.py       mod              out.dat       README       x86_64
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ vim cfg.py
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ vim init.py
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ vim cfg.py
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ python3 init.py 
+	0 
+Balancing each compartment to -64 mV
+Starting sim ...
+
+Creating network of 22 cell populations on 1 hosts...
+  Number of cells on node 0: 151 
+  Done; cell creation time = 1.45 s.
+Making connections...
+  Distributing synapses based on subcellular connectivity rules...
+  Number of connections on node 0: 5058 
+  Number of synaptic contacts on node 0: 22231 
+  Done; cell connection time = 8.48 s.
+  Number of stims on node 0: 0 
+  Done; cell stims creation time = 0.00 s.
+Recording 2 traces of 1 types on node 0
+
+Running simulation for 50.0 ms...
+  Done; run time = 19.57 s; real-time ratio: 0.00.
+
+Gathering data...
+  Done; gather time = 1.68 s.
+
+Analyzing...
+  Cells: 151
+  Connections: 5058 (33.50 per cell)
+  Synaptic contacts: 22231 (147.23 per cell)
+  Spikes: 19 (2.52 Hz)
+   IT2 : 0.000 Hz
+   PV2 : 0.000 Hz
+   IT4 : 0.000 Hz
+   IT5A : 0.000 Hz
+   PV5A : 0.000 Hz
+   IT5B : 0.000 Hz
+   PT5B : 0.000 Hz
+   SOM5B : 0.000 Hz
+   PV5B : 0.000 Hz
+   IT6 : 0.000 Hz
+   CT6 : 0.000 Hz
+   PV6 : 0.000 Hz
+   TPO : 4.000 Hz
+   TVL : 4.000 Hz
+   S1 : 6.000 Hz
+   S2 : 4.000 Hz
+   cM1 : 10.000 Hz
+   M2 : 2.000 Hz
+   OC : 8.000 Hz
+  Simulated time: 0.1 s; 1 workers
+  Run time: 19.57 s
+Saving output as ./M1detailed.json  ... 
+Finished saving!
+  Done; saving time = 0.35 s.
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ 
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ lsl
+-bash: lsl: command not found
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ ls
+cells   compile  enginemech.o  M1detailed.json  netParams.py  __pycache__  runsim
+cfg.py  conn     init.py       mod              out.dat       README       x86_64
+[ext_salvadordura_gmail_com@coreneuron-2 m1]$ cd mod
+[ext_salvadordura_gmail_com@coreneuron-2 mod]$ cat vecstim.mod 
+:  Vector stream of events
+
+COMMENT
+A VecStim is an artificial spiking cell that generates
+events at times that are specified in a Vector.
+
+HOC Example:
+
+// assumes spt is a Vector whose elements are all > 0
+// and are sorted in monotonically increasing order
+objref vs
+vs = new VecStim()
+vs.play(spt)
+// now launch a simulation, and vs will produce spike events
+// at the times contained in spt
+
+Python Example:
+
+from neuron import h
+spt = h.Vector(10).indgen(1, 0.2)
+vs = h.VecStim()
+vs.play(spt)
+
+def pr():
+  print (h.t)
+
+nc = h.NetCon(vs, None)
+nc.record(pr)
+
+cvode = h.CVode()
+h.finitialize()
+cvode.solve(20)
+
+ENDCOMMENT
+
+NEURON {
+	THREADSAFE
+	ARTIFICIAL_CELL VecStim
+	BBCOREPOINTER ptr
+}
+
+ASSIGNED {
+	index
+	etime (ms)
+	ptr
+}
+
+
+INITIAL {
+	index = 0
+	element()
+	if (index > 0) {
+		net_send(etime - t, 1)
+	}
+}
+
+NET_RECEIVE (w) {
+	if (flag == 1) {
+		net_event(t)
+		element()
+		if (index > 0) {
+			net_send(etime - t, 1)
+		}
+	}
+}
+
+DESTRUCTOR {
+VERBATIM
+	void* vv = (void*)(_p_ptr);  
+        if (vv) {
+		hoc_obj_unref(*vector_pobj(vv));
+	}
+ENDVERBATIM
+}
+
+PROCEDURE element() {
+VERBATIM	
+  { void* vv; int i, size; double* px;
+	i = (int)index;
+	if (i >= 0) {
+		vv = (void*)(_p_ptr);
+		if (vv) {
+			size = vector_capacity(vv);
+			px = vector_vec(vv);
+			if (i < size) {
+				etime = px[i];
+				index += 1.;
+			}else{
+				index = -1.;
+			}
+		}else{
+			index = -1.;
+		}
+	}
+  }
+ENDVERBATIM
+}
+
+PROCEDURE play() {
+VERBATIM
+#if !NRNBBCORE
+  {
+	void** pv;
+	void* ptmp = NULL;
+	if (ifarg(1)) {
+		ptmp = vector_arg(1);
+		hoc_obj_ref(*vector_pobj(ptmp));
+	}
+	pv = (void**)(&_p_ptr);
+	if (*pv) {
+		hoc_obj_unref(*vector_pobj(*pv));
+	}
+	*pv = ptmp;
+  }
+#endif
+ENDVERBATIM
+}
+
+VERBATIM
+static void bbcore_write(double* xarray, int* iarray, int* xoffset, int* ioffset, _threadargsproto_) {
+  int i, dsize, *ia;
+  double *xa, *dv;
+  dsize = 0;
+  if (_p_ptr) {
+    dsize = vector_capacity(_p_ptr);
+  }
+  if (xarray) {
+    void* vec = _p_ptr;
+    ia = iarray + *ioffset;
+    xa = xarray + *xoffset;
+    ia[0] = dsize;
+    if (dsize) {
+      dv = vector_vec(vec);
+      for (i = 0; i < dsize; ++i) {
+         xa[i] = dv[i];
+      }
+
+** link to M1 github issue
+
+https://github.com/BlueBrain/CoreNeuron/issues/220
+* 20Mar21 Downloading monitoring / metrics data from GCP
+** link 
+https://cloud.google.com/solutions/stackdriver-monitoring-metric-export
+** only last 6 weeks available!
+** example
+https://monitoring.googleapis.com/v3/projects/sage-facet-201016/timeSeries?
+interval.startTime=2019-02-19T20%3A00%3A01.593641Z&
+interval.endTime=2019-02-19T21%3A00%3A00.829121Z&
+aggregation.alignmentPeriod=3600s&
+aggregation.perSeriesAligner=ALIGN_SUM&
+aggregation.crossSeriesReducer=REDUCE_SUM&
+filter=metric.type%3D%22kubernetes.io%2Fnode_daemon%2Fmemory%2Fused_bytes%22+&
+aggregation.groupByFields=metric.labels.key
+** customize for ecas
+https://monitoring.googleapis.com/v3/projects/ecas-2019/timeSeries?
+interval.startTime=2019-02-19T20%3A00%3A01.593641Z&interval.endTime=2020-03-20T21%3A00%3A00.829121Z&
+aggregation.alignmentPeriod=3600s&aggregation.perSeriesAligner=ALIGN_SUM&aggregation.crossSeriesReducer=REDUCE_SUM&filter=%22metric.type%3D%5C%22compute.googleapis.com%2Finstance%2Fcpu%2Freserved_cores%5C%22+&aggregation.groupByFields=metric.labels.key
+
+
+
+https://console.cloud.google.com/monitoring/metrics-explorer?
+organizationId=728762063943&
+project=ecas-2019&
+pageState=%7B%22xyChart%22:
+%7B%22dataSets%22:
+%5B%7B%22timeSeriesFilter%22:
+%7B%22filter%22:
+%22metric.type%3D%5C%22compute.googleapis.com%2Finstance%2Fcpu%2Freserved_cores%5C%22%20resource.type%3D%5C%22gce_instance%5C%22%22,%22perSeriesAligner%22:
+%22ALIGN_MEAN%22,%22crossSeriesReducer%22:
+%22REDUCE_SUM%22,%22secondaryCrossSeriesReducer%22:
+%22REDUCE_NONE%22,%22minAlignmentPeriod%22:
+%2260s%22,%22groupByFields%22:
+%5B%5D,%22unitOverride%22:%221%22%7D,%22targetAxis%22:
+%22Y1%22,%22plotType%22:
+%22LINE%22%7D%5D,%22options%22:
+%7B%22mode%22:
+%22COLOR%22%7D,%22constantLines%22:
+%5B%5D,%22timeshiftDuration%22:
+%220s%22,%22y1Axis%22:
+%7B%22label%22:
+%22y1Axis%22,%22scale%22:
+%22LINEAR%22%7D%7D,%22isAutoRefresh%22:
+true,%22timeSelection%22:%7B%22timeRange%22:%221h%22%7D%7D
+** link with examples
+https://cloud.google.com/monitoring/custom-metrics/reading-metrics#monitoring_read_timeseries_fields-python
+** Step 1: create service account
+https://cloud.google.com/docs/authentication/getting-started
+- follow console steps
+** Step 2: set env var with credentials
+setenv GOOGLE_APPLICATION_CREDENTIALS "/u/salvadord/Documents/ISB/Models/gcloud/monitoring/ECAS-e1c691342787.json"
+** Step 3: install packages
+pip install google-cloud-monitoring
+** Step 4: run py script
+from google.cloud import monitoring_v3      
+
+*** list_time_series.py
+import argparse
+import os
+import pprint
+import time
+import uuid
+
+project_id = 'ecas-2019'
+
+# [START monitoring_read_timeseries_reduce]
+client = monitoring_v3.MetricServiceClient()
+project_name = client.project_path(project_id)
+interval = monitoring_v3.types.TimeInterval()
+now = time.time()
+interval.end_time.seconds = int(now)
+interval.end_time.nanos = int(
+    (now - interval.end_time.seconds) * 10**9)
+interval.start_time.seconds = int(now - (6*7*24*60*60))  # 6 weeks before
+interval.start_time.nanos = interval.end_time.nanos
+aggregation = monitoring_v3.types.Aggregation()
+aggregation.alignment_period.seconds = 1200  # 20 minutes
+aggregation.per_series_aligner = (
+    monitoring_v3.enums.Aggregation.Aligner.ALIGN_MEAN)
+aggregation.cross_series_reducer = (
+    monitoring_v3.enums.Aggregation.Reducer.REDUCE_MEAN)
+aggregation.group_by_fields.append('resource.zone')
+
+results = client.list_time_series(
+    project_name,
+    'metric.type = "compute.googleapis.com/instance/cpu/utilization"',
+    interval,
+    monitoring_v3.enums.ListTimeSeriesRequest.TimeSeriesView.FULL,
+    aggregation)
+for result in results:
+    print(result)

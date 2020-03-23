@@ -25,7 +25,7 @@ resources:
   properties:
     cluster_name            : g3
     static_node_count       : 0
-    max_node_count          : 1500
+    max_node_count          : 1200
 
     default_users           : ext_salvadordura_gmail_com
 
@@ -33,7 +33,7 @@ resources:
     region                  : us-central1
     cidr                    : 10.10.0.0/16
 
-    controller_machine_type : n1-highmem-64
+    controller_machine_type : n1-highmem-96
     controller_node_scopes          :
         -  https://www.googleapis.com/auth/devstorage.read_write
         -  https://www.googleapis.com/auth/logging.write
@@ -43,7 +43,7 @@ resources:
     compute_disk_size_gb    : 10
     preemptible_bursting     : True
 
-    login_machine_type      : n1-standard-8
+    login_machine_type      : n1-standard-16
     login_disk_size_gb      : 10
     login_node_scopes          :
            -  https://www.googleapis.com/auth/devstorage.read_write
