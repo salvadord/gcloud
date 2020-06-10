@@ -28240,3 +28240,715 @@ results = client.list_time_series(
     aggregation)
 for result in results:
     print(result)
+* 20Mar23 Getting monitoring data from Slurm
+
+** sacct
+sacct --starttime 2019-03-01 --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist
+https://ubccr.freshdesk.com/support/solutions/articles/5000686909-how-to-retrieve-job-history-and-accounting
+
+command to save from g1 cluster:
+
+sacct --starttime 2019-01-01 --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist > g1_cluster_slurm_jobs_2019-01-01_2020-03-25.txt
+
+IMPORTANT: You have to run sacct as the root to see all user's jobs or use --user to see specific users job
+** sreport
+
+https://wiki.fysik.dtu.dk/niflheim/Slurm_accounting#accounting-reports
+https://wiki.fysik.dtu.dk/niflheim/Slurm_accounting#accounting-information
+* 20Mar23 Deleted firewall rules and added back
+** Emails explaining
+Hi, I messed up. I was trying to delete 1 of the 3 slurm clusters using the ./delete_slurm.sh script, but turns out this also deletes parts of the other clusters (see also screenshot):
+
+ 
+
+cid:171136d19854cff311
+
+Deleting firewall rules.
+
+Deleted [https://www.googleapis.com/compute/v1/projects/ecas-2019/global/firewalls/g2-all-internal-firewall-rule].
+
+Deleted [https://www.googleapis.com/compute/v1/projects/ecas-2019/global/firewalls/g2-ssh-firewall-rule].
+
+Deleted [https://www.googleapis.com/compute/v1/projects/ecas-2019/global/firewalls/g1-ssh-firewall-rule].
+
+Deleted [https://www.googleapis.com/compute/v1/projects/ecas-2019/global/firewalls/g3-ssh-firewall-rule].
+
+Deleted [https://www.googleapis.com/compute/v1/projects/ecas-2019/global/firewalls/g1-all-internal-firewall-rule].
+
+Deleted [https://www.googleapis.com/compute/v1/projects/ecas-2019/global/firewalls/g3-all-internal-firewall-rule].
+
+ 
+
+The login and controller nodes of clusters 2 and 3 are still on, and they even resubmitted some jobs and spinned new VMs after I deleted the VMs they were running on.
+
+ 
+
+However, I get a timeout error when I try to ssh (via gcloud or console) to these nodes (g2-login1 and g3-login1). I have data there that I haven't yet downloaded, including a simulation that has been going on for 2 weeks. Any suggestions on how to log in to these nodes to recover my data?
+
+
+Wyatt: Yes, it deleted a few too many firewall rules, sorry about that. If you recreate the ssh rules (allow port 22 to the desired instances) then you should be able to SSH again.
+** Commands to recreate rules
+
+gcloud compute firewall-rules create g3-all-internal-firewall-rule --allow tcp:0-65535,udp:0-65535,icmp --source-ranges 10.10.0.0/16 --network https://www.googleapis.com/compute/v1/projects/ecas-2019/global/networks/g3-slurm-network
+
+gcloud compute firewall-rules create g3-ssh-firewall-rule --allow tcp:22,icmp --source-ranges 0.0.0.0/0 --network https://www.googleapis.com/compute/v1/projects/ecas-2019/global/networks/g3-slurm-network
+
+gcloud compute firewall-rules list
+
+NAME                           NETWORK           DIRECTION  PRIORITY  ALLOW                         DENY  DISABLED
+default-allow-icmp             default           INGRESS    65534     icmp                                False
+default-allow-internal         default           INGRESS    65534     tcp:0-65535,udp:0-65535,icmp        False
+default-allow-rdp              default           INGRESS    65534     tcp:3389                            False
+default-allow-ssh              default           INGRESS    65534     tcp:22                              False
+g2-all-internal-firewall-rule  g2-slurm-network  INGRESS    1000      icmp                                False
+g2-ssh-firewall-rule           g2-slurm-network  INGRESS    1000      tcp:22                              False
+g3-all-internal-firewall-rule  g3-slurm-network  INGRESS    1000      tcp:0-65535,udp:0-65535,icmp        False
+g3-ssh-firewall-rule           g3-slurm-network  INGRESS    1000      tcp:22,icmp                         False
+
+To show all fields of the firewall, please show in JSON format: --format=json
+To show all fields in table format, please see the examples in --help.
+* 20Apr3 Setting up Placement groups
+
+** README from GCP
+# Slurm on Google Cloud Platform - Placement Group Beta Preview
+
+The following describes compute instance provisioning support for slurm cluster compute nodes 
+on GCP Placement Group Beta Preview.
+
+First, review [Slurm on GCP code lab](https://codelabs.developers.google.com/codelabs/hpc-slurm-on-gcp/).
+
+Also, see the Placement Beta Preview User's Guide for information on the Placement Beta Preview offering
+
+## Summary
+Placement support changes:
+- slurm-cluster.yaml
+- slurm.ninja 
+- scripts/startup-script.py
+## Steps
+
+1. Install GCP Slurm github example and then follow the Slurm README to configure the install 
+
+   ```
+   git clone https://github.com/SchedMD/slurm-gcp.git
+   ```
+
+2. Create the Placement Group policy using curl
+
+   set POLICYNAME to the name for your policy
+   set YOUR_GCP_PROJECT_ID and REGION
+
+   ```
+   curl --data "{'name':'POLICYNAME','description':'Group placement for HPC','groupPlacementPolicy':{'collocation': 'COLLOCATED', 'vmCount': 20}}" \
+   --header 'Content-Type: application/json'  --header "Authorization: Bearer $(gcloud auth print-access-token)" \
+   https://www.googleapis.com/compute/alpha/projects/YOUR_GCP_PROJECT_ID/regions/REGION/resourcePolicies -X POST
+   ```
+
+3. Edit the `slurm-cluster.yaml` file
+   
+   cd to the ./slurm-gcp directory
+   edit slurm-cluster.yaml 
+
+   Add the Placement Group policy you created 
+
+   ```
+     properties:
+        resource_policy        : POLICYNAME
+   ```
+
+   Update static_node_count and max_node_count to the maximum cluster size 
+   ```
+    static_node_count       : 2
+    max_node_count          : 20
+   ```
+
+   Make sure login_node_count is not commented out 
+   ```
+    login_node_count        : 1
+   ```
+
+   Update zone, region, compute_machine_type. e.g.:
+   ```
+    zone                    : europe-west4-a
+    region                  : europe-west4
+    compute_machine_type    : c2-standard-60
+   ```
+
+   Set default user and uncomment slurm_version:
+   ```
+    default_users           : cbrasuell@google.com
+    slurm_version           : 19.05-latest
+   ```
+
+5. Update  slurm.jinja 
+
+   Make a backup of slurm.ninja
+   
+   Using your editor, change every 'v1' occurrence to 'alpha' for GCE v2 alpha
+
+   For example:
+   ```
+   type: compute.alpha.instance
+        diskType: https://www.googleapis.com/compute/alpha/projects/{{ env["project"] }}/zones/{{ properties["zone"] }}/diskTypes/{{ properties["controller_disk_type"] }}
+
+   ```
+
+   Find the section {% for n in range(properties['static_node_count']) %}
+
+   Copy and past the resourcePolicies, region, and maintenance parms after properties:
+
+   ```
+   properties:
+    region: {{ properties["region"] }} 
+    scheduling:
+      onHostMaintenance: TERMINATE
+    resourcePolicies: 
+    - https://www.googleapis.com/compute/alpha/projects/{{ env["project"] }}/regions/{{ properties["region"] }}/resourcePolicies/{{ properties["resource_policy"] }}
+   ```
+
+    Search for resume.py and insert the following replace statement after "{{ imports["scripts/resume.py"]|indent(12)|" 
+    ```
+    replace("@RESOURCE_POLICY@",properties["resource_policy"]) | 
+    ```
+
+6. Update  ./scripts/resume.py
+
+    Add the RESOURCE_POLICY variable after the python import statements
+
+    ```
+    RESOURCE_POLICY ='@RESOURCE_POLICY@'
+    ```
+
+    Search for the function: def create_instance 
+
+    Add region, scheduling, and resource policies inside the config data structure    
+
+    ```
+    config = {
+        'region': REGION,
+        'scheduling': {'onHostMaintenance': 'TERMINATE'},
+        'resourcePolicies': ['https://www.googleapis.com/compute/alpha/projects/'+PROJECT+'/regions/'+ REGION+'/resourcePolicies/'+RESOURCE_POLICY],
+    ```
+
+7. Update  ./scripts/startup-script.py
+
+   find the install_slurm_conf() function and add the following condition to def_mem_per_cpu variable computation
+
+   ```
+    def install_slurm_conf():
+
+        machine = expand_machine_type()
+        if (MACHINE_TYPE.find('c2')) == 0:
+            def_mem_per_cpu = (machine['memory'] / (machine['threads']*machine['cores']*machine['sockets']))
+        else:
+            def_mem_per_cpu = max(100,
+                (machine['memory'] /
+                 (machine['threads']*machine['cores']*machine['sockets'])))
+   ```
+
+8. Spin up the slurm cluster using the deployment-manager CLI. See also the slurm README
+
+   Note the beta version of deployment-manager
+
+   ```
+   gcloud beta deployment-manager deployments [--project=<project id>] create slurm --config slurm-cluster.yaml
+   ```
+
+9. Validate the Resource Policy is attached to the VM
+
+    For example, a placement policy named ixpolicy1 deployed into europe-west4 
+
+    ```
+    gcloud alpha compute instances describe g1-compute1 --zone europe-west4-a | grep resource
+    ```
+
+    Should return:
+
+    ```
+    resourcePolicies:
+    - https://www.googleapis.com/compute/alpha/projects/slb-wg-prod-rne/regions/europe-west4/resourcePolicies/ixpolicy1
+    ```
+
+10. Check the cluster status.
+
+   Wait while the slurm login node configuration completes and the compute nodes register 
+
+   You can see that status of the deployment by viewing:
+   https://console.cloud.google.com/deployments
+
+   and viewing the new instances:
+   https://console.cloud.google.com/compute/instances
+
+   To verify the deployment, ssh to the login node and run `sinfo` to see how
+   many nodes have registered and are in an idle state.
+
+   A message will be broadcast to the terminal when the installation is
+   complete. If you log in before the installation is complete, you will either
+   need to re-log in after the installation is complete or start a new shell
+   (e.g. /bin/bash) to get the correct bash profile.
+
+   ```
+   $ gcloud compute [--project=<project id>] ssh [--zone=<zone>] g1-login1
+   ```
+
+   ```
+   [you@g1-login1 ~]$ sinfo
+   PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+   debug*       up   infinite      8  idle~ g1-compute[N+1-max_node_count]
+   debug*       up   infinite      2   idle g1-compute[1-N] where N= static_node_count
+   ```
+   
+   If the output doesn't ever match, then check the VM console serial logs to look for any errors. 
+
+   Errors would be related to the scripts/startup-script.py modification
+
+   **NOTE:** By default, Slurm will hide nodes that are in a power_save state --
+   "cloud" nodes. The GCP Slurm scripts configure **PrivateData=cloud** in the
+   slurm.conf so that the "cloud" nodes are always shown. This is done so that
+   nodes that get marked down can be easily seen.
+
+11. Submit jobs on the cluster.
+
+   ```
+   [you@g1-login1 ~]$ sbatch -N2 --wrap="srun hostname"
+   Submitted batch job 2
+
+   [you@g1-login1 ~]$ cat slurm-2.out
+   g1-compute1
+   g1-compute2
+   ```
+   If the slurm output file is not created, then the config may not have completed
+   Or, exit the login VM and re-ssh into it.
+
+12. Test running dynamic hosts (NOT TESTED)
+    ssh into the g1-controller VM
+
+    cd over to the scripts directory and run the resume.py script
+
+    ```
+    sudo -s
+    sudo su - slurm
+    [slurm@g1-controller ~]$ cd /apps/slurm/scripts/
+    [slurm@g1-controller scripts]$ ./resume.py g1-compute-image
+
+    ```
+    # Wait until the instance is fully installed. You can verify this by ssh'ing to
+    # the instance and verify that there are no messages about installing in the
+    # motd.
+
+    TODO/WIP
+    ```
+    [slurm@g1-controller scripts]$ gcloud compute images create <cluster_name>-compute-image-$(date '+%Y-%m-%d-%H-%M-%S') \
+                                                            --source-disk proj2-compute-image \
+                                                            --source-disk-zone <zone> --force \
+                                                            --family <cluster_name>-compute-image-family \
+                                                            --project <project2>
+    ```
+                                                            
+13. Tearing down the deployment.
+
+   **NOTE:** If additional resources (instances, networks) are created (e.g. static compute nodes) other
+   than the ones created from the default deployment then they will need to be
+   destroyed before deployment can be removed.
+
+   ```
+   $ gcloud deployment-manager [--project=<project id>] deployments delete slurm
+
+   ```
+   If you any slurm related deployment deletion errors, use the GCP console to delete any VM intances, slurm network, and the slurm Deployment Manager deployment instance
+
+
+** steps
+*** step 2: set policy (error)
+   curl --data "{'name':'gpp','description':'Group placement for HPC','groupPlacementPolicy':{'collocation': 'COLLOCATED', 'vmCount': 20}}" --header 'Content-Type: application/json'  --header "Authorization: Bearer $(gcloud auth print-access-token)" https://www.googleapis.com/compute/alpha/projects/ecas-2019/regions/us-central1/resourcePolicies -X POST
+
+Illegal variable name
+
+*** Up to step 5 - all ok -- make a copy of folder before modifying? git?
+** email from Wyatt
+Hey Salvador, sorry for the late reply, wanted to just make your life simpler right away :) Here's a set of slurm scripts that support placement groups for any job under 22 nodes that you can deploy, or you can pull the relevant bits from resume.py, suspend.py, setup.sh, and epilog and prolog scripts. Basically we added Job ID handling to resume.py and suspend.py, and for each job there's a prolog script to call the resume.py script with the job ID so we can create a placement group per job, create the nodes in that group, run the job, and tear the nodes and placement group down unless another job of the same size comes in.
+
+Here's the deployment manager scripts. The Terraform in the newest version doesn't support placement groups yet, but in the near future our development will move over to Terraform, and the actual support for placement groups will be in the next release, which will be Terraform-based.
+
+https://storage.googleapis.com/slurm-gcp/slurm-placement-groups.tgz
+
+Let me know if you have any questions as you start testing with this. You don't need to specify a placement group name, it's generated based on cluster name and job ID per job. Your resource policy quota should be 5 or 10 by default as well. Quota for C2s is limited, though, so keep that in mind as you start running your jobs.
+** steps to use wyatt's files
+*** 1: updated slurm-cluster.yaml:
+# Copyright 2017 SchedMD LLC.
+# Modified for use with the Slurm Resource Manager.
+#
+# Copyright 2015 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START cluster_yaml]
+imports:
+- path: slurm.jinja
+
+resources:
+- name: slurm-cluster
+  type: slurm.jinja
+  properties:
+    cluster_name            : pg1
+
+    zone                    : us-central1-a
+
+  # Optional network configuration fields
+  # READ slurm.jinja.schema for prerequisites
+    # vpc_net                   : default
+    # vpc_subnet                : default
+    # shared_vpc_host_project   : < my-shared-vpc-project-name >
+
+    controller_machine_type : n1-standard-8
+    # controller_disk_type      : pd-standard
+    controller_disk_size_gb   : 100
+    controller_scopes          :
+    -  https://www.googleapis.com/auth/devstorage.read_write
+    -  https://www.googleapis.com/auth/logging.write
+    # controller_labels         :
+    #   key1 : value1
+    #   key2 : value2
+    # controller_service_account: default
+    # controller_scopes         :
+    # - https://www.googleapis.com/auth/cloud-platform
+    # cloudsql                  :
+    #   server_ip: <cloudsql ip>
+    #   user: slurm
+    #   password: verysecure
+    #   # Optional
+    #   db_name: slurm_accounting
+
+    login_machine_type        : n1-standard-2
+    # login_disk_type           : pd-standard
+    login_disk_size_gb        : 10
+    # login_labels              :
+    #   key1 : value1
+    #   key2 : value2
+    # login_node_count          : 0
+    # login_node_service_account: default
+    # login_node_scopes         :
+    # - https://www.googleapis.com/auth/devstorage.read_only
+    # - https://www.googleapis.com/auth/logging.write
+
+  # Optional network storage fields
+  # network_storage is mounted on all instances
+  # login_network_storage is mounted on controller and login instances
+    # network_storage           :
+    #   - server_ip: <storage host>
+    #     remote_mount: /home
+    #     local_mount: /home
+    #     fs_type: nfs
+    # login_network_storage     :
+    #   - server_ip: <storage host>
+    #     remote_mount: /net_storage
+    #     local_mount: /shared
+    #     fs_type: nfs
+
+    compute_image_machine_type  : n1-standard-2
+    # compute_image_disk_type   : pd-standard
+    compute_image_disk_size_gb: 10
+    # compute_image_labels      :
+    #   key1 : value1
+    #   key2 : value2
+
+  # Optional compute configuration fields
+    # external_compute_ips      : False
+    # private_google_access     : True
+
+    # controller_secondary_disk         : True
+    # controller_secondary_disk_type    : pd-standard
+    # controller_secondary_disk_size_gb : 300
+
+    # compute_node_service_account : default
+    # compute_node_scopes          :
+    #   -  https://www.googleapis.com/auth/devstorage.read_only
+    #   -  https://www.googleapis.com/auth/logging.write
+
+    # Optional timer fields
+    # suspend_time              : 300
+
+    # slurm_version             : 19.05-latest
+    # ompi_version              : v3.1.x
+
+    partitions :
+      - name              : debug
+        machine_type      : c2-standard-60
+        max_node_count    : 2
+        zone              : us-central1-a
+
+    # Optional compute configuration fields
+
+        # cpu_platform           : Intel Skylake
+        # preemptible_bursting   : False
+        # compute_disk_type      : pd-standard
+        compute_disk_size_gb   : 10
+        # compute_labels         :
+        #   key1 : value1
+        #   key2 : value2
+        # compute_image_family   : custom-image
+
+#  [END cluster_yaml]
+
+*** 2: updated slurm.jinja to use neuron image
+sourceImage: https://www.googleapis.com/compute/alpha/projects/ecas-2019/global/images/centos-7-neuron-7-7-netpyne
+** 1st attempt - cluster created but cant submit jobs
+*** deployment log
+ /slurm-pg % gcloud deployment-manager deployments create slurm_pg --config slurm-cluster.yaml
+ERROR: (gcloud.deployment-manager.deployments.create) ResponseError: code=400, message=Invalid value for field 'resource.name': 'slurm_pg'.  Must be a match of regex '[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?'
+ /slurm-pg % gcloud deployment-manager deployments create slurm-pg --config slurm-cluster.yaml
+The fingerprint of the deployment is UEngTWfWzyNDST3aT_jfzg==
+Waiting for create [operation-1586475304331-5a2e410f5a8eb-482342f9-952ad5cf]...done.                                          
+WARNING: Create operation operation-1586475304331-5a2e410f5a8eb-482342f9-952ad5cf completed with warnings:
+---
+code: EXTERNAL_API_WARNING
+data:
+- key: disk_size_gb
+  value: '20'
+- key: image_size_gb
+  value: '10'
+message: "Disk size: '20 GB' is larger than image size: '10 GB'. You might need to\
+  \ resize the root repartition manually if the operating system does not support\
+  \ automatic resizing. See https://cloud.google.com/compute/docs/disks/add-persistent-disk#resize_pd\
+  \ for details."
+---
+code: EXTERNAL_API_WARNING
+data:
+- key: disk_size_gb
+  value: '100'
+- key: image_size_gb
+  value: '10'
+message: "Disk size: '100 GB' is larger than image size: '10 GB'. You might need to\
+  \ resize the root repartition manually if the operating system does not support\
+  \ automatic resizing. See https://cloud.google.com/compute/docs/disks/add-persistent-disk#resize_pd\
+  \ for details."
+---
+code: EXTERNAL_API_WARNING
+data:
+- key: disk_size_gb
+  value: '20'
+- key: image_size_gb
+  value: '10'
+message: "Disk size: '20 GB' is larger than image size: '10 GB'. You might need to\
+  \ resize the root repartition manually if the operating system does not support\
+  \ automatic resizing. See https://cloud.google.com/compute/docs/disks/add-persistent-disk#resize_pd\
+  \ for details."
+
+NAME                            TYPE                   STATE      ERRORS  INTENT
+pg1-all-internal-firewall-rule  compute.v1.firewall    COMPLETED  []
+pg1-allow-iap                   compute.v1.firewall    COMPLETED  []
+pg1-compute-0-image             compute.v1.instance    COMPLETED  []
+pg1-controller                  compute.v1.instance    COMPLETED  []
+pg1-login0                      compute.v1.instance    COMPLETED  []
+pg1-network                     compute.v1.network     COMPLETED  []
+pg1-us-central1                 compute.v1.subnetwork  COMPLETED  []
+pg1-us-central1-router          compute.v1.router      COMPLETED  []
+
+
+Updates are available for some Cloud SDK components.  To install them,
+please run:
+  $ gcloud components update
+
+ /slurm-pg % alias sgc
+gcloud beta compute --project "ecas-2019" ssh --zone "us-central1-b" "g1-login1"
+ /slurm-pg % gcloud beta compute --project "ecas-2019" ssh --zone "us-central1-a" "pg1-login0"
+Unable to retrieve host keys from instance metadata. Continuing.
+External IP address was not found; defaulting to using IAP tunneling.
+Traceback (most recent call last):
+  File "/u/salvadord/google-cloud-sdk/lib/gcloud.py", line 20, in <module>
+    from __future__ import absolute_import
+ImportError: No module named __future__
+ssh_exchange_identification: Connection closed by remote host
+ERROR: (gcloud.beta.compute.ssh) [/usr/bin/ssh] exited with return code [255].
+ /slurm-pg % gcloud beta compute --project "ecas-2019" ssh --zone "us-central1-a" "pg1-login0"
+Unable to retrieve host keys from instance metadata. Continuing.
+External IP address was not found; defaulting to using IAP tunneling.
+Traceback (most recent call last):
+  File "/u/salvadord/google-cloud-sdk/lib/gcloud.py", line 20, in <module>
+    from __future__ import absolute_import
+ImportError: No module named __future__
+ssh_exchange_identification: Connection closed by remote host
+ERROR: (gcloud.beta.compute.ssh) [/usr/bin/ssh] exited with return code [255].
+ /slurm-pg % gcloud beta compute --project "ecas-2019" ssh --zone "us-central1-a" "pg1-login0"sudo git clone https://github.com/suny-downstate-medical-center/neurosim-scripts.git scripts
+*** login node log
+** email from wyatt
+Seems from the serial logs that there's insufficient scope to manage nodes for the controller node. Can you comment out the controller_scope lines, or add the scope: "https://www.googleapis.com/auth/cloud-platform"
+
+That should fix the issue. 
+** error submitting jobs
+   UserId=ext_salvadordura_gmail_com(2645697571) GroupId=nobody(2645697571) MCS_label=N/A
+   Priority=4294901759 Nice=0 Account=(null) QOS=normal
+   JobState=CONFIGURING Reason=None Dependency=(null)
+   Requeue=1 Restarts=8 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=00:00:49 TimeLimit=00:10:00 TimeMin=N/A
+   SubmitTime=2020-04-10T17:54:52 EligibleTime=2020-04-10T17:56:53
+   AccrueTime=2020-04-10T17:56:53
+   StartTime=2020-04-10T17:57:22 EndTime=2020-04-10T18:07:22 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2020-04-10T17:57:22
+   Partition=debug AllocNode:Sid=pg1-login0:3672
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=pg1-compute-0-0
+   BatchHost=pg1-compute-0-0
+   NumNodes=1 NumCPUs=60 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   TRES=cpu=60,mem=6000M,node=1,billing=60
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryCPU=100M MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null)
+   Command=/home/ext_salvadordura_gmail_com/submit.sh
+   WorkDir=/home/ext_salvadordura_gmail_com
+   StdErr=/home/ext_salvadordura_gmail_com/res.txt
+   StdIn=/dev/null
+   StdOut=/home/ext_salvadordura_gmail_com/res.txt
+   Power=
+
+** worked ok if use original .yaml file and submit to c2-standard-4
+ delete	
+pg1-3
+61828189274-compute@developer.gserviceaccount.com	
+Start: Apr 20, 2020, 7:43:24 PM
+End: Apr 20, 2020, 7:43:26 PM
+Done
+ insert	
+pg1-3
+61828189274-compute@developer.gserviceaccount.com	
+Start: Apr 20, 2020, 7:41:18 PM
+End: Apr 20, 2020, 7:41:19 PM
+Done
+ delete	
+pg1-3
+61828189274-compute@developer.gserviceaccount.com	
+Start: Apr 20, 2020, 7:41:14 PM
+End: Apr 20, 2020, 7:41:16 PM
+Done
+ delete	
+pg1-2
+61828189274-compute@developer.gserviceaccount.com	
+Start: Apr 20, 2020, 7:39:14 PM
+End: Apr 20, 2020, 7:39:17 PM
+Done
+ insert	
+pg1-2
+61828189274-compute@developer.gserviceaccount.com	
+Start: Apr 20, 2020, 7:37:15 PM
+End: Apr 20, 2020, 7:37:16 PM
+Done
+ Create an image	
+pg1-compute-0-image-2020-04-20-23-30-49
+61828189274-compute@developer.gserviceaccount.com	
+Start: Apr 20, 2020, 7:30:50 PM
+End: Apr 20, 2020, 7:32:18 PM
+Done
+
+** script to submit that worked (had wrong flags) -- only worked with orig .yaml!
+#!/bin/bash
+#
+#SBATCH --job-name=test
+#SBATCH --output=res.txt
+#
+#SBATCH --ntasks=2
+#SBATCH --time=10:00
+#SBATCH --cpus-per-task=60
+ 
+echo 'running!'
+** script to test (submit.sh) -- using right flags, but doesnt work
+
+#!/bin/bash
+#
+#SBATCH --job-name=test
+#SBATCH --output=res.txt
+#
+#SBATCH --nodes=2
+#SBATCH --time=10:00
+#SBATCH --ntasks-per-node=60
+ 
+echo 'running!'
+
+** maybe because using the wrong region! nodes reserved for us-central1-b? nope
+
+** nodes get assigned (with correct submit.sh script)
+NODELIST         NODES PARTITION       STATE CPUS    S:C:T MEMORY TMP_DISK WEIGHT AVAIL_FE REASON              
+pg1-compute-0-0      1    debug*       idle~   60   60:1:1 238160        0      1   (null) none                
+pg1-compute-0-1      1    debug*       idle~   60   60:1:1 238160        0      1   (null) none 
+
+Tue Apr 21 20:47:08 2020
+NODELIST         NODES PARTITION       STATE CPUS    S:C:T MEMORY TMP_DISK WEIGHT AVAIL_FE REASON              
+pg1-compute-0-0      1    debug*  allocated#   60   60:1:1 238160        0      1   (null) none                
+pg1-compute-0-1      1    debug*  allocated#   60   60:1:1 238160        0      1   (null) none 
+
+but job doesn't complete
+
+** get insert resourcePolicies operation (with correct submit.sh script)
+ operation-1587501424167-5a3d2fa77cbe7-47f862f1-9e3d34f6
+Operation type
+insert
+Target type
+resourcePolicies
+Target
+pg1-3
+Target ID
+5034783193072592799
+Progress
+100%
+User
+61828189274-compute@developer.gserviceaccount.com
+Insert time
+Apr 21, 2020, 4:37:04 PM
+Start time
+Apr 21, 2020, 4:37:04 PM
+End time
+Apr 21, 2020, 4:37:06 PM
+Equivalent REST
+** and then delete
+
+ operation-1587501726235-5a3d30c78fb80-207f3e36-7a678b0c
+Operation type
+delete
+Target type
+resourcePolicies
+Target
+pg1-3
+Target ID
+5034783193072592799
+Progress
+100%
+User
+61828189274-compute@developer.gserviceaccount.com
+Insert time
+Apr 21, 2020, 4:42:06 PM
+Start time
+Apr 21, 2020, 4:42:06 PM
+End time
+Apr 21, 2020, 4:42:08 PM
+
+** 20Apr24 - Test coreNEURON pip installation 
+*** pramod tested on centos7 and works
+$ docker run -it centos:7 bash
+yum install python3-devel.x86_64 python3-pip openmpi-devel.x86_64 python3-dev
+export PATH=/usr/lib64/openmpi/bin:$PATH
+export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+cat >test.py <<EOL
+from neuron import h
+h.nrnmpi_init()
+pc = h.ParallelContext()
+id = int(pc.id())
+nhost = int(pc.nhost())
+print ('I am %d of %d'%(id, nhost))
+pc.barrier()
+h.quit()
+EOL
+pip3 install numpy
+pip3 install -i https://test.pypi.org/simple/ NEURON
+mpirun --allow-run-as-root -n 2 python3 test.py -mpi
+numprocs=2
+I am 0 of 2
+I am 1 of 2
