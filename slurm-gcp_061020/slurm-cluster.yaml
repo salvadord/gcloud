@@ -35,8 +35,10 @@ resources:
 
     controller_machine_type : n1-highmem-16
     controller_scopes  :
-    -  https://www.googleapis.com/auth/devstorage.read_write
-    -  https://www.googleapis.com/auth/logging.write
+    - https://www.googleapis.com/auth/devstorage.read_write
+    - https://www.googleapis.com/auth/logging.write
+    - https://www.googleapis.com/auth/cloud-platform
+    
     controller_disk_size_gb    : 1000
     # controller_disk_type      : pd-standard
     # external_controller_ip    : False
@@ -45,7 +47,6 @@ resources:
     #   key2 : value2
     # controller_service_account: default
     # controller_scopes         :
-    # - https://www.googleapis.com/auth/cloud-platform
     # cloudsql                  :
     #   server_ip: <cloudsql ip>
     #   user: slurm
@@ -55,7 +56,7 @@ resources:
 
     login_machine_type        : n1-standard-1
     # login_disk_type           : pd-standard
-    login_disk_size_gb        : 10
+    login_disk_size_gb        : 20
     # external_login_ips        : False
     # login_labels              :
     #   key1 : value1
@@ -80,7 +81,7 @@ resources:
     #     local_mount: /shared
     #     fs_type: nfs
 
-    #compute_image_machine_type  : n1-standard-2
+    compute_image_machine_type  : n1-standard-2
     # compute_image_disk_type   : pd-standard
     # compute_image_disk_size_gb: 20
     # compute_image_labels      :
@@ -117,7 +118,7 @@ resources:
         # cpu_platform           : Intel Skylake
         preemptible_bursting   : False
         # compute_disk_type      : pd-standard
-        # compute_disk_size_gb   : 20
+        compute_disk_size_gb   : 20
         # compute_labels         :
         #   key1 : value1
         #   key2 : value2
