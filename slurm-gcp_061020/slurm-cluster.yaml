@@ -23,7 +23,7 @@ resources:
 - name: slurm-cluster
   type: slurm.jinja
   properties:
-    cluster_name            : g2
+    cluster_name            : g3
 
     zone                    : us-central1-b
 
