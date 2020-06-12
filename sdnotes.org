@@ -29176,7 +29176,7 @@ I am 1 of 2
 ** create new disk image 
 - use new pip install? might result in different results but can try 
 
-*** 1) startup.sh - basic setup used with gcp-slurm
+ 1) startup.sh - basic setup used with gcp-slurm
 yum install -y https://repo.ius.io/ius-release-el7.rpm
 
 vim startup.sh
@@ -29287,7 +29287,68 @@ EOL
 
 mpirun --allow-run-as-root -n 2 python3 test.py -mpi
 
-*** 
+
+# other libs
+yum install gcc-c++
+yum -y install screen 
+]
+
+pip3 install numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future inspyred pyspike 
+
+git clone -b development https://github.com/Neurosim-lab/netpyne.git
+git clone -b paper2019_py3 https://github.com/suny-downstate-medical-center/M1.git m1_paper2019_py3
+
+
+cd /usr/site
+cd site
+sudo git clone https://github.com/suny-downstate-medical-center/nrniv-local.git
+sudo git clone https://github.com/suny-downstate-medical-center/neurosim-scripts.git
+sudo git clone https://github.com/suny-downstate-medical-center/neurosim-config.git
+
+** bashrc
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+    #export N=root/nrn
+    #export CPU=x86_64
+    #export PATH="$N/$CPU/bin:/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$SITE/scripts/:$SITE/config:$PATH"
+    #export PYTHONPATH=$N/lib/python:$NB/share/python/lib64/python:/usr/local/python:~/netpyne:$PYTHONPATH
+    #export SITE=/usr/local/site
+    #export NEURONHOME=$N/share/nrn
+    export MODL_INCLUDE=$SITE/local/mod
+    export HOC_LIBRARY_PATH=$N/share/nrn/lib/hoc:$SITE/local/hoc
+
+    export PATH=/usr/lib64/openmpi/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+    export PYTHONPATH=~/netpyne:$PYTHONPATH
+
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER -o "%.18i %.9P %.12j %.8u %.2t %.10M %.6D %R"; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l'
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+    alias cpgs='gsutil -m cp -r'
+
+
 ** draft email to gcp slurm groups
 I have updated gcp-slurm to the latest version on github. I would like to use a custom centos-7 disk image with some preinstalled tools (via pip3) for my login, controller and computer nodes.
 
