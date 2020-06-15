@@ -23,8 +23,7 @@ resources:
 - name: slurm-cluster
   type: slurm.jinja
   properties:
-    cluster_name            : g2
-
+    cluster_name            : g1
     zone                    : us-central1-a
 
   # Optional network configuration fields
@@ -35,7 +34,7 @@ resources:
 
     controller_machine_type : n1-highmem-16
     # controller_disk_type      : pd-standard
-    # controller_disk_size_gb   : 50
+    controller_disk_size_gb   : 1000
     # external_controller_ip    : False
     # controller_labels         :
     #   key1 : value1
@@ -52,7 +51,7 @@ resources:
 
     login_machine_type        : n1-standard-2
     # login_disk_type           : pd-standard
-    # login_disk_size_gb        : 20
+    login_disk_size_gb        : 20
     # external_login_ips        : False
     # login_labels              :
     #   key1 : value1
@@ -79,7 +78,7 @@ resources:
 
     compute_image_machine_type  : n1-standard-2
     # compute_image_disk_type   : pd-standard
-    # compute_image_disk_size_gb: 20
+    compute_image_disk_size_gb: 20
     # compute_image_labels      :
     #   key1 : value1
     #   key2 : value2
@@ -115,7 +114,7 @@ resources:
         # cpu_platform           : Intel Skylake
         # preemptible_bursting   : False
         # compute_disk_type      : pd-standard
-        # compute_disk_size_gb   : 20
+        compute_disk_size_gb   : 20
         # compute_labels         :
         #   key1 : value1
         #   key2 : value2

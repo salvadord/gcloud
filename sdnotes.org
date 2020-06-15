@@ -29449,13 +29449,7 @@ PACKAGES=(
         'libtool'
         'libXext' 
         'libXext-devel'
-        'xorg-x11-fonts-100dpi'
-        'python36-Cython'
-        'ncurses-devel'
-        'openmpi-devel'
-        'openmpi'
-        'bison' 
-        'cmake'
+
     )
 
 PY_PACKAGES=(
@@ -29473,6 +29467,8 @@ PY_PACKAGES=(
         'inspyred' 
         'pyspike' 
     )
+
+
 
 PING_HOST=8.8.8.8
 until ( ping -q -w1 -c1 $PING_HOST > /dev/null ) ; do
@@ -29495,6 +29491,20 @@ done
 
 bash startup.sh
 
+yum -y group install "Development Tools"  # maybe just need flex-2.5.37-6.el7.x86_64 
+
+[
+    NOT USED:
+        'xorg-x11-fonts-100dpi'
+        'python36-Cython'
+        'ncurses-devel'
+        'openmpi-devel'
+        'openmpi'
+        'bison' 
+        'cmake'
+        
+]
+
 export PATH=/usr/lib64/openmpi/bin:$PATH
 export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
 
@@ -29502,30 +29512,18 @@ export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
 git clone https://github.com/neuronsimulator/nrn 
 cd nrn
 git checkout d9605cb
-./build.sh
-./configure --with-paranrn --with-nrnpython=python3 --without-iv
-make -j
-make install -j
-cd src/nrnpython
-python3 setup.py install
+./build.sh; ./configure --with-paranrn --with-nrnpython=python3 --without-iv; make -j; make install -j; cd src/nrnpython; python3 setup.py install
+
+cd /usr/local; mkdir site; cd site
+git clone https://github.com/suny-downstate-medical-center/nrniv-local.git local
+git clone https://github.com/suny-downstate-medical-center/neurosim-scripts.git script
+git clone https://github.com/suny-downstate-medical-center/neurosim-config.git config
 
 exit [exit su]
 
-cd /usr/local
-mkdir python
-mkdir site
-cd python
-sudo git clone -b development https://github.com/Neurosim-lab/netpyne.git
+cd ~; sudo git clone -b development https://github.com/Neurosim-lab/netpyne.git
 
-cd ..
-cd site
-sudo git clone https://github.com/suny-downstate-medical-center/nrniv-local.git local
-sudo git clone https://github.com/suny-downstate-medical-center/neurosim-scripts.git script
-sudo git clone https://github.com/suny-downstate-medical-center/neurosim-config.git config
-
-cd ~
 git clone --single-branch --branch paper2019_py3 https://github.com/suny-downstate-medical-center/M1.git m1_paper2019_py3
-
 
 sudo vim ~/.bashrc
     export N=~/nrn
@@ -29551,6 +29549,9 @@ sudo vim ~/.bashrc
     alias sdetail='scontrol show job'
     alias tarc='tar -zcvf'
     alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+
+source ~/.bashrc
+cp ~/.bashrc ~/bashrc
 
 ** blank
 
