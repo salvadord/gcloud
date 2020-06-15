@@ -108,6 +108,7 @@ resources:
         machine_type      : n1-standard-96
         max_node_count    : 100
         zone              : us-central1-a
+        #static_node_count : 0
 
     # Optional compute configuration fields
 

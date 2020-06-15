@@ -232,6 +232,7 @@ export PATH=$PATH:/usr/lib64/openmpi/bin
 /usr/local/bin/pip3 install mpi4py
 
 git clone https://github.com/neuronsimulator/nrn 
+git checkout d9605cb
 cd nrn
 ./build.sh
 ./configure --with-iv --with-paranrn --with-nrnpython=python3 --without-iv
@@ -28968,15 +28969,19 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
 EOF
 
 [use sudo in front?]
-yum update
-
-yum install gcsfuse
+[yum update]
+sudo yum install gcsfuse
 
 mkdir data
 
-[gcloud config set account `ACCOUNT` ?? -- https://github.com/GoogleCloudPlatform/gcsfuse/blob/master/docs/mounting.md]
+[
+    gcloud auth login  [OR]
+    gcloud config set account `ACCOUNT` 
+    [-- https://github.com/GoogleCloudPlatform/gcsfuse/blob/master/docs/mounting.md]]
 
-gcsfuse salvadord_data data/
+sudo gcsfuse salvadord_data data/
+
+[if doesn't work: this works: sudo cpgs v56_batch8_neuron_nightly/ gs://salvadord_data]
 ** debugging new gcp-slurm
 *** orig yaml works
 # Copyright 2017 SchedMD LLC.
@@ -29145,7 +29150,6 @@ resources:
 #  [END cluster_yaml]
 *** with jinja including images - doesn't work
 *** with jinja including neuron-nightly image - takes a while but works!
-
 *** blank
 ** code from Pramod on how to install neuron on Centos
  $ docker run -it centos:7 bash
@@ -29234,12 +29238,28 @@ PACKAGES=(
         'pdsh'
         'openmpi'
         'yum-utils'
+        'gcc-c++'
+        'screen'
+        'python3-devel.x86_64' 
+        'python3-pip' 
+        'openmpi-devel.x86_64' 
+        'python3-dev'
     )
 
 PY_PACKAGES=(
         'pyyaml'
         'requests'
         'google-api-python-client'
+        'numpy' 
+        'matplotlib' 
+        'scipy' 
+        'pandas' 
+        'seaborn' 
+        'matplotlib_scalebar' 
+        'ipython' 
+        'future' 
+        'inspyred' 
+        'pyspike' 
     )
 
 PING_HOST=8.8.8.8
@@ -29265,7 +29285,7 @@ done
 bash startup.sh
 
 
-yum install python3-devel.x86_64 python3-pip openmpi-devel.x86_64 python3-dev  # from kumar
+[yum install python3-devel.x86_64 python3-pip openmpi-devel.x86_64 python3-dev  # from kumar; ALREADY ADDED ABOVE]
 
 export PATH=/usr/lib64/openmpi/bin:$PATH
 export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
@@ -29287,20 +29307,15 @@ EOL
 
 mpirun --allow-run-as-root -n 2 python3 test.py -mpi
 
+# other libs for netpyne
+[pip3 install numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future inspyred pyspike  # ALREADY ADDED ABOVE]
 
-# other libs
-yum install gcc-c++
-yum -y install screen 
-]
-
-pip3 install numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future inspyred pyspike 
-
-git clone -b development https://github.com/Neurosim-lab/netpyne.git
+exit (sudo)
+git clone -b development https://github.com/Neurosim-lab/netpyne.git netpyne
 git clone -b paper2019_py3 https://github.com/suny-downstate-medical-center/M1.git m1_paper2019_py3
 
-
 cd /usr/site
-cd site
+mkdir site; cd site
 sudo git clone https://github.com/suny-downstate-medical-center/nrniv-local.git
 sudo git clone https://github.com/suny-downstate-medical-center/neurosim-scripts.git
 sudo git clone https://github.com/suny-downstate-medical-center/neurosim-config.git
@@ -29357,6 +29372,186 @@ I have tried manually modifying the slurm.jinja 'sourceImage' fields to point to
 Is there a way to specify what disk image to use for login, controller and compute nodes in the slurm-cluster.yaml file? 
 
 Thanks
+** neuron-nightly produced different results (though very close)
+** create new disk image for previous neuron 7.7.1
+- deploy cluster
+- ssh into compute node
+- use prelim steps of latest neuron-nightly but install 7.7.1
+
+
+1) 
+sudo su root
+
+yum install -y https://repo.ius.io/ius-release-el7.rpm
+
+vim startup.sh
+
+----- startup.sh   ------
+#!/bin/bash
+# Copyright 2019 SchedMD LLC.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+PACKAGES=(
+        'bind-utils'
+        'environment-modules'
+        'epel-release'
+        'gcc'
+        'git'
+        'hwloc'
+        'hwloc-devel'
+        'libibmad'
+        'libibumad'
+        'lua'
+        'lua-devel'
+        'man2html'
+        'mariadb'
+        'mariadb-devel'
+        'mariadb-server'
+        'munge'
+        'munge-devel'
+        'munge-libs'
+        'ncurses-devel'
+        'nfs-utils'
+        'numactl'
+        'numactl-devel'
+        'openssl-devel'
+        'pam-devel'
+        'perl-ExtUtils-MakeMaker'
+        'python3'
+        'python3-pip'
+        'readline-devel'
+        'rpm-build'
+        'rrdtool-devel'
+        'vim'
+        'wget'
+        'tmux'
+        'pdsh'
+        'openmpi'
+        'yum-utils'
+        'gcc-c++'
+        'screen'
+        'python3-devel.x86_64' 
+        'python3-pip' 
+        'openmpi-devel.x86_64' 
+        'python3-dev'
+        'libX11-devel'
+        'libtool'
+        'libXext' 
+        'libXext-devel'
+        'xorg-x11-fonts-100dpi'
+        'python36-Cython'
+        'ncurses-devel'
+        'openmpi-devel'
+        'openmpi'
+        'bison' 
+        'cmake'
+    )
+
+PY_PACKAGES=(
+        'pyyaml'
+        'requests'
+        'google-api-python-client'
+        'numpy' 
+        'matplotlib' 
+        'scipy' 
+        'pandas' 
+        'seaborn' 
+        'matplotlib_scalebar' 
+        'ipython' 
+        'future' 
+        'inspyred' 
+        'pyspike' 
+    )
+
+PING_HOST=8.8.8.8
+until ( ping -q -w1 -c1 $PING_HOST > /dev/null ) ; do
+    echo "Waiting for internet"
+    sleep .5
+done
+
+echo "yum install -y ${PACKAGES[*]}"
+until ( yum install -y ${PACKAGES[*]} > /dev/null ) ; do
+    echo "yum failed to install packages. Trying again in 5 seconds"
+    sleep 5
+done
+
+echo   "pip3 install --upgrade ${PY_PACKAGES[*]}"
+until ( pip3 install --upgrade ${PY_PACKAGES[*]} ) ; do
+    echo "pip3 failed to install python packages. Trying again in 5 seconds"
+    sleep 5
+done
+----- startup.sh   ------
+
+bash startup.sh
+
+export PATH=/usr/lib64/openmpi/bin:$PATH
+export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+
+
+git clone https://github.com/neuronsimulator/nrn 
+cd nrn
+git checkout d9605cb
+./build.sh
+./configure --with-paranrn --with-nrnpython=python3 --without-iv
+make -j
+make install -j
+cd src/nrnpython
+python3 setup.py install
+
+exit [exit su]
+
+cd /usr/local
+mkdir python
+mkdir site
+cd python
+sudo git clone -b development https://github.com/Neurosim-lab/netpyne.git
+
+cd ..
+cd site
+sudo git clone https://github.com/suny-downstate-medical-center/nrniv-local.git local
+sudo git clone https://github.com/suny-downstate-medical-center/neurosim-scripts.git script
+sudo git clone https://github.com/suny-downstate-medical-center/neurosim-config.git config
+
+cd ~
+git clone --single-branch --branch paper2019_py3 https://github.com/suny-downstate-medical-center/M1.git m1_paper2019_py3
+
+
+sudo vim ~/.bashrc
+    export N=~/nrn
+    export PATH="/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$SITE/scripts/:$SITE/config:$PATH"
+    export PYTHONPATH=$N/lib/python:$NB/share/python/lib64/python:/usr/local/python:~/netpyne:$PYTHONPATH
+    export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+    export SITE=/usr/local/site
+    export NEURONHOME=$N/share/nrn
+    export MODL_INCLUDE=$SITE/local/mod
+    export HOC_LIBRARY_PATH=$N/share/nrn/lib/hoc:$SITE/local/hoc
+
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l' 
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+
 ** blank
 
 * blank
