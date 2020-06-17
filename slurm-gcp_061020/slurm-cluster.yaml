@@ -112,7 +112,7 @@ resources:
     # Optional compute configuration fields
 
         # cpu_platform           : Intel Skylake
-        # preemptible_bursting   : False
+        preemptible_bursting     : True
         # compute_disk_type      : pd-standard
         compute_disk_size_gb   : 20
         # compute_labels         :
