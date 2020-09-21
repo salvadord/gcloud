@@ -34,7 +34,7 @@ resources:
 
     controller_machine_type : n1-highmem-16
     # controller_disk_type      : pd-standard
-    controller_disk_size_gb   : 1000
+    controller_disk_size_gb   : 2000
     # external_controller_ip    : False
     # controller_labels         :
     #   key1 : value1
@@ -105,7 +105,7 @@ resources:
     partitions :
       - name              : debug
         machine_type      : n1-standard-96
-        max_node_count    : 100
+        max_node_count    : 1000
         zone              : us-central1-a
         #static_node_count : 0
 

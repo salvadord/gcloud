@@ -29364,6 +29364,9 @@ fi
     alias cpgs='gsutil -m cp -r'
 
 
+if mpi issues make sure have:
+export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+
 ** draft email to gcp slurm groups
 I have updated gcp-slurm to the latest version on github. I would like to use a custom centos-7 disk image with some preinstalled tools (via pip3) for my login, controller and computer nodes.
 
