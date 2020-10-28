@@ -29180,6 +29180,8 @@ I am 1 of 2
 ** create new disk image 
 - use new pip install? might result in different results but can try 
 
+sudo su -
+
  1) startup.sh - basic setup used with gcp-slurm
 yum install -y https://repo.ius.io/ius-release-el7.rpm
 
@@ -29260,6 +29262,9 @@ PY_PACKAGES=(
         'future' 
         'inspyred' 
         'pyspike' 
+        'optuna' 
+        'psutil' 
+        'sklearn'
     )
 
 PING_HOST=8.8.8.8
@@ -29310,12 +29315,11 @@ mpirun --allow-run-as-root -n 2 python3 test.py -mpi
 # other libs for netpyne
 [pip3 install numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future inspyred pyspike  # ALREADY ADDED ABOVE]
 
-exit (sudo)
+exit [sudo]
 git clone -b development https://github.com/Neurosim-lab/netpyne.git netpyne
 git clone -b paper2019_py3 https://github.com/suny-downstate-medical-center/M1.git m1_paper2019_py3
 
-cd /usr/site
-mkdir site; cd site
+sudo mkdir site; cd site
 sudo git clone https://github.com/suny-downstate-medical-center/nrniv-local.git
 sudo git clone https://github.com/suny-downstate-medical-center/neurosim-scripts.git
 sudo git clone https://github.com/suny-downstate-medical-center/neurosim-config.git
@@ -29469,8 +29473,10 @@ PY_PACKAGES=(
         'future' 
         'inspyred' 
         'pyspike' 
+        'optuna' 
+        'psutil' 
+        'sklearn'
     )
-
 
 
 PING_HOST=8.8.8.8
@@ -29517,6 +29523,7 @@ cd nrn
 git checkout d9605cb
 ./build.sh; ./configure --with-paranrn --with-nrnpython=python3 --without-iv; make -j; make install -j; cd src/nrnpython; python3 setup.py install
 
+
 cd /usr/local; mkdir site; cd site
 git clone https://github.com/suny-downstate-medical-center/nrniv-local.git local
 git clone https://github.com/suny-downstate-medical-center/neurosim-scripts.git script
@@ -29538,6 +29545,9 @@ sudo vim ~/.bashrc
     export MODL_INCLUDE=$SITE/local/mod
     export HOC_LIBRARY_PATH=$N/share/nrn/lib/hoc:$SITE/local/hoc
 
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+
     # Aliases
     alias mysudo='sudo -E env "PATH=$PATH"'
     alias ipy='ipython'
@@ -29555,6 +29565,85 @@ sudo vim ~/.bashrc
 
 source ~/.bashrc
 cp ~/.bashrc ~/bashrc
+
+** Mike Hines instructions to install neuron-nightly on CentOS 7
+https://github.com/neuronsimulator/nrn/issues/743#issuecomment-699111492
+
+sudo su -
+yum install python3 python3-pip openmpi git gcc-c++ screen
+pip3 install neuron-nightly
+
+
+ln -s /usr/lib64/openmpi/lib/libmpi.so.12 /usr/lib64/openmpi/lib/libmpi.so
+ldconfig /usr/lib64/openmpi/lib
+
+exit [exit root]
+
+sudo pip3 install pyyaml requests google-api-python-client numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future inspyred optuna psutil sklearn
+[gcc error with psutil and pyspike]
+
+
+[not really needed:
+cd /usr/local
+sudo mkdir site; cd site
+sudo git clone https://github.com/suny-downstate-medical-center/nrniv-local.git
+sudo git clone https://github.com/suny-downstate-medical-center/neurosim-scripts.git
+sudo git clone https://github.com/suny-downstate-medical-center/neurosim-config.git
+]
+
+vim ~/.bashrc:
+
+    export PYTHONHOME="/usr"
+    export NRN_PYLIB=/lib64/libpython3.6m.so.1.0
+    export PATH=/usr/lib64/openmpi/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+    export PYTHONPATH=~/netpyne:$PYTHONPATH
+    export HOC_LIBRARY_PATH=/user/local/site/hoc
+
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l' 
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+
+
+Testing:
+
+cat >test.py <<EOL
+from neuron import h
+h.nrnmpi_init()
+pc = h.ParallelContext()
+id = int(pc.id())
+nhost = int(pc.nhost())
+print ('I am %d of %d'%(id, nhost))
+pc.barrier()
+h.quit()
+EOL
+
+mpiexec -n 2 python3 test.py
+mpiexec -n 2 nrniv -python -mpi test.py
+
+After deploying cluster:
+
+[sudo yum install screen]
+
+cp /usr/local/site/.bashrc ~/.bashrc
+source ~/.bashrc
+
+git clone -b development https://github.com/Neurosim-lab/netpyne.git netpyne
+git clone --single-branch --branch salva https://github.com/NathanKlineInstitute/A1.git
 
 ** blank
 
