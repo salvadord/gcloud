@@ -29646,5 +29646,11 @@ git clone -b development https://github.com/Neurosim-lab/netpyne.git netpyne
 git clone --single-branch --branch salva https://github.com/NathanKlineInstitute/A1.git
 
 ** blank
+* 21Feb12 Terraform
+Here is the link to the slurm-gcp branch that I forked from the main repo 
+
+https://github.com/suny-downstate-medical-center/slurm-gcp
+
+launch from the slurm-gcp/tf/slurm-clusters/basic-bernal-ecas2 directory and it should work in cloud shell or gcloud. 
 
 * blank
