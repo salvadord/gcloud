@@ -29390,6 +29390,7 @@ Thanks
 sudo su root
 
 yum install -y https://repo.ius.io/ius-release-el7.rpm
+yum install gcc 
 
 vim startup.sh
 
@@ -29410,6 +29411,9 @@ vim startup.sh
 # limitations under the License.
 
 PACKAGES=(
+        'python3-devel'
+        'libjpeg-devel' 
+        'zlib-devel'
         'bind-utils'
         'environment-modules'
         'epel-release'
@@ -29579,6 +29583,8 @@ ldconfig /usr/lib64/openmpi/lib
 
 exit [exit root]
 
+sudo yum install gcc python3-devel libjpeg-devel zlib-devel
+
 sudo pip3 install pyyaml requests google-api-python-client numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future inspyred optuna psutil sklearn
 [gcc error with psutil and pyspike]
 
@@ -29618,6 +29624,9 @@ vim ~/.bashrc:
     alias tarc='tar -zcvf'
     alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
 
+source ~/.bashrc
+sudo cp ~/.bashrc /usr/local
+
 
 Testing:
 
@@ -29639,11 +29648,12 @@ After deploying cluster:
 
 [sudo yum install screen]
 
-cp /usr/local/site/.bashrc ~/.bashrc
+cp /usr/local/.bashrc ~/.bashrc
 source ~/.bashrc
 
 git clone -b development https://github.com/Neurosim-lab/netpyne.git netpyne
-git clone --single-branch --branch salva https://github.com/NathanKlineInstitute/A1.git
+git clone --single-branch --branch salva_layers https://github.com/NathanKlineInstitute/A1.git
+cd A1; nrnivmodl mod
 
 ** blank
 * 21Feb12 Terraform
@@ -29652,5 +29662,337 @@ Here is the link to the slurm-gcp branch that I forked from the main repo
 https://github.com/suny-downstate-medical-center/slurm-gcp
 
 launch from the slurm-gcp/tf/slurm-clusters/basic-bernal-ecas2 directory and it should work in cloud shell or gcloud. 
+* 22Jan18 Terraform - 2nd try
+** tested and works ok following default instructions
+https://github.com/SchedMD/slurm-gcp
+
+** creating a disk image with NEURON from their default disk image with slurm
+gcloud compute instances create centos7-tf-neuron8 --project=high-power-computing --zone=us-east4-c --machine-type=n2-standard-2 --network-interface=network-tier=PREMIUM,subnet=default --maintenance-policy=MIGRATE --service-account=618419324245-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/cloud-platform --create-disk=auto-delete=yes,boot=yes,device-name=centos7-tf-neuron,image=projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-4-hpc-centos-7,mode=rw,size=20,type=projects/high-power-computing/zones/us-central1-a/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any
+
+followed instructions above: ** Mike Hines instructions to install neuron-nightly on CentOS 7
+
+create new disk image called: "schedmd-slurm-21-08-4-hpc-centos-7-neuron-8"
+
+** set image in n2-pre.tfvars
+controller_image        = "https://www.googleapis.com/compute/v1/projects/high-power-computing/global/images/schedmd-slurm-21-08-4-hpc-centos-7-neuron-8"
+
+** ISSUE was missing "p" in yaml file
+
+** HOW TO DEBUG Issues
+- look at log: `cat /var/log/slurm/resume.log`
+- can modify directly the yaml: `vim /slurm/scripts/config.yaml`
+** notes from Keith (Google Tech)
+chechk resume.log
+
+Check:
+N2d nodes
+C2 nodes
+TAU
+
+spot = preemptible but not 24 hour cut out period; discount level fluctuates
+
+GPU?
+redeploy cluster; specify in terraform - create partition
+A96 machine - AMD machine
+
+2 VMs?
+cluster with placement policies
+can do via slurm image - MPI 
+
+with terraform - chooses best zone within region 
+
+https://cloud.google.com/compute/docs/instances/spot
+https://cloud.google.com/compute/docs/machine-types
+
+** need to install a custom NEURON version to reproduce A1 results
+1) create VM to install:
+gcloud compute instances create centos7-tf-neuron8dev99 --project=high-power-computing --zone=us-east4-c --machine-type=n2-standard-2 --network-interface=network-tier=PREMIUM,subnet=default --maintenance-policy=MIGRATE --service-account=618419324245-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/cloud-platform --create-disk=auto-delete=yes,boot=yes,device-name=centos7-tf-neuron8dev99,image=projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-4-hpc-centos-7,mode=rw,size=1000,type=projects/high-power-computing/zones/us-central1-a/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any
+
+2) Install NEURON (see Hines instructions above)
+
+the results (spike times) were different … I think because of different NEURON versions: 
+NEURON -- VERSION 8.0.0 HEAD (429d11ef) 2021-04-30 vs. 
+NEURON -- VERSION 8.0.dev-183-ga42fae5b HEAD (a42fae5b) 2020-09-15
+
+
+so here’s the list of NEURON-nightly history: https://pypi.org/project/NEURON-nightly/#history
+anything on there is installable, but that jumps from May 25, 2020 to January 24, 2021
+
+so for May 25, 2020:
+pip install NEURON-nightly==8.0.dev99  --> THIS VERSION WORKED!!!
+
+
+and for January 24, 2021:
+pip install NEURON-nightly==8.0a0
+
+3) create disk image:
+gcloud compute images create schedmd-slurm-21-08-4-hpc-centos-7-neuron-8dev99 --project=high-power-computing --source-disk=centos7-tf-neuron8dev99 --source-disk-zone=us-east4-c
+
+4) update n2.tfvars to use disk image
+
+5) deploy cluster via terraform from the GCP console:
+terraform init
+terraform apply -var-file=n2.tfvars
+
+6) log into controller to complete setup and copy params cfg
+gcloud beta compute ssh "g1-n2-controller" --zone "us-east4-c" --project "high-power-computing"
+
+cp /usr/local/.bashrc ~/.bashrc
+source ~/.bashrc
+git clone -b development https://github.com/Neurosim-lab/netpyne.git netpyne
+git clone --single-branch --branch salva_layers https://github.com/NathanKlineInstitute/A1.git
+cd A1
+nrnivmodl mod
+cp data/v34_batch25/trial_2142_cfg.json ../
+git checkout 7aa405be9
+mkdir data/v34_batch25
+mkdir data/v34_batch25/trial_2142
+mv ../trial_2142_cfg.json data/v34_batch25/trial_2142/
+vim batch.py
+
+** coreneuron image for cluster
+gcloud compute instances create centos7-tf-coreneuron-large --project=high-power-computing --zone=us-east4-c --machine-type=n2-standard-2 --network-interface=network-tier=PREMIUM,subnet=default --maintenance-policy=MIGRATE --service-account=618419324245-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/cloud-platform --create-disk=auto-delete=yes,boot=yes,device-name=centos7-tf-coreneuron-large,image=projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-4-hpc-centos-7,mode=rw,size=100,type=projects/high-power-computing/zones/us-central1-a/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any
+
+
+* 22Jan19 Latest installation instructions for coreneuron
+** Ubuntu steps
+#!/usr/bin/env bash
+​
+# Scripts related env variables
+BASE_DIR=$(pwd)
+​
+# Simulation related env variables
+export SIM_TIME=1000  # set SIM_TIME to something small to avoid long run time (mainly with NEURON)
+export SCALE_DENSITY=1 # can be from 0.15 to 1.0
+​
+# Install Intel Compilers and IntelMPI
+install_intel() {
+     # download the key to system keyring
+     wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \
+         | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+​
+     # add signed entry to apt sources and configure the APT client to use Intel repository:
+     echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+​
+     sudo apt-get update
+​
+     sudo apt-get install -y intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+​
+     sudo apt-get install -y intel-oneapi-mpi-devel-2021.5.0
+​
+}
+​
+check_intel_compiler() {
+	source /opt/intel/oneapi/setvars.sh && \
+        gcc --version && g++ --version && \
+        icc --version && icpc --version && \
+        mpicc -v && mpicxx -v && mpiicc -v && mpiicpc -v
+}
+​
+clone_netpyne_M1() {
+    git clone git@github.com:suny-downstate-medical-center/netpyne.git
+    git clone -b magkanar/M1_vip_ngf git@github.com:iomaganaris/M1.git
+    pushd netpyne
+    sudo apt install python3.8-venv
+    python3 -m venv ${BASE_DIR}/M1/sim/venv
+    source ${BASE_DIR}/M1/sim/venv/bin/activate
+    pip3 install -r requirements.txt
+    pip3 install matplotlib_scalebar
+    popd
+}
+​
+install_neuron() {
+	[ -d nrn ] || git clone git@github.com:neuronsimulator/nrn.git
+    source /opt/intel/oneapi/setvars.sh
+    pushd nrn
+    rm -rf build_cpu
+	mkdir build_cpu && pushd build_cpu
+	cmake .. \
+	  -DNRN_ENABLE_INTERVIEWS=OFF \
+	  -DNRN_ENABLE_RX3D=OFF \
+	  -DNRN_ENABLE_MPI=ON \
+	  -DCORENRN_ENABLE_OPENMP=OFF \
+	  -DNRN_ENABLE_CORENEURON=ON \
+	  -DCORENRN_ENABLE_GPU=OFF \
+	  -DCORENRN_ENABLE_NMODL=ON \
+      -DCORENRN_NMODL_FLAGS=" sympy --analytic" \
+	  -DNRN_ENABLE_PYTHON=ON \
+	  -DPYTHON_EXECUTABLE=$(which python3) \
+	  -DNRN_ENABLE_TESTS=OFF \
+	  -DCORENRN_ENABLE_UNIT_TESTS=OFF \
+	  -DCMAKE_INSTALL_PREFIX=./install \
+      -DCMAKE_CXX_COMPILER=$(which icpc) \
+      -DCMAKE_C_COMPILER=$(which icc) \
+	  -G Ninja /
+	cmake --build . --parallel 40 --target install
+	popd
+	popd
+}
+​
+build_special() {
+	NEURON_BUILD="$1"
+    source /opt/intel/oneapi/setvars.sh
+	pushd M1
+    rm -rf x86_64
+    ${BASE_DIR}/nrn/${NEURON_BUILD}/install/bin/nrnivmodl -coreneuron mod
+	popd
+}
+​
+run_netpyne_M1_nrn() {
+    export PYTHONPATH=${BASE_DIR}/netpyne:${BASE_DIR}/nrn/build_cpu/install/lib/python:${PYTHONPATH}
+    source /opt/intel/oneapi/setvars.sh
+	pushd M1/sim
+    source venv/bin/activate
+	sed -i "s#cfg.coreneuron = .*#cfg.coreneuron = False#g" cfg.py
+	sed -i "s#cfg.duration = .*#cfg.duration = $SIM_TIME#g" cfg.py
+	sed -i "s#cfg.scaleDensity = .*#cfg.scaleDensity = $SCALE_DENSITY#g" cfg.py
+    mpirun ../x86_64/special -mpi -python init.py
+	popd
+}
+​
+run_netpyne_M1_corenrn() {
+	export PYTHONPATH=${BASE_DIR}/netpyne:${BASE_DIR}/nrn/build_cpu/install/lib/python:${PYTHONPATH}
+    source /opt/intel/oneapi/setvars.sh
+    pushd M1/sim
+    source venv/bin/activate
+    sed -i "s#cfg.coreneuron = .*#cfg.coreneuron = True#g" cfg.py
+    sed -i "s#cfg.duration = .*#cfg.duration = $SIM_TIME#g" cfg.py
+    sed -i "s#cfg.scaleDensity = .*#cfg.scaleDensity = $SCALE_DENSITY#g" cfg.py
+    mpirun ../x86_64/special -mpi -python init.py
+	popd
+}
+​
+install_intel
+​
+check_intel_compiler
+​
+clone_netpyne_M1
+​
+install_neuron
+​
+build_special build_cpu
+​
+run_netpyne_M1_nrn
+​
+run_netpyne_M1_corenrn
+** docker file for CentOS
+https://github.com/iomaganaris/docker-centos-intel
+
+* 22Sep27 Deploy cluster to run 2019 M1 model (to get connectivity data)
+** Steps
+open GCP cloud shell
+
+git clone https://github.com/salvadord/slurm-gcp.git
+cd slurm-gcp/tf/examples/basic/
+terraform apply -var-file=n1-standard-96_neuron77.tfvars
+
+gcloud compute ssh --zone "us-central1-f" "g2-n1-controller"  --tunnel-through-iap --project "high-power-computing"
+
+cp /usr/local/site/config/bashrc_gcp ~/.bashrc
+source ~/.bashrc
+
+[ERROR: slurm not installed!]
+
+git clone -b v0.9.6 https://github.com/Neurosim-lab/netpyne.git netpyne
+
+git clone --single-branch --branch paper2019_py3_conn https://github.com/suny-downstate-medical-center/M1.git m1_paper2019_py3
+
+cd m1_paper2019_py3/sim
+nrnivmodl mod
+python3 batch.py [ERROR since slurm not installed; but can just copy and run mpirun command on local controller node]
+screen -L mpirun -np 96 nrniv -python -mpi init.py simConfig=../data/v56_batch23_conn/v56_batch23_conn_0_0_cfg.json netParams=../data/v56_batch23_conn/v56_batch23_conn_netParams.py
+
+cat screenlog.0
+[if get memory error while gathering, try controller node with 96 cores and high mem - got error gathering so doing this]
+
+terraform destroy -var-file=n1-standard-96_neuron77.tfvars
+
+* 22Dec29 Create VM to generate A1 full connectivity
+
+export CLOUDSDK_PYTHON=/u/salvadord/venvs/neuron78/bin/python
+
+gcloud compute instances create centos7-tf-neuron8dev99 --project=ecas2-nsf1904444 --zone=us-central1-c --machine-type=n2-standard-80 --network-interface=network-tier=PREMIUM,subnet=default --maintenance-policy=MIGRATE --scopes=https://www.googleapis.com/auth/cloud-platform --create-disk=auto-delete=yes,boot=yes,device-name=centos7-tf-neuron8dev99,image=projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-4-hpc-centos-7,mode=rw,size=1000,type=projects/high-power-computing/zones/us-central1-a/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any 
+
+gcloud compute ssh --zone "us-central1-c" "centos7-tf-neuron8dev99"  --project "ecas2-nsf1904444"
+
+sudo su -
+yum install python3 python3-pip openmpi git gcc-c++ screen
+
+ln -s /usr/lib64/openmpi/lib/libmpi.so.12 /usr/lib64/openmpi/lib/libmpi.so
+ldconfig /usr/lib64/openmpi/lib
+
+pip3 install neuron==8.0a0
+
+exit [exit root]
+
+sudo yum install gcc python3-devel libjpeg-devel zlib-devel
+
+sudo pip3 install pyyaml requests google-api-python-client numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future inspyred optuna psutil sklearn
+[gcc error with psutil and pyspike]
+
+
+
+vim ~/.bashrc:
+
+    export PYTHONHOME="/usr"
+    export NRN_PYLIB=/lib64/libpython3.6m.so.1.0
+    export PATH=/usr/lib64/openmpi/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+    export PYTHONPATH=~/netpyne:$PYTHONPATH
+    export HOC_LIBRARY_PATH=/user/local/site/hoc
+
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l' 
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+
+source ~/.bashrc
+sudo cp ~/.bashrc /usr/local
+
+
+Testing:
+
+cat >test.py <<EOL
+from neuron import h
+h.nrnmpi_init()
+pc = h.ParallelContext()
+id = int(pc.id())
+nhost = int(pc.nhost())
+print ('I am %d of %d'%(id, nhost))
+pc.barrier()
+h.quit()
+EOL
+
+mpiexec -n 2 python3 test.py
+mpiexec -n 2 nrniv -python -mpi test.py
+
+[sudo yum install screen]
+
+cp /usr/local/.bashrc ~/.bashrc
+source ~/.bashrc
+
+pip3 install --user netpyne==1.0.2.1
+git clone --single-branch --branch fullconn https://github.com/NathanKlineInstitute/A1.git
+cd A1; nrnivmodl mod
+mpiexec -np 80 nrniv -mpi -python init.py
+gsutil -m cp -r v35_fullconn/* gs://salvadord_data2/v35_fullconn/
+
+[if using only changeset:
+cp -r data/v34_batch25/trial_2142/ ../
+git checkout cae03d5320cf
+cp -r ../trial_2142/ data/v34_batch25/]
 
 * blank
