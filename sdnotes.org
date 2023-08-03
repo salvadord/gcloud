@@ -29719,7 +29719,7 @@ so here’s the list of NEURON-nightly history: https://pypi.org/project/NEURON-
 anything on there is installable, but that jumps from May 25, 2020 to January 24, 2021
 
 so for May 25, 2020:
-pip install NEURON-nightly==8.0.dev99  --> THIS VERSION WORKED!!!
+pip install neuron-nightly==8.0.dev99  --> THIS VERSION WORKED!!!
 
 
 and for January 24, 2021:
@@ -29907,6 +29907,10 @@ cat screenlog.0
 
 terraform destroy -var-file=n1-standard-96_neuron77.tfvars
 
+
+Alternative:
+gcloud compute instances create centos7-tf-neuron77 --project=high-power-computing --zone=us-central1-c --machine-type=n1-standard-96 --network-interface=network-tier=PREMIUM,subnet=default --maintenance-policy=MIGRATE --scopes=https://www.googleapis.com/auth/cloud-platform --create-disk=auto-delete=yes,boot=yes,device-name=centos7-tf-neuron77,image=projects/high-power-computing/global/images/centos-7-neuron-7-7-netpyne-v2,mode=rw,size=1000,type=projects/high-power-computing/zones/us-central1-a/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any 
+
 * 22Dec29 Create VM to generate A1 full connectivity
 
 export CLOUDSDK_PYTHON=/u/salvadord/venvs/neuron78/bin/python
@@ -29929,6 +29933,7 @@ sudo yum install gcc python3-devel libjpeg-devel zlib-devel
 
 sudo pip3 install pyyaml requests google-api-python-client numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future inspyred optuna psutil sklearn
 [gcc error with psutil and pyspike]
+
 
 
 
@@ -29993,6 +29998,95 @@ gsutil -m cp -r v35_fullconn/* gs://salvadord_data2/v35_fullconn/
 [if using only changeset:
 cp -r data/v34_batch25/trial_2142/ ../
 git checkout cae03d5320cf
-cp -r ../trial_2142/ data/v34_batch25/]
+cp -r ../trial_2142/ data/v34_batch25]
+
+* create VM to run M1 and VL sims
+gcloud compute instances create centos7-tf-neuron77 --project=high-power-computing --zone=us-central1-c --machine-type=n1-standard-96 --network-interface=network-tier=PREMIUM,subnet=default --maintenance-policy=MIGRATE --scopes=https://www.googleapis.com/auth/cloud-platform --create-disk=auto-delete=yes,boot=yes,device-name=centos7-tf-neuron77,image=projects/high-power-computing/global/images/centos-7-neuron-7-7-netpyne-v2,mode=rw,size=1000,type=projects/high-power-computing/zones/us-central1-a/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any 
+
+gcloud compute ssh --zone "us-central1-c" "centos7-tf-neuron77"  --tunnel-through-iap --project "high-power-computing"
+
+cp /usr/local/site/config/bashrc_gcp ~/.bashrc
+source ~/.bashrc
+sudo pip3 install netpyne
+
+git clone --single-branch --branch VLinput https://github.com/suny-downstate-medical-center/M1.git m1_vl
+
+NOT WORKING - MPI with Python
+
+----
+Alternative:
+
+gcloud compute instances create centos7-tf-neuron8 --project=high-power-computing --zone=us-central1-c --machine-type=n2-standard-80 --network-interface=network-tier=PREMIUM,subnet=default --maintenance-policy=MIGRATE --scopes=https://www.googleapis.com/auth/cloud-platform --create-disk=auto-delete=yes,boot=yes,device-name=centos7-tf-neuron8,image=projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-4-hpc-centos-7,mode=rw,size=1000,type=projects/high-power-computing/zones/us-central1-a/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any 
+
+gcloud compute ssh --zone "us-central1-c" "centos7-tf-neuron8"  --project "high-power-computing"
+
+sudo su -
+yum install python3 python3-pip openmpi git gcc-c++ screen
+
+ln -s /usr/lib64/openmpi/lib/libmpi.so.12 /usr/lib64/openmpi/lib/libmpi.so
+ldconfig /usr/lib64/openmpi/lib
+
+pip3 install neuron
+
+exit [exit root]
+
+sudo yum install gcc python3-devel libjpeg-devel zlib-devel
+
+sudo pip3 install pyyaml requests google-api-python-client numpy matplotlib scipy pandas seaborn matplotlib_scalebar ipython future inspyred optuna psutil sklearn
+[gcc error with psutil and pyspike]
+
+vim ~/.bashrc:
+
+    export PYTHONHOME="/usr"
+    export NRN_PYLIB=/lib64/libpython3.6m.so.1.0
+    export PATH=/usr/lib64/openmpi/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+    export PYTHONPATH=~/netpyne:$PYTHONPATH
+    export HOC_LIBRARY_PATH=/user/local/site/hoc
+
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l' 
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+
+source ~/.bashrc
+sudo cp ~/.bashrc /usr/local
+
+
+Testing:
+
+cat >test.py <<EOL
+from neuron import h
+h.nrnmpi_init()
+pc = h.ParallelContext()
+id = int(pc.id())
+nhost = int(pc.nhost())
+print ('I am %d of %d'%(id, nhost))
+pc.barrier()
+h.quit()
+EOL
+
+mpiexec -n 2 python3 test.py
+mpiexec -n 2 nrniv -python -mpi test.py
+
+pip3 install --user netpyne
+
+git clone --single-branch --branch VLinput https://github.com/suny-downstate-medical-center/M1.git m1_vl
+nrnivmodl mod
+python bathch.py
+
 
 * blank
